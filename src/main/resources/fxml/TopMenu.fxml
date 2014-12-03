@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="topMenu" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.hsr.xclavis.ui.controller.TopMenuController">
+    <children>
+        <MenuBar fx:id="menuBar">
+            <menus>
+                <Menu mnemonicParsing="false" text="%file">
+                    <items>
+                        <MenuItem fx:id="miOpen" mnemonicParsing="false" onAction="#openFile" text="%open" />
+                        <MenuItem mnemonicParsing="false" onAction="#exitApplication" text="%exit" />
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="%settings">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="%security" />
+                        <Menu mnemonicParsing="false" text="%language">
+                            <items>
+                                <MenuItem mnemonicParsing="false" onAction="#changeLanguageToGerman" text="%german" />
+                                <MenuItem mnemonicParsing="false" text="Unspecified Action" />
+                                <MenuItem mnemonicParsing="false" text="Unspecified Action" />
+                                <MenuItem mnemonicParsing="false" text="Unspecified Action" />
+                                <MenuItem mnemonicParsing="false" onAction="#changeLanguageToEnglish" text="%english" />
+                            </items>
+                        </Menu>
+                        <MenuItem mnemonicParsing="false" text="%general" />
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="%help">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="%about" />
+                        <MenuItem mnemonicParsing="false" text="%documentation" />
+                        <MenuItem mnemonicParsing="false" text="%licenses" />
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+        <TilePane fx:id="toolBar" alignment="TOP_CENTER">
+            <children>
+                <Button maxWidth="1.7976931348623157E308" onAction="#openFile" text="%open_file">
+                    <graphic>
+                        <ImageView>
+                            <image>
+                                <Image url="@../images/open.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button maxWidth="1.7976931348623157E308" text="%scan_qr_code">
+                    <graphic>
+                        <ImageView>
+                            <image>
+                                <Image url="@../images/scanner.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button maxWidth="1.7976931348623157E308" text="%extended_security">
+                    <graphic>
+                        <ImageView>
+                            <image>
+                                <Image url="@../images/extended.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </children>
+        </TilePane>
+    </children>
+</VBox>

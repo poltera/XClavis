@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.effect.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.lang.*?>
+<?import javafx.scene.*?>
+
+<VBox alignment="CENTER" style="-fx-padding: 25;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.hsr.xclavis.ui.controller.FileSelecterController">
+    <children>
+        <TableView fx:id="tableView" onKeyPressed="#keyPressed">
+            <columns>
+                <TableColumn fx:id="tcIcon" prefWidth="50.0" sortable="false" text="%icon" />
+                <TableColumn fx:id="tcFilename" prefWidth="150.0" text="%filename" />
+                <TableColumn fx:id="tcExtension" prefWidth="75.0" text="%extension" />
+                <TableColumn fx:id="tcSize" prefWidth="75.0" text="%size" />
+                <TableColumn fx:id="tcDelete" prefWidth="75.0" sortable="false" text="%delete" />
+            </columns>
+        </TableView>
+    </children>
+   <opaqueInsets>
+      <Insets />
+   </opaqueInsets>
+</VBox>
