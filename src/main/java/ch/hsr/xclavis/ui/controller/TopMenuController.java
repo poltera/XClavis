@@ -85,4 +85,9 @@ public class TopMenuController implements Initializable {
     private void changeLanguageToGerman(ActionEvent event) {
         mainApp.changeLanguage(Locale.GERMAN);
     }
+
+    @FXML
+    private void scanQR(ActionEvent event) {
+        mainApp.showCodeReader();
+    }
 }

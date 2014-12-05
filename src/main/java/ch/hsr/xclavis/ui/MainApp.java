@@ -1,12 +1,13 @@
 package ch.hsr.xclavis.ui;
 
 import ch.hsr.xclavis.commons.SelectedFile;
+import ch.hsr.xclavis.ui.controller.CodeReaderController;
+import ch.hsr.xclavis.ui.controller.EncryptionStatusController;
 import ch.hsr.xclavis.ui.controller.FileSelecterController;
 import ch.hsr.xclavis.ui.controller.RootPaneController;
 import ch.hsr.xclavis.ui.controller.TopMenuController;
 import java.io.IOException;
 import java.util.Locale;
-import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,9 +17,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.TableView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -126,7 +125,51 @@ public class MainApp extends Application {
             Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    /**
+     * Shows the Encryption Status inside the root layout.
+     */
+    public void showEncryptionStatus() {
+        try {
+            // Load file overview.
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/EncryptionStatus.fxml"), bundle);
+            VBox encryptionStatus = loader.load();
 
+            // Set file overview into the center of root layout.
+            rootLayout.setCenter(encryptionStatus);
+
+            // Give the controller access to the main app.
+            EncryptionStatusController controller = loader.getController();
+
+            controller.setMainApp(this);
+
+        } catch (IOException ex) {
+            Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    /**
+     * Shows the Encryption Status inside the root layout.
+     */
+    public void showCodeReader() {
+        try {
+            // Load file overview.
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/CodeReader.fxml"), bundle);
+            VBox codeReader = loader.load();
+
+            // Set file overview into the center of root layout.
+            rootLayout.setCenter(codeReader);
+
+            // Give the controller access to the main app.
+            CodeReaderController controller = loader.getController();
+
+            controller.setMainApp(this);
+
+        } catch (IOException ex) {
+            Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     public void changeLanguage(Locale locale) {
         bundle = ResourceBundle.getBundle("bundles.XClavis", locale);
         initRootLayout();

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.*?>
 <?import javafx.scene.effect.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
@@ -7,7 +8,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.*?>
 
-<VBox alignment="CENTER" style="-fx-padding: 25;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.hsr.xclavis.ui.controller.FileSelecterController">
+<VBox alignment="CENTER" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.hsr.xclavis.ui.controller.FileSelecterController">
     <children>
         <TableView fx:id="tableView" onKeyPressed="#keyPressed">
             <columns>
@@ -17,9 +18,30 @@
                 <TableColumn fx:id="tcSize" prefWidth="75.0" text="%size" />
                 <TableColumn fx:id="tcDelete" prefWidth="75.0" sortable="false" text="%delete" />
             </columns>
+            <VBox.margin>
+                <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+            </VBox.margin>
         </TableView>
+        <Button fx:id="btnEncrypt" disable="true" visible="false" mnemonicParsing="false" onAction="#encryptFiles" text="%encrypt">
+            <graphic>
+                <ImageView>
+                    <image>
+                        <Image url="@../images/encrypt.png" />
+                    </image>
+                </ImageView>
+            </graphic>
+        </Button>
+        <Button fx:id="btnDecrypt" disable="true" visible="false" onAction="#decryptFiles" text="%decrypt">
+            <graphic>
+                <ImageView>
+                    <image>
+                        <Image url="@../images/decrypt.png" />
+                    </image>
+                </ImageView>
+            </graphic>
+        </Button>
     </children>
-   <opaqueInsets>
-      <Insets />
-   </opaqueInsets>
+    <opaqueInsets>
+        <Insets />
+    </opaqueInsets>
 </VBox>

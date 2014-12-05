@@ -7,10 +7,16 @@ package ch.hsr.xclavis.helpers;
 
 import ch.hsr.xclavis.commons.SelectedFile;
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.NumberFormat;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
@@ -23,6 +29,7 @@ import javax.swing.filechooser.FileSystemView;
  * @author Gian
  */
 public class FileHandler {
+
     public static void loadFile(File file, ObservableList<SelectedFile> fileData) {
         if (!file.isDirectory() && file.isFile() && file.canRead()) {
             boolean exists = false;
@@ -91,6 +98,25 @@ public class FileHandler {
         return fileExtension;
     }
 
+    public static Properties loadProperties() {
+        Properties properties = new Properties();
+        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream("beispiel.properties"))) {
+            properties.load(bis);
+        } catch (IOException ex) {
+            Logger.getLogger(FileHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return properties;
+    }
+    
+    public static void saveProperties(Properties properties, String path) {
+        try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(""))) {
+            
+        } catch (IOException ex) {
+            Logger.getLogger(FileHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     public static boolean checkWritePermissions(String path) {
         File file = new File(path);
         try (FileOutputStream fos = new FileOutputStream(file)) {
@@ -104,5 +130,10 @@ public class FileHandler {
         } finally {
             file.delete();
         }
+    }
+
+    //tba
+    public static boolean checkFileExists(String path) {
+        return false;
     }
 }
