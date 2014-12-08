@@ -7,7 +7,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox fx:id="topMenu" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.hsr.xclavis.ui.controller.TopMenuController">
+<VBox fx:id="topMenu" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefWidth="650.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.hsr.xclavis.ui.controller.TopMenuController">
     <children>
         <MenuBar fx:id="menuBar">
             <menus>
@@ -41,22 +41,13 @@
                 </Menu>
             </menus>
         </MenuBar>
-        <TilePane fx:id="toolBar" alignment="TOP_CENTER">
-            <children>
+      <HBox fx:id="toolBar" alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+         <children>
                 <Button maxWidth="1.7976931348623157E308" onAction="#openFile" text="%open_file">
                     <graphic>
                         <ImageView>
                             <image>
                                 <Image url="@../images/open.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-                <Button maxWidth="1.7976931348623157E308" onAction="#scanQR" text="%scan_qr_code">
-                    <graphic>
-                        <ImageView>
-                            <image>
-                                <Image url="@../images/scanner.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -70,7 +61,16 @@
                         </ImageView>
                     </graphic>
                 </Button>
-            </children>
-        </TilePane>
+                <Button maxWidth="1.7976931348623157E308" onAction="#scanQR" text="%scan_qr_code">
+                    <graphic>
+                        <ImageView>
+                            <image>
+                                <Image url="@../images/scanner.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+         </children>
+      </HBox>
     </children>
 </VBox>

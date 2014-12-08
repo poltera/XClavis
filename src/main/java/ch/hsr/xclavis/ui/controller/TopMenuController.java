@@ -18,7 +18,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.layout.TilePane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -30,6 +30,8 @@ import javafx.stage.Stage;
  */
 public class TopMenuController implements Initializable {
 
+    private MainApp mainApp;
+    
     @FXML
     private VBox topMenu;
     @FXML
@@ -37,9 +39,7 @@ public class TopMenuController implements Initializable {
     @FXML
     private MenuItem miOpen;
     @FXML
-    private TilePane toolBar;
-
-    private MainApp mainApp;
+    private HBox toolBar;
 
     /**
      * Initializes the controller class.

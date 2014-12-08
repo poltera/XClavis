@@ -10,10 +10,10 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox id="codeReader" prefHeight="650.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.hsr.xclavis.ui.controller.CodeReaderController">
+<VBox id="codeReader" alignment="CENTER" prefHeight="650.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.hsr.xclavis.ui.controller.CodeReaderController">
     <children>
-        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="500.0" prefWidth="500.0" style="-fx-background-color: red;" text="Label" textAlignment="CENTER" />
-        <HBox fx:id="inputBlocks" alignment="CENTER" prefWidth="500.0">
+        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="500.0" prefWidth="500.0" style="-fx-background-color: white;" text="No Camera available" textAlignment="CENTER" />
+        <HBox fx:id="hbInputBlocks" alignment="CENTER" maxWidth="500.0" minWidth="500.0" prefWidth="500.0" spacing="10.0">
             <VBox.margin>
                 <Insets top="25.0" />
             </VBox.margin>

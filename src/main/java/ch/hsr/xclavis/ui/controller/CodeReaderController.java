@@ -5,22 +5,18 @@
  */
 package ch.hsr.xclavis.ui.controller;
 
+import ch.hsr.xclavis.crypto.Checksum;
 import ch.hsr.xclavis.ui.InputBlock;
+import ch.hsr.xclavis.ui.InputBlocks;
 import ch.hsr.xclavis.ui.MainApp;
+import java.awt.Toolkit;
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.input.InputMethodEvent;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.InputEvent;
 import javafx.scene.layout.HBox;
 
 /**
@@ -30,13 +26,19 @@ import javafx.scene.layout.HBox;
  */
 public class CodeReaderController implements Initializable {
 
+    private String pattern = "[23456789abcdefghjklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ]";
+    
     private MainApp mainApp;
-    private int maxLength = 5;
+    private final int blockLength = 5;
+    private final int blockChecksumSize = 1;
+    private final int blocksSize = 7;
+    private final int blocksChecksumSize = 2;
+    private InputBlocks inputBlocks = new InputBlocks(blocksSize, blocksChecksumSize);
 
     @FXML
-    private HBox inputBlocks;
-    @FXML
     private Button btnDecrypt;
+    @FXML
+    private HBox hbInputBlocks;
 
     /**
      * Initializes the controller class.
@@ -45,63 +47,17 @@ public class CodeReaderController implements Initializable {
      * @param rb
      */
     @Override
-    public void initialize(URL url, ResourceBundle rb) {        
-        for (int i = 0; i < 7; i++) {
-            InputBlock inputBlock = new InputBlock();
+    public void initialize(URL url, ResourceBundle rb) {
+        for (int i = 0; i < blocksSize; i++) {
+            InputBlock inputBlock = new InputBlock(blockLength, blockChecksumSize, pattern);
+            inputBlock.setAlignment(Pos.CENTER);
             inputBlock.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
-                if (newValue.length() == maxLength) {
-                    inputBlock.setDisable(true);
-                }
+                inputBlocks.areValid();
             });
-            inputBlocks.getChildren().add(inputBlock);
+            inputBlocks.addBlock(inputBlock);
+            hbInputBlocks.getChildren().add(inputBlock);
         }
-//        textField.lengthProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
-//            System.out.println(newValue);
-//        });
-//    }
-
-//        textField.addEventFilter(InputEvent.ANY, (Event event) -> {
-//            if (event.getEventType().equals(KeyEvent.KEY_TYPED)) {
-//                if (textField.getLength() <= 6) {
-//                    event.
-//                }
-//            } else {
-//                //event.consume();
-//            }
-//        });
-//        textField.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
-//            //Check the maximal allowed characters per textfield
-//            String allowedCharacters = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
-//            newValue = newValue.toUpperCase();
-//            if (newValue.length() <= 5 && !newValue.contains(allowedCharacters)) {
-//                //Convert the lower case characters to upper case characters
-//                //newValue = newValue.toUpperCase();
-//                textField.setText(newValue);
-//                
-//            } else {
-//                return;
-//            }
-//        });
-//        textField = new TextField() {
-//            @Override
-//            public void replaceText(int start, int end, String text) {
-//        // If the replaced text would end up being invalid, then simply
-//                // ignore this call!
-//                if (!text.matches("[a-z]")) {
-//                    super.replaceText(start, end, text);
-//                }
-//            }
-//
-//            @Override
-//            public void replaceSelection(String text) {
-//                if (!text.matches("[a-z]")) {
-//                    super.replaceSelection(text);
-//                }
-//            }
-//        };
     }
-
-    //textField.addEventFilter(filter);
 
     /**
      * Is called by the main application to give a reference back to itself.
