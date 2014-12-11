@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.image.*?>
-<?import ch.hsr.xclavis.ui.*?>
+<?import ch.hsr.xclavis.commons.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.image.*?>
 <?import java.lang.*?>
@@ -13,10 +13,53 @@
 <VBox id="codeReader" alignment="CENTER" prefHeight="650.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.hsr.xclavis.ui.controller.CodeReaderController">
     <children>
         <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="500.0" prefWidth="500.0" style="-fx-background-color: white;" text="No Camera available" textAlignment="CENTER" />
-        <HBox fx:id="hbInputBlocks" alignment="CENTER" maxWidth="500.0" minWidth="500.0" prefWidth="500.0" spacing="10.0">
+        <HBox fx:id="hbInputSelecter" alignment="CENTER" maxWidth="500.0" minWidth="500.0" prefWidth="500.0" spacing="10.0">
             <VBox.margin>
                 <Insets top="25.0" />
             </VBox.margin>
+            <children>
+                <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../images/id.png" />
+                    </image>
+                </ImageView>
+            </children>
+        </HBox>
+        <HBox fx:id="hbInputBlocks1" alignment="CENTER_LEFT" maxWidth="500.0" minWidth="500.0" prefWidth="500.0" spacing="10.0" visible="false">
+            <VBox.margin>
+                <Insets top="10.0" />
+            </VBox.margin>
+            <children>
+                <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../images/key.png" />
+                    </image>
+                </ImageView>
+            </children>
+        </HBox>
+        <HBox fx:id="hbInputBlocks2" alignment="CENTER_LEFT" maxWidth="500.0" minWidth="500.0" prefWidth="500.0" spacing="10.0" visible="false">
+            <VBox.margin>
+                <Insets top="10.0" />
+            </VBox.margin>
+            <children>
+                <Label maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" prefHeight="25.0" prefWidth="25.0" />
+            </children>
+        </HBox>
+        <HBox fx:id="hbInputBlocks3" alignment="CENTER_LEFT" maxWidth="500.0" minWidth="500.0" prefWidth="500.0" spacing="10.0" visible="false">
+            <VBox.margin>
+                <Insets top="10.0" />
+            </VBox.margin>
+            <children>
+                <Label maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" prefHeight="25.0" prefWidth="25.0" />
+            </children>
+        </HBox>
+        <HBox fx:id="hbInputBlocks4" alignment="CENTER_LEFT" maxWidth="500.0" minWidth="500.0" prefWidth="500.0" spacing="10.0" visible="false">
+            <VBox.margin>
+                <Insets top="10.0" />
+            </VBox.margin>
+            <children>
+                <Label maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" prefHeight="25.0" prefWidth="25.0" />
+            </children>
         </HBox>
         <Button fx:id="btnDecrypt" alignment="CENTER" disable="true" mnemonicParsing="false" text="%decrypt"> 
             <graphic>
@@ -26,9 +69,9 @@
                     </image>
                 </ImageView>
             </graphic>
-         <VBox.margin>
-            <Insets top="25.0" />
-         </VBox.margin>
+            <VBox.margin>
+                <Insets top="25.0" />
+            </VBox.margin>
         </Button>
     </children>
     <padding>

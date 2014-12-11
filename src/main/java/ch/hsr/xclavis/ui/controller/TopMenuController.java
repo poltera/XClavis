@@ -90,4 +90,9 @@ public class TopMenuController implements Initializable {
     private void scanQR(ActionEvent event) {
         mainApp.showCodeReader();
     }
+
+    @FXML
+    private void keyManagement(ActionEvent event) {
+        mainApp.showKeyManagement();
+    }
 }

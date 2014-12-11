@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ch.hsr.xclavis.ui;
+package ch.hsr.xclavis.commons;
 
 import ch.hsr.xclavis.crypto.Checksum;
 import java.awt.Toolkit;
@@ -32,6 +32,8 @@ public class InputBlocks {
 
     public boolean areValid() {
         if (areComplete()) {
+            System.out.println("Value: " + getValue());
+            System.out.println("Checksum: " + getChecksum());
             if (Checksum.verify(getValue(), getChecksum())) {
                 markCorrect();
                 return true;
@@ -59,7 +61,7 @@ public class InputBlocks {
 
         if (areComplete()) {
             InputBlock lastInputBlock = inputBlocks.get(inputBlocks.size() - 1);
-            checksum = lastInputBlock.getValue().substring(lastInputBlock.getValue().length() - checksumSize - 1);
+            checksum = lastInputBlock.getValue().substring(lastInputBlock.getValue().length() - checksumSize);
         }
 
         return checksum;

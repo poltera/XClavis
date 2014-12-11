@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<VBox id="codeOutput" alignment="CENTER" prefHeight="650.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.hsr.xclavis.ui.controller.CodeOutputController">
+   <children>
+      <ImageView fx:id="imageView" fitHeight="500.0" fitWidth="500.0" pickOnBounds="true" preserveRatio="true" />
+   </children>
+</VBox>

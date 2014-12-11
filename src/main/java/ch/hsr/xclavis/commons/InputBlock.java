@@ -3,10 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ch.hsr.xclavis.ui;
+package ch.hsr.xclavis.commons;
 
 import ch.hsr.xclavis.crypto.Checksum;
 import java.awt.Toolkit;
+import javafx.geometry.Pos;
 import javafx.scene.control.TextField;
 
 /**
@@ -21,6 +22,9 @@ public class InputBlock extends TextField {
 
     public InputBlock(int blockLength, int checksumLength, String pattern) {
         super();
+        super.setAlignment(Pos.CENTER);
+        super.setMaxWidth(blockLength * 11.56);
+        //super.setWidth(blockLength);
         this.blockLength = blockLength;
         this.pattern = pattern;
         this.checksumLength = checksumLength;
@@ -108,12 +112,12 @@ public class InputBlock extends TextField {
     }
 
     private void markEditable() {
-        super.setStyle("-fx-border-color: white");
+        super.setStyle("-fx-border-color: none");
         super.setDisable(false);
     }
 
     private void markCorrect() {
-        super.setStyle("-fx-border-color: white");
+        super.setStyle("-fx-border-color: none");
         super.setDisable(true);
     }
 

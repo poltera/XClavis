@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox id="keyManagement" alignment="CENTER" prefHeight="650.0" prefWidth="650.0" spacing="25.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.hsr.xclavis.ui.controller.KeyManagementController">
+   <children>
+      <TableView prefHeight="200.0" prefWidth="200.0">
+        <columns>
+          <TableColumn prefWidth="75.0" text="Partner" />
+          <TableColumn prefWidth="75.0" text="Datum" />
+            <TableColumn prefWidth="75.0" text="Sesssion ID" />
+            <TableColumn prefWidth="75.0" text="Status" />
+            <TableColumn prefWidth="75.0" text="Löschen" />
+        </columns>
+      </TableView>
+      <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+         <children>
+            <TextField fx:id="tfName" text="Partner" />
+            <Slider fx:id="slKeyNumbers" blockIncrement="1.0" majorTickUnit="1.0" max="10.0" min="1.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0" />
+            <CheckBox fx:id="cbExtendedSecurity" mnemonicParsing="false" text="Erweiterte Sicherheit" />
+            <Button mnemonicParsing="false" onAction="#startKeyExchange" text="Beginnen" />
+         </children>
+      </HBox>
+   </children>
+   <padding>
+      <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+   </padding>
+</VBox>

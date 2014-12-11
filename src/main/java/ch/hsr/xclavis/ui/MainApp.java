@@ -1,9 +1,11 @@
 package ch.hsr.xclavis.ui;
 
 import ch.hsr.xclavis.commons.SelectedFile;
+import ch.hsr.xclavis.ui.controller.CodeOutputController;
 import ch.hsr.xclavis.ui.controller.CodeReaderController;
 import ch.hsr.xclavis.ui.controller.EncryptionStatusController;
 import ch.hsr.xclavis.ui.controller.FileSelecterController;
+import ch.hsr.xclavis.ui.controller.KeyManagementController;
 import ch.hsr.xclavis.ui.controller.RootPaneController;
 import ch.hsr.xclavis.ui.controller.TopMenuController;
 import java.io.IOException;
@@ -149,7 +151,7 @@ public class MainApp extends Application {
     }
     
     /**
-     * Shows the Encryption Status inside the root layout.
+     * Shows the Code Reader inside the root layout.
      */
     public void showCodeReader() {
         try {
@@ -162,6 +164,50 @@ public class MainApp extends Application {
 
             // Give the controller access to the main app.
             CodeReaderController controller = loader.getController();
+
+            controller.setMainApp(this);
+
+        } catch (IOException ex) {
+            Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    /**
+     * Shows the Code Output inside the root layout.
+     */
+    public void showCodeOutput() {
+        try {
+            // Load file overview.
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/CodeOutput.fxml"), bundle);
+            VBox codeOuput = loader.load();
+
+            // Set file overview into the center of root layout.
+            rootLayout.setCenter(codeOuput);
+
+            // Give the controller access to the main app.
+            CodeOutputController controller = loader.getController();
+
+            controller.setMainApp(this);
+
+        } catch (IOException ex) {
+            Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    /**
+     * Shows the Key Management inside the root layout.
+     */
+    public void showKeyManagement() {
+        try {
+            // Load file overview.
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/KeyManagement.fxml"), bundle);
+            VBox keyManagement = loader.load();
+
+            // Set file overview into the center of root layout.
+            rootLayout.setCenter(keyManagement);
+
+            // Give the controller access to the main app.
+            KeyManagementController controller = loader.getController();
 
             controller.setMainApp(this);
 

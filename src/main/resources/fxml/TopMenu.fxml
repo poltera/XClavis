@@ -52,20 +52,20 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button maxWidth="1.7976931348623157E308" text="%extended_security">
-                    <graphic>
-                        <ImageView>
-                            <image>
-                                <Image url="@../images/extended.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
                 <Button maxWidth="1.7976931348623157E308" onAction="#scanQR" text="%scan_qr_code">
                     <graphic>
                         <ImageView>
                             <image>
                                 <Image url="@../images/scanner.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button maxWidth="1.7976931348623157E308" onAction="#keyManagement" text="%key_management">
+                    <graphic>
+                        <ImageView>
+                            <image>
+                                <Image url="@../images/extended.png" />
                             </image>
                         </ImageView>
                     </graphic>
