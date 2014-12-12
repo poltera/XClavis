@@ -5,9 +5,11 @@
  */
 package ch.hsr.xclavis.ui.controller;
 
+import ch.hsr.xclavis.commons.SelectedFile;
 import ch.hsr.xclavis.ui.MainApp;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ProgressBar;
@@ -27,8 +29,8 @@ public class EncryptionStatusController implements Initializable {
      * Initializes the controller class.
      */
     @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+    public void initialize(URL url, ResourceBundle rb) {        
+        
     }    
     
      /**
@@ -38,5 +40,7 @@ public class EncryptionStatusController implements Initializable {
      */
     public void setMainApp(MainApp mainApp) {
         this.mainApp = mainApp;
+        
+        System.out.println(mainApp.getFileData().size());
     }
 }

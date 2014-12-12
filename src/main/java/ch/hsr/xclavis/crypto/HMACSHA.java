@@ -5,10 +5,64 @@
  */
 package ch.hsr.xclavis.crypto;
 
+import java.math.BigInteger;
+import org.bouncycastle.crypto.Digest;
+import org.bouncycastle.crypto.digests.SHA256Digest;
+import org.bouncycastle.crypto.digests.SHA512Digest;
+import org.bouncycastle.crypto.macs.HMac;
+import org.bouncycastle.crypto.params.KeyParameter;
+
 /**
  *
  * @author Gian
  */
 public class HMACSHA {
-    
+    private final static String KEY = "XClavis Key Exchange";
+    private byte[] inputBuffer, outputBuffer, derivatedKey;
+    private Digest digest;
+
+    public HMACSHA(int length) {
+        this.outputBuffer = new byte[length / Byte.SIZE];
+        this.inputBuffer = KEY.getBytes();
+        
+        if (length == 256) {
+            digest = new SHA256Digest();
+        } else if (length == 512) {
+            digest = new SHA512Digest();
+        }        
+    }
+
+    public byte[] getDerivatedKey(int length, byte[] key) {
+        derivatedKey = new byte[length / Byte.SIZE];
+
+        HMac mac = new HMac(digest);
+        mac.init(new KeyParameter(key));
+        mac.update(inputBuffer, 0, inputBuffer.length);
+        mac.doFinal(outputBuffer, 0);
+
+        System.out.println("Länge: " + mac.getMacSize() * Byte.SIZE + ", Algorithmus: " + mac.getAlgorithmName());
+
+        // Source Array, From Source, Destination Array, To Destination, Count
+        System.arraycopy(outputBuffer, 0, derivatedKey, 0, derivatedKey.length);
+
+        System.out.println("Länge: " + derivatedKey.length * Byte.SIZE);
+
+        System.out.println("\nkey:");
+        for (byte keyByte : key) {
+            System.out.print(keyByte + " ");
+        }
+        System.out.println("\nbefore:");
+        for (byte beforeByte : outputBuffer) {
+            System.out.print(beforeByte + " ");
+        }
+        System.out.println("\nafter:");
+        for (byte afterByte : derivatedKey) {
+            System.out.print(afterByte + " ");
+        }
+        BigInteger result = new BigInteger(1, outputBuffer);
+        System.out.println("");
+        System.out.println(result.toString(16).toUpperCase());
+
+        return derivatedKey;
+    }
 }

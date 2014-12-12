@@ -5,19 +5,20 @@
  */
 package ch.hsr.xclavis.ui.controller;
 
+import ch.hsr.xclavis.commons.ECDHKey;
 import ch.hsr.xclavis.commons.InputBlock;
 import ch.hsr.xclavis.commons.InputBlocks;
+import ch.hsr.xclavis.commons.SessionID;
 import ch.hsr.xclavis.commons.SessionKey;
 import ch.hsr.xclavis.ui.MainApp;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 
 /**
@@ -27,11 +28,12 @@ import javafx.scene.layout.HBox;
  */
 public class CodeReaderController implements Initializable {
 
-    private String pattern = "[23456789abcdefghjklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ]";
+    private final static String PATTERN = "[23456789abcdefghjklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ]";
 
     private MainApp mainApp;
     private final int blockLength = 5;
     private final int blockChecksumSize = 1;
+    private SessionID sessionID;
 
     @FXML
     private HBox hbInputSelecter;
@@ -54,10 +56,12 @@ public class CodeReaderController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        InputBlock inputSelecter = new InputBlock(blockLength, blockChecksumSize, pattern);
+        InputBlock inputSelecter = new InputBlock(blockLength, blockChecksumSize, PATTERN);
         inputSelecter.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
             if (inputSelecter.isValid()) {
-                String type = newValue.substring(0, 1);
+                String type = inputSelecter.getValue().substring(0, 1);
+                String random = inputSelecter.getValue().substring(1);
+                sessionID = new SessionID(type, random);
                 addBlocks(type);
             }
         });
@@ -76,26 +80,49 @@ public class CodeReaderController implements Initializable {
     private void addBlocks(String type) {
         int blocksSize = 7;
         int overallChecksumSize = 2;
-        if (type.equals(SessionKey.SESSION_KEY_128)) {
-            blocksSize = 7;
-            overallChecksumSize = 2;
-        } else if (type.equals(SessionKey.SESSION_KEY_256)) {
-            blocksSize = 14;
-            overallChecksumSize = 4;
-        } else if ((type.equals(SessionKey.ECDH_REQ_128)) || (type.equals(SessionKey.ECDH_RES_128))) {
-            blocksSize = 14;
-            overallChecksumSize = 3;
-        } else if ((type.equals(SessionKey.ECDH_REQ_256)) || (type.equals(SessionKey.ECDH_RES_256))) {
-            blocksSize = 27;
-            overallChecksumSize = 4;
+        switch (type) {
+            case SessionID.SESSION_KEY_128:
+                blocksSize = 7;
+                overallChecksumSize = 2;
+                break;
+            case SessionID.SESSION_KEY_256:
+                blocksSize = 14;
+                overallChecksumSize = 4;
+                break;
+            case SessionID.ECDH_REQ_256:
+            case SessionID.ECDH_RES_256:
+                blocksSize = 14;
+                overallChecksumSize = 3;
+                break;
+            case SessionID.ECDH_REQ_512:
+            case SessionID.ECDH_RES_512:
+                blocksSize = 27;
+                overallChecksumSize = 4;
+                break;
         }
 
         InputBlocks inputBlocks = new InputBlocks(blocksSize, overallChecksumSize);
 
         for (int i = 0; i < blocksSize; i++) {
-            InputBlock inputBlock = new InputBlock(blockLength, blockChecksumSize, pattern);
+            InputBlock inputBlock = new InputBlock(blockLength, blockChecksumSize, PATTERN);
             inputBlock.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
-                inputBlocks.areValid();
+                if (inputBlocks.areValid()) {
+                    try {
+                        Thread.sleep(500);
+                        if (sessionID.isECDHReq()) {
+                            // Calculating the ECDH response and the SessionKey
+                            ECDHKey ecdhKey = new ECDHKey(sessionID);
+                            SessionKey sessionKey = ecdhKey.getSessionKey(inputBlocks.getValue());
+
+                            mainApp.getECDHKeyData().add(ecdhKey);
+                            mainApp.getSessionKeyData().add(sessionKey);
+                            
+                            mainApp.showCodeOutput();
+                        }
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(CodeReaderController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
             });
             inputBlocks.addBlock(inputBlock);
             if (i < 7) {

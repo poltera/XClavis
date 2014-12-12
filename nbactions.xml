@@ -5,6 +5,7 @@
             <goals>
                 <goal>clean</goal>
                 <goal>package</goal>
+                <goal>org.codehaus.mojo:truezip-maven-plugin:1.2:remove</goal>
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.3.2:exec</goal>
             </goals>
             <properties>
@@ -16,6 +17,7 @@
             <goals>
                 <goal>clean</goal>
                 <goal>package</goal>
+                <goal>org.codehaus.mojo:truezip-maven-plugin:1.2:remove</goal>
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.3.2:exec</goal>
             </goals>
             <properties>

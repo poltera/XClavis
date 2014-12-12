@@ -5,6 +5,8 @@
  */
 package ch.hsr.xclavis.ui.controller;
 
+import ch.hsr.xclavis.commons.ECDHKey;
+import ch.hsr.xclavis.commons.SessionID;
 import ch.hsr.xclavis.ui.MainApp;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -35,7 +37,7 @@ public class KeyManagementController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        
     }    
     
     /**
@@ -49,6 +51,7 @@ public class KeyManagementController implements Initializable {
 
     @FXML
     private void startKeyExchange(ActionEvent event) {
+        mainApp.getECDHKeyData().add(new ECDHKey(SessionID.ECDH_REQ_256));
         mainApp.showCodeOutput();
     }
     

@@ -6,6 +6,7 @@
 package ch.hsr.xclavis.commons;
 
 import ch.hsr.xclavis.crypto.RandomGenerator;
+import ch.hsr.xclavis.helpers.FormatTransformer;
 
 /**
  *
@@ -13,26 +14,26 @@ import ch.hsr.xclavis.crypto.RandomGenerator;
  */
 public class SessionKey {
 
-    public final static String SESSION_KEY_128 = "A";
-    public final static String SESSION_KEY_256 = "B";
-    public final static String ECDH_REQ_128 = "C";
-    public final static String ECDH_REQ_256 = "D";
-    public final static String ECDH_RES_128 = "E";
-    public final static String ECDH_RES_256 = "F";
-
     private SessionID sessionID;
     private final byte[] sessionKey;
     private byte[] iv;
 
-    public SessionKey(int length, String type) {
-        this.sessionKey = RandomGenerator.getRandomBytes(length / 8);
+    public SessionKey(String type) {
+        this.sessionID = new SessionID(type);
+        this.sessionKey = RandomGenerator.getRandomBytes(this.sessionID.getKeyLength() / 8);
         this.iv = RandomGenerator.getRandomBytes(12);
-        this.sessionID = new SessionID(type, 15);
     }
 
     public SessionKey(byte[] sessionKey, SessionID sessionID) {
-        this.sessionKey = sessionKey;
         this.sessionID = sessionID;
+        this.sessionKey = sessionKey;
+        this.iv = RandomGenerator.getRandomBytes(12);
+    }
+
+    public SessionKey(String base32SessionKey, SessionID sessionID) {
+        this.sessionID = sessionID;
+        this.sessionKey = FormatTransformer.base32ToByte(base32SessionKey);
+        this.iv = RandomGenerator.getRandomBytes(12);
     }
 
     public byte[] getKey() {
@@ -50,11 +51,11 @@ public class SessionKey {
     public String getID() {
         return sessionID.getID();
     }
-    
+
     public String getType() {
-        return sessionID.type;
+        return sessionID.getType();
     }
-    
+
     public void setType(String type) {
         this.sessionID.setType(type);
     }

@@ -1,6 +1,10 @@
 package ch.hsr.xclavis.ui;
 
+import ch.hsr.xclavis.commons.ECDHKey;
 import ch.hsr.xclavis.commons.SelectedFile;
+import ch.hsr.xclavis.commons.SessionKey;
+import ch.hsr.xclavis.crypto.ECDH;
+import ch.hsr.xclavis.helpers.QRModel;
 import ch.hsr.xclavis.ui.controller.CodeOutputController;
 import ch.hsr.xclavis.ui.controller.CodeReaderController;
 import ch.hsr.xclavis.ui.controller.EncryptionStatusController;
@@ -19,6 +23,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -29,16 +34,20 @@ public class MainApp extends Application {
     private BorderPane rootLayout;
     private ResourceBundle bundle;
     private ObservableList<SelectedFile> fileData;
+    private ObservableList<SessionKey> sessionKeyData;
+    private ObservableList<ECDHKey> ecdhKeyData;
 
     /**
      * Constructor
      */
     public MainApp() {
         this.fileData = FXCollections.observableArrayList();
+        this.sessionKeyData = FXCollections.observableArrayList();
+        this.ecdhKeyData = FXCollections.observableArrayList();
     }
 
     /**
-     * Returns the data as an observable list of SelectedFiles.
+     * Returns the Files as an observable list of SelectedFiles.
      *
      * @return
      */
@@ -46,11 +55,29 @@ public class MainApp extends Application {
         return fileData;
     }
 
+    /**
+     * Returns the SessionKeys as an observable list of SelectedFiles.
+     *
+     * @return
+     */
+    public ObservableList<SessionKey> getSessionKeyData() {
+        return sessionKeyData;
+    }
+
+    /**
+     * Returns the ECDHKeys as an observable list of SelectedFiles.
+     *
+     * @return
+     */
+    public ObservableList<ECDHKey> getECDHKeyData() {
+        return ecdhKeyData;
+    }
+
     @Override
     public void start(Stage stage) {
         //try {
         this.stage = stage;
-        //stage.getIcons().add(new Image(Start.class.getResourceAsStream("logo.jpg")));
+        this.stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/xclavis.png")));
         this.stage.setTitle("XClavis");
         //this.stage.setResizable(false);
         Locale locale = Locale.getDefault();
@@ -127,7 +154,7 @@ public class MainApp extends Application {
             Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     /**
      * Shows the Encryption Status inside the root layout.
      */
@@ -149,7 +176,7 @@ public class MainApp extends Application {
             Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     /**
      * Shows the Code Reader inside the root layout.
      */
@@ -171,7 +198,7 @@ public class MainApp extends Application {
             Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     /**
      * Shows the Code Output inside the root layout.
      */
@@ -193,7 +220,7 @@ public class MainApp extends Application {
             Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     /**
      * Shows the Key Management inside the root layout.
      */
@@ -215,7 +242,7 @@ public class MainApp extends Application {
             Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public void changeLanguage(Locale locale) {
         bundle = ResourceBundle.getBundle("bundles.XClavis", locale);
         initRootLayout();

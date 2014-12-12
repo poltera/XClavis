@@ -5,12 +5,15 @@
  */
 package ch.hsr.xclavis.ui.controller;
 
+import ch.hsr.xclavis.commons.ECDHKey;
+import ch.hsr.xclavis.commons.SessionID;
 import ch.hsr.xclavis.commons.SessionKey;
 import ch.hsr.xclavis.helpers.QRModel;
 import ch.hsr.xclavis.qrcode.QRCodeGenerator;
 import ch.hsr.xclavis.ui.MainApp;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.image.ImageView;
@@ -35,10 +38,7 @@ public class CodeOutputController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        SessionKey sessionKey = new SessionKey(256, SessionKey.SESSION_KEY_256);
-        QRModel qrModell = new QRModel();
-        qrModell.addSessionKey(sessionKey);
-        imageView.setImage(new QRCodeGenerator().createQR(qrModell.getModell(), 500));
+
     }
 
     /**
@@ -48,5 +48,8 @@ public class CodeOutputController implements Initializable {
      */
     public void setMainApp(MainApp mainApp) {
         this.mainApp = mainApp;
+        QRModel qrModell = new QRModel();
+        qrModell.addECDHKey(mainApp.getECDHKeyData().get(0));
+        imageView.setImage(new QRCodeGenerator().createQR(qrModell.getModell(), 500));
     }
 }
