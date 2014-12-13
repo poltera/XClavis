@@ -3,8 +3,6 @@ package ch.hsr.xclavis.ui;
 import ch.hsr.xclavis.commons.ECDHKey;
 import ch.hsr.xclavis.commons.SelectedFile;
 import ch.hsr.xclavis.commons.SessionKey;
-import ch.hsr.xclavis.crypto.ECDH;
-import ch.hsr.xclavis.helpers.QRModel;
 import ch.hsr.xclavis.ui.controller.CodeOutputController;
 import ch.hsr.xclavis.ui.controller.CodeReaderController;
 import ch.hsr.xclavis.ui.controller.EncryptionStatusController;

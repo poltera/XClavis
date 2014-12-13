@@ -10,9 +10,23 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox id="codeReader" alignment="CENTER" prefHeight="650.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.hsr.xclavis.ui.controller.CodeReaderController">
+<VBox id="codeReader" alignment="TOP_CENTER" prefHeight="650.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.hsr.xclavis.ui.controller.CodeReaderController">
     <children>
-        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="500.0" prefWidth="500.0" style="-fx-background-color: white;" text="No Camera available" textAlignment="CENTER" />
+        <VBox fx:id="vbWebcam" alignment="TOP_CENTER" maxWidth="500.0" prefWidth="500.0" spacing="25.0">
+            <children>
+                <HBox fx:id="hbWebcamSelecter" alignment="CENTER" spacing="25.0">
+                    <children>
+                        <Label text="%select_webcam" />
+                        <ComboBox fx:id="cbWebcamSelecter" maxWidth="150.0" prefWidth="150.0" />
+                    </children>
+                </HBox>
+                <ImageView fx:id="imageViewWebcam" fitHeight="240.0" fitWidth="320.0" pickOnBounds="true" preserveRatio="true" scaleX="-1">
+                    <image>
+                        <Image url="@../images/print.png" />
+                    </image>
+                </ImageView>
+            </children>
+        </VBox>
         <HBox fx:id="hbInputSelecter" alignment="CENTER" maxWidth="500.0" minWidth="500.0" prefWidth="500.0" spacing="10.0">
             <VBox.margin>
                 <Insets top="25.0" />

@@ -10,7 +10,9 @@ import ch.hsr.xclavis.commons.InputBlock;
 import ch.hsr.xclavis.commons.InputBlocks;
 import ch.hsr.xclavis.commons.SessionID;
 import ch.hsr.xclavis.commons.SessionKey;
+import ch.hsr.xclavis.commons.WebcamInfo;
 import ch.hsr.xclavis.ui.MainApp;
+import ch.hsr.xclavis.webcam.WebcamHandler;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -19,7 +21,10 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 /**
  * FXML Controller class
@@ -47,6 +52,14 @@ public class CodeReaderController implements Initializable {
     private HBox hbInputBlocks4;
     @FXML
     private Button btnDecrypt;
+    @FXML
+    private VBox vbWebcam;
+    @FXML
+    private HBox hbWebcamSelecter;
+    @FXML
+    private ComboBox<WebcamInfo> cbWebcamSelecter;
+    @FXML
+    private ImageView imageViewWebcam;
 
     /**
      * Initializes the controller class.
@@ -56,6 +69,29 @@ public class CodeReaderController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        WebcamHandler webcamHandler = new WebcamHandler();
+
+        // Show WebcamSelecter if more then one Webcam
+        if (webcamHandler.getWebcamCount() > 1) {
+            cbWebcamSelecter.setItems(webcamHandler.getWebcams());
+            cbWebcamSelecter.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends WebcamInfo> observable, WebcamInfo oldValue, WebcamInfo newValue) -> {
+                if (newValue != null) {
+                    webcamHandler.initWebcam(newValue.getWebcamIndex());
+                    imageViewWebcam.imageProperty().bind(webcamHandler.getStream());
+                }
+            });
+        } else {
+            vbWebcam.getChildren().remove(hbWebcamSelecter);
+        }
+
+        // Show WebcamImage from first Webcam if any Webcam exists
+        if (webcamHandler.existsWebcam()) {
+            webcamHandler.initWebcam(0);
+            imageViewWebcam.imageProperty().bind(webcamHandler.getStream());
+        } else {
+            vbWebcam.getChildren().remove(imageViewWebcam);
+        }
+
         InputBlock inputSelecter = new InputBlock(blockLength, blockChecksumSize, PATTERN);
         inputSelecter.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
             if (inputSelecter.isValid()) {
@@ -116,7 +152,7 @@ public class CodeReaderController implements Initializable {
 
                             mainApp.getECDHKeyData().add(ecdhKey);
                             mainApp.getSessionKeyData().add(sessionKey);
-                            
+
                             mainApp.showCodeOutput();
                         }
                     } catch (InterruptedException ex) {

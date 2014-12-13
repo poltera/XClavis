@@ -58,7 +58,7 @@ public class RandomGeneratorTest {
     @Test
     public void testGetRandomBits() {
         for (Webcam webcam : Webcam.getWebcams()) {
-            System.out.println(webcam.getName());
+            System.out.println("Kamera gefunden: " + webcam.getName());
         }
     }
 }
