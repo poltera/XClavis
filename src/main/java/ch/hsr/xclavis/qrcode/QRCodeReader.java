@@ -106,20 +106,3 @@ public class QRCodeReader extends JFrame implements Runnable, ThreadFactory {
 	}
 }
 
-// Flip the WebcamPanel
-class MirrorWebcamPanel extends WebcamPanel {
-	private static final long serialVersionUID = 6441489157408381878L;
-	
-	public MirrorWebcamPanel(Webcam webcam) {
-		super(webcam);
-	}
-
-	@Override
-	public synchronized void paint(Graphics g) {
-		Graphics2D g2 = (Graphics2D) g.create();
-		g2.translate(getWidth(), 0);
-		g2.scale(-1, 1);
-		super.paint(g2);
-	}
-}
-
