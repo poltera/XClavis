@@ -68,7 +68,7 @@ public class WebcamHandler {
                     close();
                 }
                 selectedWebcam = Webcam.getWebcams().get(webcamIndex);
-                selectedWebcam.setViewSize(WebcamResolution.QVGA.getSize());
+                //selectedWebcam.setViewSize(WebcamResolution.QVGA.getSize());
                 selectedWebcam.open();
                 //startWebcamStream();
                 return null;

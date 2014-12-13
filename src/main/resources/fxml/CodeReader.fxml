@@ -20,7 +20,7 @@
                         <ComboBox fx:id="cbWebcamSelecter" maxWidth="150.0" prefWidth="150.0" />
                     </children>
                 </HBox>
-                <ImageView fx:id="imageViewWebcam" fitHeight="240.0" fitWidth="320.0" pickOnBounds="true" preserveRatio="true" scaleX="-1">
+                <ImageView fx:id="imageViewWebcam" fitWidth="500.0" pickOnBounds="true" preserveRatio="true" scaleX="-1">
                     <image>
                         <Image url="@../images/print.png" />
                     </image>
