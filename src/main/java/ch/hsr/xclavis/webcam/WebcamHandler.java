@@ -7,14 +7,6 @@ package ch.hsr.xclavis.webcam;
 
 import ch.hsr.xclavis.commons.WebcamInfo;
 import com.github.sarxos.webcam.Webcam;
-import com.github.sarxos.webcam.WebcamResolution;
-import com.google.zxing.BinaryBitmap;
-import com.google.zxing.LuminanceSource;
-import com.google.zxing.MultiFormatReader;
-import com.google.zxing.NotFoundException;
-import com.google.zxing.Result;
-import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
-import com.google.zxing.common.HybridBinarizer;
 import java.awt.image.BufferedImage;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
@@ -89,16 +81,11 @@ public class WebcamHandler {
                     try {
                         if ((bufferedImage = selectedWebcam.getImage()) != null) {
                             Platform.runLater(() -> {
+                                // Convert the Image for JavaFX
                                 Image image = SwingFXUtils.toFXImage(bufferedImage, null);
                                 imageProperty.set(image);
-                                LuminanceSource source = new BufferedImageLuminanceSource(bufferedImage);
-                                BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
-                                try {
-                                    Result result = new MultiFormatReader().decode(bitmap);
-                                    System.out.println(result);
-                                } catch (NotFoundException e) {
-                                    // No QR Code in the image
-                                }
+                                // QR-Code scanner
+                                
                             });
                         }
                     } catch (Exception e) {

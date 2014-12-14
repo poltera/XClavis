@@ -1,11 +1,11 @@
 package ch.hsr.xclavis.helpers;
 
-public class FormatTransformer {
-
-    private static final String[] BASE32_CHARACTERS = {"2", "3", "4", "5", "6", "7",
+public class Base32 {
+    public final static int SIZE = 5;
+    private final static String[] BASE32_CHARACTERS = {"2", "3", "4", "5", "6", "7",
         "8", "9", "A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L",
         "M", "N", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
-    private static final int[] BASE32_VALUES = {16, 8, 4, 2, 1};
+    private final static int[] BASE32_VALUES = {16, 8, 4, 2, 1};
 
     /**
      * Transform a bit-string in a base32 string

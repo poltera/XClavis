@@ -1,0 +1,83 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package ch.hsr.xclavis.helpers;
+
+import ch.hsr.xclavis.commons.ECDHKey;
+import ch.hsr.xclavis.commons.Keys;
+import ch.hsr.xclavis.commons.SessionID;
+import ch.hsr.xclavis.commons.SessionKey;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+/**
+ *
+ * @author Gian
+ */
+public class QRModelTest {
+    
+    public QRModelTest() {
+    }
+    
+    @BeforeClass
+    public static void setUpClass() {
+    }
+    
+    @AfterClass
+    public static void tearDownClass() {
+    }
+    
+    @Before
+    public void setUp() {
+    }
+    
+    @After
+    public void tearDown() {
+    }
+
+    /**
+     * Test of addSessionKey method, of class QRModel.
+     */
+    @Test
+    public void testAddSessionKey() {
+
+    }
+
+    /**
+     * Test of addECDHKey method, of class QRModel.
+     */
+    @Test
+    public void testAddECDHKey() {
+
+    }
+
+    /**
+     * Test of getModell method, of class QRModel.
+     */
+    @Test
+    public void testGetModell() {
+
+    }
+
+    /**
+     * Test of getKeys method, of class QRModel.
+     */
+    @Test
+    public void testGetKeys() {
+        QRModel qrModel = new QRModel();
+        ECDHKey ecdhKey = new ECDHKey(SessionID.ECDH_RES_512);
+        qrModel.addECDHKey(ecdhKey);
+        SessionKey sessionKey = new SessionKey(SessionID.SESSION_KEY_128);
+        qrModel.addSessionKey(sessionKey);
+        String result = qrModel.getModell();
+        
+        Keys keys = qrModel.getKeys(result);
+    }
+    
+}

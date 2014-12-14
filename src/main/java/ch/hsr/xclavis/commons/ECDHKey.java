@@ -7,7 +7,7 @@ package ch.hsr.xclavis.commons;
 
 import ch.hsr.xclavis.crypto.ECDH;
 import ch.hsr.xclavis.crypto.HMACSHA;
-import ch.hsr.xclavis.helpers.FormatTransformer;
+import ch.hsr.xclavis.helpers.Base32;
 
 /**
  *
@@ -40,7 +40,7 @@ public class ECDHKey {
         changeType();
     }
 
-    public byte[] getPublicKey() {
+    public byte[] getPublicKey() {        
         return ecdh.getPublicKey();
     }
 
@@ -48,17 +48,22 @@ public class ECDHKey {
         byte[] agreedKey = ecdh.getAgreedKey(publicKey);
         HMACSHA hmacsha = new HMACSHA(sessionID.getKeyLength());
         changeType();
-        byte[] derivatedKey = hmacsha.getDerivatedKey(sessionID.getKeyLength(), agreedKey);
+        byte[] derivatedKey = hmacsha.getDerivatedKey(sessionID.getFinalKeyLength(), agreedKey);
         SessionKey sessionKey = new SessionKey(derivatedKey, sessionID);
 
         return sessionKey;
     }
 
     public SessionKey getSessionKey(String base32PublicKey) {
-        byte[] agreedKey = ecdh.getAgreedKey(FormatTransformer.base32ToByte(base32PublicKey));
+        // Converting back a Base32 String to its Byte Value gives an additional Byte
+        byte[] bytePublicKey = Base32.base32ToByte(base32PublicKey);
+        // Trim the additional Byte
+        byte[] trimmedPublicKey = new byte[bytePublicKey.length - 1];
+        System.arraycopy(bytePublicKey, 0, trimmedPublicKey, 0, bytePublicKey.length - 1);
+        byte[] agreedKey = ecdh.getAgreedKey(trimmedPublicKey);
         HMACSHA hmacsha = new HMACSHA(sessionID.getKeyLength());
         changeType();
-        byte[] derivatedKey = hmacsha.getDerivatedKey(sessionID.getKeyLength(), agreedKey);
+        byte[] derivatedKey = hmacsha.getDerivatedKey(sessionID.getFinalKeyLength(), agreedKey);
         SessionKey sessionKey = new SessionKey(derivatedKey, sessionID);
 
         return sessionKey;

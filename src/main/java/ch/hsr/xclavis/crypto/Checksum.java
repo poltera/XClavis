@@ -1,6 +1,6 @@
 package ch.hsr.xclavis.crypto;
 
-import ch.hsr.xclavis.helpers.FormatTransformer;
+import ch.hsr.xclavis.helpers.Base32;
 import java.math.BigInteger;
 
 public class Checksum {
@@ -31,7 +31,7 @@ public class Checksum {
             //Character
             String character = string.substring(i, i + 1);
             //BigInteger bitstring of the character
-            BigInteger value = BigInteger.valueOf(Integer.parseInt(FormatTransformer.base32ToBitString(character)));
+            BigInteger value = BigInteger.valueOf(Integer.parseInt(Base32.base32ToBitString(character)));
             //Add to the partialChecksum
             partialChecksum = partialChecksum.add(value);
             //Add the character to the result
@@ -39,7 +39,7 @@ public class Checksum {
             //If the position for a checksum is arrive, calculate the checksum and add it to the result
             for (int j = 0; j < positions.length; j++) {
                 if (i == positions[j]) {
-                    result = result + FormatTransformer.bitStringToBase32(partialChecksum.mod(BIG32).toString(2));
+                    result = result + Base32.bitStringToBase32(partialChecksum.mod(BIG32).toString(2));
                     partialChecksum = BigInteger.ZERO;
                 }
             }
@@ -49,11 +49,11 @@ public class Checksum {
             }
         }
         //Add last partial checksum
-        result = result + FormatTransformer.bitStringToBase32(partialChecksum.mod(BIG32).toString(2));
+        result = result + Base32.bitStringToBase32(partialChecksum.mod(BIG32).toString(2));
         //If the overall checksum is enabled, calculate the checksum and add it to the result
         if (overall > 0) {
             //Add overall checksum
-            String checksum = FormatTransformer.bitStringToBase32(overallChecksum.mod(BIG32.pow(overall)).toString(2));
+            String checksum = Base32.bitStringToBase32(overallChecksum.mod(BIG32.pow(overall)).toString(2));
             while (checksum.length() < overall) {
                 checksum = checksum + "Z";
             }
@@ -72,12 +72,12 @@ public class Checksum {
             //Character
             String character = string.substring(i, i + 1);
             //BigInteger bitstring of the character
-            BigInteger value = BigInteger.valueOf(Integer.parseInt(FormatTransformer.base32ToBitString(character)));
+            BigInteger value = BigInteger.valueOf(Integer.parseInt(Base32.base32ToBitString(character)));
             //Add to the partialChecksum
             checksum = checksum.add(value);
         }
         //Calculate the new checksum and compare with the old one
-        String newChecksum = FormatTransformer.bitStringToBase32(checksum.mod(BIG32.pow(checksumNumber)).toString(2));
+        String newChecksum = Base32.bitStringToBase32(checksum.mod(BIG32.pow(checksumNumber)).toString(2));
         String oldChecksum = string.substring(string.length() - checksumNumber);
         while (newChecksum.length() < checksumNumber) {
             newChecksum = newChecksum + "Z";
@@ -98,12 +98,12 @@ public class Checksum {
             //Character
             String character = string.substring(i, i + 1);
             //BigInteger bitstring of the character
-            BigInteger value = BigInteger.valueOf(Integer.parseInt(FormatTransformer.base32ToBitString(character)));
+            BigInteger value = BigInteger.valueOf(Integer.parseInt(Base32.base32ToBitString(character)));
             //Add to the partialChecksum
             bitString = bitString.add(value);
         }
 
-        String checksum = FormatTransformer.bitStringToBase32(bitString.mod(BIG32.pow(length)).toString(2));
+        String checksum = Base32.bitStringToBase32(bitString.mod(BIG32.pow(length)).toString(2));
         while (checksum.length() < length) {
             checksum += "Z";
         }
@@ -120,12 +120,12 @@ public class Checksum {
             //Character
             String character = string.substring(i, i + 1);
             //BigInteger bitstring of the character
-            BigInteger value = BigInteger.valueOf(Integer.parseInt(FormatTransformer.base32ToBitString(character)));
+            BigInteger value = BigInteger.valueOf(Integer.parseInt(Base32.base32ToBitString(character)));
             //Add to the partialChecksum
             bitString = bitString.add(value);
         }
 
-        String calculatedChecksum = FormatTransformer.bitStringToBase32(bitString.mod(BIG32.pow(checksum.length())).toString(2));
+        String calculatedChecksum = Base32.bitStringToBase32(bitString.mod(BIG32.pow(checksum.length())).toString(2));
         while (calculatedChecksum.length() < checksum.length()) {
             calculatedChecksum += "Z";
         }

@@ -5,7 +5,7 @@
  */
 package ch.hsr.xclavis.crypto;
 
-import ch.hsr.xclavis.helpers.FormatTransformer;
+import ch.hsr.xclavis.helpers.Base32;
 import com.github.sarxos.webcam.Webcam;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;

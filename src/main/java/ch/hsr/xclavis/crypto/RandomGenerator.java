@@ -1,6 +1,6 @@
 package ch.hsr.xclavis.crypto;
 
-import ch.hsr.xclavis.helpers.FormatTransformer;
+import ch.hsr.xclavis.helpers.Base32;
 import java.security.SecureRandom;
 
 public class RandomGenerator {
@@ -20,7 +20,7 @@ public class RandomGenerator {
         
         public static String getRandomBits(int bits) {
             byte[] randomBytes = getRandomBytes(bits/Byte.SIZE + 1);
-            String randomBits = FormatTransformer.byteToBitString(randomBytes);
+            String randomBits = Base32.byteToBitString(randomBytes);
             
             return randomBits.substring(0, bits);
         }

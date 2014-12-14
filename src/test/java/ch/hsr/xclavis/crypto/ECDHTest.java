@@ -5,7 +5,7 @@
  */
 package ch.hsr.xclavis.crypto;
 
-import ch.hsr.xclavis.helpers.FormatTransformer;
+import ch.hsr.xclavis.helpers.Base32;
 import java.security.Security;
 import java.util.Arrays;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -67,18 +67,18 @@ public class ECDHTest {
         ECDH ecdh2 = new ECDH(curve);
 
         byte[] publicKey1 = ecdh1.getPublicKey();
-        System.out.println("PublicKey1: " + FormatTransformer.byteToBase32(publicKey1));
+        System.out.println("PublicKey1: " + Base32.byteToBase32(publicKey1));   
         System.out.println("PublicKey1 Length: " + publicKey1.length * Byte.SIZE);
 
         byte[] publicKey2 = ecdh2.getPublicKey();
-        System.out.println("PublicKey2: " + FormatTransformer.byteToBase32(publicKey2));
+        System.out.println("PublicKey2: " + Base32.byteToBase32(publicKey2));
         System.out.println("PublicKey2 Length: " + publicKey2.length * Byte.SIZE);
 
         byte[] agreedKey1 = ecdh1.getAgreedKey(publicKey2);
-        System.out.println("KeyAgreement1: " + FormatTransformer.byteToBase32(agreedKey1));
+        System.out.println("KeyAgreement1: " + Base32.byteToBase32(agreedKey1));
 
         byte[] agreedKey2 = ecdh2.getAgreedKey(publicKey1);
-        System.out.println("KeyAgreement2: " + FormatTransformer.byteToBase32(agreedKey2));
+        System.out.println("KeyAgreement2: " + Base32.byteToBase32(agreedKey2));
         System.out.println("KeyAgreement Length: " + agreedKey2.length * Byte.SIZE);
 
         return Arrays.equals(agreedKey1, agreedKey2);

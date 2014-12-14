@@ -3,10 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ch.hsr.xclavis.helpers;
+package ch.hsr.xclavis.commons;
 
-import ch.hsr.xclavis.commons.ECDHKey;
-import ch.hsr.xclavis.commons.SessionKey;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,20 +12,28 @@ import java.util.List;
  *
  * @author Gian
  */
-public class KeyStoreHandler {
+public class Keys {
     private List<SessionKey> sessionKeys;
     private List<ECDHKey> ecdhKeys;
-    
-    public KeyStoreHandler() {
+
+    public Keys() {
         this.sessionKeys = new ArrayList<>();
         this.ecdhKeys = new ArrayList<>();
     }
-    
+
     public void addKey(SessionKey sessionKey) {
         sessionKeys.add(sessionKey);
     }
-    
+
     public void addKey(ECDHKey ecdhKey) {
         ecdhKeys.add(ecdhKey);
+    }
+    
+    public List<SessionKey> getSessionKeys() {
+        return sessionKeys;
+    }
+    
+    public List<ECDHKey> getECDHKeys() {
+        return ecdhKeys;
     }
 }

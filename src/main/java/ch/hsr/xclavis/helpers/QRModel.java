@@ -6,6 +6,8 @@
 package ch.hsr.xclavis.helpers;
 
 import ch.hsr.xclavis.commons.ECDHKey;
+import ch.hsr.xclavis.commons.Keys;
+import ch.hsr.xclavis.commons.SessionID;
 import ch.hsr.xclavis.commons.SessionKey;
 import ch.hsr.xclavis.crypto.Checksum;
 
@@ -79,7 +81,7 @@ public class QRModel {
 
         // Key Blocks
         model += UNICODE_KEY + UNICODE_SPACE;
-        String[] keyBlocks = KeySeparator.getSeparated(FormatTransformer.byteToBase32(key), BLOCK_LENGTH - BLOCK_CHECKSUM);
+        String[] keyBlocks = KeySeparator.getSeparated(Base32.byteToBase32(key), BLOCK_LENGTH - BLOCK_CHECKSUM);
         String lastBlock = "";
         for (String keyBlock : keyBlocks) {
             if (keyBlock.length() == BLOCK_LENGTH - BLOCK_CHECKSUM) {
@@ -90,8 +92,41 @@ public class QRModel {
             }
         }
         int overallChecksumLength = BLOCK_LENGTH - BLOCK_CHECKSUM - lastBlock.length();
-        String overallChecksum = Checksum.get(FormatTransformer.byteToBase32(key), overallChecksumLength);
+        String overallChecksum = Checksum.get(Base32.byteToBase32(key), overallChecksumLength);
         String blockChecksum = Checksum.get(lastBlock + overallChecksum, BLOCK_CHECKSUM);
         model += lastBlock + overallChecksum + blockChecksum;
+    }
+    
+    public Keys getKeys(String test) {
+        Keys keys = new Keys();
+        String[] splittedKeys = test.split(UNICODE_ID);
+        
+        for (int i = 1; i < splittedKeys.length; i++) {
+            String id = splittedKeys[i].substring(1, 1 + BLOCK_LENGTH);
+            String key = splittedKeys[i].substring(10);
+            String type = id.substring(0, 1);
+            String random = id.substring(1, BLOCK_LENGTH - BLOCK_CHECKSUM);
+            SessionID sessionID = new SessionID(type, random);
+            
+            // Remove the delemiters and checksums from the key
+            String[] blocks = key.split(DELIMITER);
+            key = "";
+            for (String block : blocks) {
+                key += block.substring(0, BLOCK_LENGTH - BLOCK_CHECKSUM);
+            }
+            key = key.substring(0, sessionID.getKeyLength()/Base32.SIZE + 1);
+            if (sessionID.isSessionKey()) {
+                SessionKey sessionKey = new SessionKey(key, sessionID);
+                keys.addKey(sessionKey);
+                
+            } else if (sessionID.isECDH()) {
+                ECDHKey ecdhKey = new ECDHKey(sessionID);
+                keys.addKey(ecdhKey);
+                SessionKey sessionKey = ecdhKey.getSessionKey(key);
+                keys.addKey(sessionKey);
+            }
+        }
+        
+        return keys;
     }
 }
