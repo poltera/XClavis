@@ -20,7 +20,7 @@ public class SessionKey {
 
     public SessionKey(String type) {
         this.sessionID = new SessionID(type);
-        this.sessionKey = RandomGenerator.getRandomBytes(this.sessionID.getFinalKeyLength() / 8);
+        this.sessionKey = RandomGenerator.getRandomBytes(this.sessionID.getFinalKeyLength() / Byte.SIZE);
         this.iv = RandomGenerator.getRandomBytes(12);
     }
 

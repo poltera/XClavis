@@ -40,28 +40,8 @@ public class HMACSHA {
         mac.update(inputBuffer, 0, inputBuffer.length);
         mac.doFinal(outputBuffer, 0);
 
-        System.out.println("Länge: " + mac.getMacSize() * Byte.SIZE + ", Algorithmus: " + mac.getAlgorithmName());
-
         // Source Array, From Source, Destination Array, To Destination, Count
         System.arraycopy(outputBuffer, 0, derivatedKey, 0, derivatedKey.length);
-
-        System.out.println("Länge: " + derivatedKey.length * Byte.SIZE);
-
-        System.out.println("\nkey:");
-        for (byte keyByte : key) {
-            System.out.print(keyByte + " ");
-        }
-        System.out.println("\nbefore:");
-        for (byte beforeByte : outputBuffer) {
-            System.out.print(beforeByte + " ");
-        }
-        System.out.println("\nafter:");
-        for (byte afterByte : derivatedKey) {
-            System.out.print(afterByte + " ");
-        }
-        BigInteger result = new BigInteger(1, outputBuffer);
-        System.out.println("");
-        System.out.println(result.toString(16).toUpperCase());
 
         return derivatedKey;
     }

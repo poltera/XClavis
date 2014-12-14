@@ -55,7 +55,7 @@ public class FileSelecterController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        tableView.setPlaceholder(new Label(rb.getString("empty_table")));
+        tableView.setPlaceholder(new Label(rb.getString("empty_table_files")));
         tcIcon.setCellValueFactory(cellData -> cellData.getValue().iconProperty());
         tcFilename.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
         tcExtension.setCellValueFactory(cellData -> cellData.getValue().extensionProperty());

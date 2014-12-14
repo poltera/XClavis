@@ -12,7 +12,7 @@ import ch.hsr.xclavis.commons.SessionKey;
 import ch.hsr.xclavis.crypto.Checksum;
 
 /**
- * 
+ *
  * @author Gian
  */
 public class QRModel {
@@ -41,16 +41,16 @@ public class QRModel {
 
     /**
      * Add a SessionKey to the QR-Model.
-     * 
+     *
      * @param sessionKey
      */
     public void addSessionKey(SessionKey sessionKey) {
         addModell(sessionKey.getID(), sessionKey.getKey());
     }
-    
+
     /**
      * Add a ECDHKey to the QR-Model
-     * 
+     *
      * @param ecdhKey
      */
     public void addECDHKey(ECDHKey ecdhKey) {
@@ -59,7 +59,7 @@ public class QRModel {
 
     /**
      * Returns the finished QR-Model.
-     * 
+     *
      * @return QRModell as String
      */
     public String getModell() {
@@ -67,13 +67,13 @@ public class QRModel {
 
         return model;
     }
-    
+
     private void addModell(String id, byte[] key) {
         numKeys++;
         // Info Block, TYP 1 Character, ID 3 Character, CHECKSUM 1 Character
         String infoBlock = id;
         String infoChecksum = Checksum.get(infoBlock, BLOCK_CHECKSUM);
-        
+
         if (numKeys > 1) {
             model += NEWLINE;
         }
@@ -96,29 +96,30 @@ public class QRModel {
         String blockChecksum = Checksum.get(lastBlock + overallChecksum, BLOCK_CHECKSUM);
         model += lastBlock + overallChecksum + blockChecksum;
     }
-    
+
     public Keys getKeys(String test) {
         Keys keys = new Keys();
         String[] splittedKeys = test.split(UNICODE_ID);
-        
+
         for (int i = 1; i < splittedKeys.length; i++) {
             String id = splittedKeys[i].substring(1, 1 + BLOCK_LENGTH);
             String key = splittedKeys[i].substring(10);
             String type = id.substring(0, 1);
             String random = id.substring(1, BLOCK_LENGTH - BLOCK_CHECKSUM);
             SessionID sessionID = new SessionID(type, random);
-            
+
             // Remove the delemiters and checksums from the key
             String[] blocks = key.split(DELIMITER);
             key = "";
             for (String block : blocks) {
                 key += block.substring(0, BLOCK_LENGTH - BLOCK_CHECKSUM);
             }
-            key = key.substring(0, sessionID.getKeyLength()/Base32.SIZE + 1);
+            key = key.substring(0, (sessionID.getKeyLength() + sessionID.getAddCordLength()) / Base32.SIZE + 1);
+
             if (sessionID.isSessionKey()) {
                 SessionKey sessionKey = new SessionKey(key, sessionID);
                 keys.addKey(sessionKey);
-                
+
             } else if (sessionID.isECDH()) {
                 ECDHKey ecdhKey = new ECDHKey(sessionID);
                 keys.addKey(ecdhKey);
@@ -126,7 +127,7 @@ public class QRModel {
                 keys.addKey(sessionKey);
             }
         }
-        
+
         return keys;
     }
 }

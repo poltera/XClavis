@@ -21,22 +21,22 @@ import static org.junit.Assert.*;
  * @author Gian
  */
 public class QRModelTest {
-    
+
     public QRModelTest() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
@@ -71,13 +71,17 @@ public class QRModelTest {
     @Test
     public void testGetKeys() {
         QRModel qrModel = new QRModel();
-        ECDHKey ecdhKey = new ECDHKey(SessionID.ECDH_RES_512);
+        ECDHKey ecdhKey = new ECDHKey(SessionID.ECDH_REQ_256);
         qrModel.addECDHKey(ecdhKey);
+        ECDHKey ecdhKey2 = new ECDHKey(SessionID.ECDH_REQ_512);
+        qrModel.addECDHKey(ecdhKey2);
         SessionKey sessionKey = new SessionKey(SessionID.SESSION_KEY_128);
         qrModel.addSessionKey(sessionKey);
+        SessionKey sessionKey2 = new SessionKey(SessionID.SESSION_KEY_256);
+        qrModel.addSessionKey(sessionKey2);
         String result = qrModel.getModell();
-        
+
         Keys keys = qrModel.getKeys(result);
     }
-    
+
 }

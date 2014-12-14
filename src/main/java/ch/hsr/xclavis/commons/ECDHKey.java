@@ -47,8 +47,8 @@ public class ECDHKey {
     public SessionKey getSessionKey(byte[] publicKey) {
         byte[] agreedKey = ecdh.getAgreedKey(publicKey);
         HMACSHA hmacsha = new HMACSHA(sessionID.getKeyLength());
-        changeType();
         byte[] derivatedKey = hmacsha.getDerivatedKey(sessionID.getFinalKeyLength(), agreedKey);
+        changeType();
         SessionKey sessionKey = new SessionKey(derivatedKey, sessionID);
 
         return sessionKey;
@@ -62,8 +62,8 @@ public class ECDHKey {
         System.arraycopy(bytePublicKey, 0, trimmedPublicKey, 0, bytePublicKey.length - 1);
         byte[] agreedKey = ecdh.getAgreedKey(trimmedPublicKey);
         HMACSHA hmacsha = new HMACSHA(sessionID.getKeyLength());
-        changeType();
         byte[] derivatedKey = hmacsha.getDerivatedKey(sessionID.getFinalKeyLength(), agreedKey);
+        changeType();
         SessionKey sessionKey = new SessionKey(derivatedKey, sessionID);
 
         return sessionKey;
