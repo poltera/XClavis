@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox id="cryptionState" alignment="TOP_CENTER" maxWidth="650.0" minWidth="650.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.hsr.xclavis.ui.controller.CryptionStateController">
+   <children>
+      <HBox maxWidth="500.0" minWidth="500.0" prefWidth="500.0" style="-fx-border-color: grey; -fx-border-radius: 5; -fx-background-color: E6E6E6;">
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+         <children>
+            <HBox alignment="CENTER_LEFT" maxWidth="189.0" minWidth="189.0" prefWidth="189.0">
+               <children>
+                  <Label fx:id="lblCryptionState" />
+               </children>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+               <padding>
+                  <Insets left="5.0" />
+               </padding>
+            </HBox>
+            <HBox alignment="CENTER" maxWidth="120.0" minWidth="120.0" prefWidth="120.0">
+               <children>
+                  <ProgressIndicator fx:id="progressIndicator" />
+               </children>
+               <padding>
+                  <Insets bottom="5.0" top="5.0" />
+               </padding>
+            </HBox>
+            <HBox alignment="TOP_RIGHT" maxWidth="189.0" minWidth="189.0" prefWidth="189.0">
+               <children>
+                  <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/delete1.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </HBox>
+         </children>
+      </HBox>
+   </children>
+   <padding>
+      <Insets bottom="10.0" top="10.0" />
+   </padding>
+</VBox>

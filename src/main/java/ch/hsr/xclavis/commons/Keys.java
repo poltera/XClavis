@@ -15,18 +15,23 @@ import java.util.List;
 public class Keys {
     private List<SessionKey> sessionKeys;
     private List<ECDHKey> ecdhKeys;
+    private List<Key> keys;
 
     public Keys() {
         this.sessionKeys = new ArrayList<>();
         this.ecdhKeys = new ArrayList<>();
+        this.keys = new ArrayList<>();
     }
 
     public void addKey(SessionKey sessionKey) {
         sessionKeys.add(sessionKey);
+        keys.add(new Key(sessionKey.getSessionID(), "", 0));
+        
     }
 
     public void addKey(ECDHKey ecdhKey) {
         ecdhKeys.add(ecdhKey);
+        keys.add(new Key(ecdhKey.getSessionID(), "", 0));
     }
     
     public List<SessionKey> getSessionKeys() {
@@ -35,5 +40,9 @@ public class Keys {
     
     public List<ECDHKey> getECDHKeys() {
         return ecdhKeys;
+    }
+    
+    public List<Key> getKeys() {
+        return keys;
     }
 }

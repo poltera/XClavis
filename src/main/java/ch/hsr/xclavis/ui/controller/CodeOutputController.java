@@ -6,6 +6,7 @@
 package ch.hsr.xclavis.ui.controller;
 
 import ch.hsr.xclavis.commons.ECDHKey;
+import ch.hsr.xclavis.commons.Keys;
 import ch.hsr.xclavis.commons.SessionID;
 import ch.hsr.xclavis.commons.SessionKey;
 import ch.hsr.xclavis.helpers.QRModel;
@@ -48,8 +49,18 @@ public class CodeOutputController implements Initializable {
      */
     public void setMainApp(MainApp mainApp) {
         this.mainApp = mainApp;
+    }
+    
+    public void setKeys(Keys keys) {
         QRModel qrModell = new QRModel();
-        qrModell.addECDHKey(mainApp.getECDHKeyData().get(0));
+        
+        keys.getECDHKeys().stream().forEach((ecdhKey) -> {
+            qrModell.addECDHKey(ecdhKey);
+        });
+        keys.getSessionKeys().stream().forEach((sessionKey) -> {
+            qrModell.addSessionKey(sessionKey);
+        });
+        
         imageView.setImage(new QRCodeGenerator().createQR(qrModell.getModell(), 500));
     }
 }

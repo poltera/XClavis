@@ -37,7 +37,7 @@ public class FileZipper {
         zos.setComment("Created by XClavis");
         zos.setMethod(ZipOutputStream.DEFLATED);
         if (compression) {
-            zos.setLevel(Deflater.BEST_COMPRESSION);
+            zos.setLevel(Deflater.DEFAULT_COMPRESSION);
         } else {
             zos.setLevel(Deflater.NO_COMPRESSION);
         }

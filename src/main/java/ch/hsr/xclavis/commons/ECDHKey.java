@@ -72,6 +72,10 @@ public class ECDHKey {
     public String getID() {
         return sessionID.getID();
     }
+    
+    public SessionID getSessionID() {
+        return sessionID;
+    }
 
     private String getCurve() {
         String type = sessionID.getType();

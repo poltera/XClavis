@@ -59,7 +59,7 @@ public class RootPaneController implements Initializable {
         Dragboard dragboard = event.getDragboard();
         if (dragboard.hasFiles()) {
             dragboard.getFiles().stream().forEach((droppedFile) -> {
-                FileHandler.loadFile(droppedFile, mainApp.getFileData());
+                new FileHandler().loadFile(droppedFile, mainApp.getFileData());
             });
         }
     }

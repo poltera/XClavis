@@ -9,6 +9,7 @@ import ch.hsr.xclavis.commons.SelectedFile;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -30,7 +31,9 @@ import javax.swing.filechooser.FileSystemView;
  */
 public class FileHandler {
 
-    public static void loadFile(File file, ObservableList<SelectedFile> fileData) {
+    private final static String ENCRYPTED_FILE_EXTENSION = "enc";
+
+    public void loadFile(File file, ObservableList<SelectedFile> fileData) {
         if (!file.isDirectory() && file.isFile() && file.canRead()) {
             boolean exists = false;
             for (SelectedFile existingFile : fileData) {
@@ -38,14 +41,24 @@ public class FileHandler {
                     exists = true;
                     break;
                 }
-            }
+            }            
             if (!exists) {
-                ImageView fileIcon = getIcon(file);
                 String fileName = getName(file);
                 String fileSize = getSize(file);
                 String fileExtension = getExtension(file);
-                SelectedFile selectedFile = new SelectedFile(file, fileIcon, fileName, fileExtension, fileSize);
-                fileData.add(selectedFile);
+                boolean fileEncrypted = isEncrypted(file);
+                
+                if (!isEncrypted(file)) {
+                    ImageView fileIcon = getIcon(file);
+                    SelectedFile selectedFile = new SelectedFile(file, fileIcon, fileName, fileExtension, fileSize, fileEncrypted);
+                    fileData.add(selectedFile);
+                } else {
+                    ImageView fileIcon = new ImageView(new Image(getClass().getResourceAsStream("/images/encrypted_icon.png")));
+                    String fileID = getID(file);
+                    byte[] fileIV = getIV(file);
+                    SelectedFile selectedFile = new SelectedFile(file, fileIcon, fileName, fileExtension, fileSize, fileEncrypted, fileID, fileIV);
+                    fileData.add(selectedFile);
+                }
             }
         }
     }
@@ -98,6 +111,49 @@ public class FileHandler {
         return fileExtension;
     }
 
+    private static boolean isEncrypted(File file) {
+        String fileExtension = getExtension(file);
+
+        return fileExtension.equals(ENCRYPTED_FILE_EXTENSION);
+    }
+
+    private static String getID(File file) {
+        String id = "";
+        if (isEncrypted(file)) {
+            //4 Bytes ID
+            try (FileInputStream fis = new FileInputStream(file);
+                    DataInputStream dis = new DataInputStream(fis)) {
+                for (int i = 0; i < 4; i++) {
+                    id += (char) dis.readByte();
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(FileHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        return id;
+    }
+
+    private static byte[] getIV(File file) {
+        byte[] iv = new byte[16];
+        if (isEncrypted(file)) {
+            //12 Bytes IV
+            try (FileInputStream fis = new FileInputStream(file);
+                    DataInputStream dis = new DataInputStream(fis)) {
+                dis.readByte();
+                dis.readByte();
+                dis.readByte();
+                dis.readByte();
+                for (int i = 0; i < 12; i++) {
+                    iv[i] = dis.readByte();
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(FileHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return iv;
+    }
+
     public static Properties loadProperties() {
         Properties properties = new Properties();
         try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream("beispiel.properties"))) {
@@ -105,13 +161,13 @@ public class FileHandler {
         } catch (IOException ex) {
             Logger.getLogger(FileHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         return properties;
     }
-    
+
     public static void saveProperties(Properties properties, String path) {
         try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(""))) {
-            
+
         } catch (IOException ex) {
             Logger.getLogger(FileHandler.class.getName()).log(Level.SEVERE, null, ex);
         }

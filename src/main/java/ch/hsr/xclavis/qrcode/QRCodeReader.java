@@ -18,6 +18,7 @@ public class QRCodeReader {
     }
     
     public boolean checkImage(BufferedImage image) {
+        result = null;
         LuminanceSource source = new BufferedImageLuminanceSource(image);
         BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
         try {
@@ -28,10 +29,14 @@ public class QRCodeReader {
         if (result != null) {
             return true;
         }
+        
         return false;
     }
     
-    public String getString() {
-        return result.getText();
+    public String getResult() {
+        if (result != null) {
+            return result.getText();
+        }
+        return "";
     }
 }

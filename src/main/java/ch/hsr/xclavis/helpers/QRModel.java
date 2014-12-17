@@ -97,9 +97,9 @@ public class QRModel {
         model += lastBlock + overallChecksum + blockChecksum;
     }
 
-    public Keys getKeys(String test) {
+    public Keys getKeys(String string) {
         Keys keys = new Keys();
-        String[] splittedKeys = test.split(UNICODE_ID);
+        String[] splittedKeys = string.split(UNICODE_ID);
 
         for (int i = 1; i < splittedKeys.length; i++) {
             String id = splittedKeys[i].substring(1, 1 + BLOCK_LENGTH);

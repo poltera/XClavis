@@ -6,11 +6,14 @@
 package ch.hsr.xclavis.webcam;
 
 import ch.hsr.xclavis.commons.WebcamInfo;
+import ch.hsr.xclavis.qrcode.QRCodeReader;
 import com.github.sarxos.webcam.Webcam;
 import java.awt.image.BufferedImage;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -23,30 +26,38 @@ import javafx.scene.image.Image;
  */
 public class WebcamHandler {
 
+    private final static int fps = 24;
+    private int sleepTimer;
+
     private ObservableList<WebcamInfo> webcams;
     private Webcam selectedWebcam;
     private BufferedImage bufferedImage;
     private boolean stopCamera;
+    private QRCodeReader qrCodeReader;
+    private StringProperty qrResult;
 
     public WebcamHandler() {
         this.webcams = FXCollections.observableArrayList();
+        sleepTimer = 1000 / fps;
         this.selectedWebcam = null;
         this.stopCamera = false;
         scanWebcams();
+        this.qrCodeReader = new QRCodeReader();
+        this.qrResult = new SimpleStringProperty("");
     }
-    
+
     public boolean existsWebcam() {
         if (webcams.size() > 0) {
             return true;
         }
-        
+
         return false;
     }
-    
+
     public int getWebcamCount() {
         return webcams.size();
     }
-    
+
     public ObservableList<WebcamInfo> getWebcams() {
         return webcams;
     }
@@ -78,19 +89,25 @@ public class WebcamHandler {
             @Override
             protected Void call() throws Exception {
                 while (!stopCamera) {
-                    try {
-                        if ((bufferedImage = selectedWebcam.getImage()) != null) {
-                            Platform.runLater(() -> {
-                                // Convert the Image for JavaFX
-                                Image image = SwingFXUtils.toFXImage(bufferedImage, null);
-                                imageProperty.set(image);
-                                // QR-Code scanner
-                                
-                            });
+                    if (selectedWebcam.isOpen()) {
+                        try {
+                            if ((bufferedImage = selectedWebcam.getImage()) != null) {
+                                Platform.runLater(() -> {
+                                    // Convert the Image for JavaFX
+                                    Image image = SwingFXUtils.toFXImage(bufferedImage, null);
+                                    imageProperty.set(image);
+                                    // Check if QR-Code is in Image
+                                    if (qrCodeReader.checkImage(bufferedImage)) {
+                                        qrResult.set(qrCodeReader.getResult());
+                                    }
+                                });
+                            }
+                        } catch (Exception e) {
+                        } finally {
                         }
-                    } catch (Exception e) {
-                    } finally {
                     }
+                    // Sleep Timer for FPS
+                    Thread.sleep(sleepTimer);
                 }
                 return null;
             }
@@ -102,6 +119,16 @@ public class WebcamHandler {
         return imageProperty;
     }
 
+    public StringProperty getScanedQRCode() {
+        return qrResult;
+    }
+
+    public void shutdownWebcam() {
+        stopCamera = true;
+        close();
+        Webcam.shutdown();
+    }
+
     private void scanWebcams() {
         int webcamCounter = 0;
 
@@ -110,6 +137,9 @@ public class WebcamHandler {
             webcams.add(webcamInfo);
             webcamCounter++;
         }
+        // Stop searching Webcams
+//        WebcamDiscoveryService discovery = Webcam.getDiscoveryService();
+//        discovery.stop();
     }
 
     private void close() {

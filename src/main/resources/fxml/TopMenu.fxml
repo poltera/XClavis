@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.image.*?>
 <?import java.lang.*?>
 <?import java.util.*?>
@@ -7,7 +8,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox fx:id="topMenu" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefWidth="650.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.hsr.xclavis.ui.controller.TopMenuController">
+<VBox fx:id="topMenu" alignment="TOP_CENTER" maxWidth="1.7976931348623157E308" prefWidth="650.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.hsr.xclavis.ui.controller.TopMenuController">
     <children>
         <MenuBar fx:id="menuBar">
             <menus>
@@ -41,9 +42,9 @@
                 </Menu>
             </menus>
         </MenuBar>
-      <HBox fx:id="toolBar" alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+      <HBox fx:id="toolBar" alignment="TOP_CENTER" maxWidth="650.0" minWidth="650.0" prefWidth="650.0">
          <children>
-                <Button maxWidth="1.7976931348623157E308" onAction="#openFile" text="%open_file">
+                <Button maxWidth="166.0" minWidth="166.0" onAction="#openFile" prefWidth="166.0" text="%open_file">
                     <graphic>
                         <ImageView>
                             <image>
@@ -52,7 +53,7 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button maxWidth="1.7976931348623157E308" onAction="#scanQR" text="%scan_qr_code">
+                <Button maxWidth="167.0" minWidth="167.0" onAction="#scanQR" prefWidth="167.0" text="%scan_qr_code">
                     <graphic>
                         <ImageView>
                             <image>
@@ -61,11 +62,11 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button maxWidth="1.7976931348623157E308" onAction="#keyManagement" text="%key_management">
+                <Button maxWidth="167.0" minWidth="167.0" onAction="#keyManagement" prefWidth="167.0" text="%key_management">
                     <graphic>
                         <ImageView>
                             <image>
-                                <Image url="@../images/extended.png" />
+                                <Image url="@../images/key_management.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -73,4 +74,7 @@
          </children>
       </HBox>
     </children>
+   <padding>
+      <Insets bottom="10.0" />
+   </padding>
 </VBox>

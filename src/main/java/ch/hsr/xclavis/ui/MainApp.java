@@ -1,11 +1,13 @@
 package ch.hsr.xclavis.ui;
 
 import ch.hsr.xclavis.commons.ECDHKey;
+import ch.hsr.xclavis.commons.Key;
+import ch.hsr.xclavis.commons.Keys;
 import ch.hsr.xclavis.commons.SelectedFile;
 import ch.hsr.xclavis.commons.SessionKey;
 import ch.hsr.xclavis.ui.controller.CodeOutputController;
 import ch.hsr.xclavis.ui.controller.CodeReaderController;
-import ch.hsr.xclavis.ui.controller.EncryptionStatusController;
+import ch.hsr.xclavis.ui.controller.CryptionStateController;
 import ch.hsr.xclavis.ui.controller.FileSelecterController;
 import ch.hsr.xclavis.ui.controller.KeyManagementController;
 import ch.hsr.xclavis.ui.controller.RootPaneController;
@@ -32,6 +34,7 @@ public class MainApp extends Application {
     private BorderPane rootLayout;
     private ResourceBundle bundle;
     private ObservableList<SelectedFile> fileData;
+    private ObservableList<Key> keyData;
     private ObservableList<SessionKey> sessionKeyData;
     private ObservableList<ECDHKey> ecdhKeyData;
 
@@ -40,6 +43,7 @@ public class MainApp extends Application {
      */
     public MainApp() {
         this.fileData = FXCollections.observableArrayList();
+        this.keyData = FXCollections.observableArrayList();
         this.sessionKeyData = FXCollections.observableArrayList();
         this.ecdhKeyData = FXCollections.observableArrayList();
     }
@@ -51,6 +55,15 @@ public class MainApp extends Application {
      */
     public ObservableList<SelectedFile> getFileData() {
         return fileData;
+    }
+
+    /**
+     * Returns the Keys as an observable list of Key.
+     *
+     * @return
+     */
+    public ObservableList<Key> getKeyData() {
+        return keyData;
     }
 
     /**
@@ -155,20 +168,25 @@ public class MainApp extends Application {
 
     /**
      * Shows the Encryption Status inside the root layout.
+     * 
+     * @param encryption, true for encryption and false for decryption
+     * @param output, Path for the output files
      */
-    public void showEncryptionStatus() {
+    public void showCryptionState(boolean encryption, String output) {
         try {
             // Load file overview.
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/EncryptionStatus.fxml"), bundle);
-            VBox encryptionStatus = loader.load();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/CryptionState.fxml"), bundle);
+            VBox cryptionState = loader.load();
 
             // Set file overview into the center of root layout.
-            rootLayout.setCenter(encryptionStatus);
+            rootLayout.setBottom(cryptionState);
 
             // Give the controller access to the main app.
-            EncryptionStatusController controller = loader.getController();
+            CryptionStateController controller = loader.getController();
 
             controller.setMainApp(this);
+            controller.setOutputPath(output);
+            controller.setEncryption(encryption);
 
         } catch (IOException ex) {
             Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
@@ -199,8 +217,9 @@ public class MainApp extends Application {
 
     /**
      * Shows the Code Output inside the root layout.
+     * @param keys
      */
-    public void showCodeOutput() {
+    public void showCodeOutput(Keys keys) {
         try {
             // Load file overview.
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/CodeOutput.fxml"), bundle);
@@ -213,6 +232,7 @@ public class MainApp extends Application {
             CodeOutputController controller = loader.getController();
 
             controller.setMainApp(this);
+            controller.setKeys(keys);
 
         } catch (IOException ex) {
             Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);

@@ -8,38 +8,65 @@
 <?import java.lang.*?>
 <?import javafx.scene.*?>
 
-<VBox alignment="CENTER" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.hsr.xclavis.ui.controller.FileSelecterController">
+<VBox alignment="TOP_CENTER" maxWidth="500.0" minWidth="500.0" prefWidth="500.0" spacing="25.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.hsr.xclavis.ui.controller.FileSelecterController">
     <children>
+      <VBox alignment="TOP_CENTER">
+         <children>
+              <Label alignment="TOP_CENTER" text="%file_selecter_intro" />
+              <Label alignment="TOP_CENTER" text="%file_selecter_file_limit" />
+         </children>
+      </VBox>
         <TableView fx:id="tableView" onKeyPressed="#keyPressed">
             <columns>
                 <TableColumn fx:id="tcIcon" prefWidth="50.0" sortable="false" text="%icon" />
                 <TableColumn fx:id="tcFilename" prefWidth="150.0" text="%filename" />
                 <TableColumn fx:id="tcExtension" prefWidth="75.0" text="%extension" />
                 <TableColumn fx:id="tcSize" prefWidth="75.0" text="%size" />
-                <TableColumn fx:id="tcDelete" prefWidth="75.0" sortable="false" text="%delete" />
+                <TableColumn fx:id="tcID" prefWidth="75.0" text="%id" />
+                <TableColumn fx:id="tcDelete" prefWidth="73.0" sortable="false" text="%delete" />
             </columns>
             <VBox.margin>
-                <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+                <Insets />
             </VBox.margin>
         </TableView>
-        <Button fx:id="btnEncrypt" disable="true" visible="false" mnemonicParsing="false" onAction="#encryptFiles" text="%encrypt">
-            <graphic>
-                <ImageView>
-                    <image>
-                        <Image url="@../images/encrypt.png" />
-                    </image>
-                </ImageView>
-            </graphic>
-        </Button>
-        <Button fx:id="btnDecrypt" disable="true" visible="false" onAction="#decryptFiles" text="%decrypt">
-            <graphic>
-                <ImageView>
-                    <image>
-                        <Image url="@../images/decrypt.png" />
-                    </image>
-                </ImageView>
-            </graphic>
-        </Button>
+      <HBox alignment="CENTER" spacing="10.0">
+         <children>
+            <Label text="%output_path" />
+            <TextField fx:id="tfOutputPath" disable="true" editable="false" maxWidth="150.0" />
+            <Button mnemonicParsing="false" onAction="#changeOutputPath" text="%change" />
+         </children>
+      </HBox>
+        <HBox alignment="CENTER" maxWidth="500.0" minWidth="500.0" prefWidth="500.0">
+            <children>
+                <Button fx:id="btnEncrypt" disable="true" mnemonicParsing="false" onAction="#encryptFiles" text="%encrypt">
+                    <graphic>
+                        <ImageView>
+                            <image>
+                                <Image url="@../images/encrypt.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="btnDecrypt" disable="true" onAction="#decryptFiles" text="%decrypt">
+                    <graphic>
+                        <ImageView>
+                            <image>
+                                <Image url="@../images/decrypt.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="btnScanQR" disable="true" onAction="#scanQR" text="%scan_qr_code">
+                    <graphic>
+                        <ImageView>
+                            <image>
+                                <Image url="@../images/scanner.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </children>
+        </HBox>
     </children>
     <opaqueInsets>
         <Insets />

@@ -10,9 +10,9 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox id="codeReader" alignment="TOP_CENTER" prefHeight="650.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.hsr.xclavis.ui.controller.CodeReaderController">
+<VBox id="codeReader" alignment="TOP_CENTER" maxWidth="650.0" minWidth="650.0" prefWidth="650.0" spacing="25.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.hsr.xclavis.ui.controller.CodeReaderController">
     <children>
-        <VBox fx:id="vbWebcam" alignment="TOP_CENTER" maxWidth="500.0" prefWidth="500.0" spacing="25.0">
+        <VBox fx:id="vbWebcamInput" alignment="TOP_CENTER" maxWidth="500.0" minWidth="500.0" prefWidth="500.0" spacing="10.0">
             <children>
                 <HBox fx:id="hbWebcamSelecter" alignment="CENTER" spacing="25.0">
                     <children>
@@ -20,75 +20,67 @@
                         <ComboBox fx:id="cbWebcamSelecter" maxWidth="150.0" prefWidth="150.0" />
                     </children>
                 </HBox>
-                <ImageView fx:id="imageViewWebcam" fitWidth="500.0" pickOnBounds="true" preserveRatio="true" scaleX="-1">
-                    <image>
-                        <Image url="@../images/print.png" />
-                    </image>
-                </ImageView>
+                <HBox fx:id="hbWebcamImage" alignment="CENTER" maxHeight="500.0" maxWidth="500.0" minWidth="500.0" prefWidth="500.0" style="-fx-border-color: grey; -fx-border-width: 10; -fx-border-radius: 10;">
+               <children>
+                  <Label fx:id="lblWebcamLoad" alignment="CENTER" maxHeight="270.0" maxWidth="480.0" minHeight="270.0" minWidth="480.0" prefHeight="270.0" prefWidth="480.0" text="%webcam_load" />
+               </children></HBox>
             </children>
         </VBox>
-        <HBox fx:id="hbInputSelecter" alignment="CENTER" maxWidth="500.0" minWidth="500.0" prefWidth="500.0" spacing="10.0">
-            <VBox.margin>
-                <Insets top="25.0" />
-            </VBox.margin>
-            <children>
-                <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@../images/id.png" />
-                    </image>
-                </ImageView>
-            </children>
-        </HBox>
-        <HBox fx:id="hbInputBlocks1" alignment="CENTER_LEFT" maxWidth="500.0" minWidth="500.0" prefWidth="500.0" spacing="10.0" visible="false">
-            <VBox.margin>
-                <Insets top="10.0" />
-            </VBox.margin>
-            <children>
-                <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@../images/key.png" />
-                    </image>
-                </ImageView>
-            </children>
-        </HBox>
-        <HBox fx:id="hbInputBlocks2" alignment="CENTER_LEFT" maxWidth="500.0" minWidth="500.0" prefWidth="500.0" spacing="10.0" visible="false">
-            <VBox.margin>
-                <Insets top="10.0" />
-            </VBox.margin>
-            <children>
-                <Label maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" prefHeight="25.0" prefWidth="25.0" />
-            </children>
-        </HBox>
-        <HBox fx:id="hbInputBlocks3" alignment="CENTER_LEFT" maxWidth="500.0" minWidth="500.0" prefWidth="500.0" spacing="10.0" visible="false">
-            <VBox.margin>
-                <Insets top="10.0" />
-            </VBox.margin>
-            <children>
-                <Label maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" prefHeight="25.0" prefWidth="25.0" />
-            </children>
-        </HBox>
-        <HBox fx:id="hbInputBlocks4" alignment="CENTER_LEFT" maxWidth="500.0" minWidth="500.0" prefWidth="500.0" spacing="10.0" visible="false">
-            <VBox.margin>
-                <Insets top="10.0" />
-            </VBox.margin>
-            <children>
-                <Label maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" prefHeight="25.0" prefWidth="25.0" />
-            </children>
-        </HBox>
-        <Button fx:id="btnDecrypt" alignment="CENTER" disable="true" mnemonicParsing="false" text="%decrypt"> 
-            <graphic>
-                <ImageView>
-                    <image>
-                        <Image url="@../images/decrypt.png" />
-                    </image>
-                </ImageView>
-            </graphic>
-            <VBox.margin>
-                <Insets top="25.0" />
-            </VBox.margin>
-        </Button>
+      <VBox fx:id="vbManualInput" maxWidth="500.0" minWidth="500.0" prefWidth="500.0" spacing="10.0">
+         <children>
+              <HBox fx:id="hbInputSelecter" alignment="CENTER" maxWidth="500.0" minWidth="500.0" prefWidth="500.0" spacing="10.0">
+                  <VBox.margin>
+                      <Insets />
+                  </VBox.margin>
+                  <children>
+                      <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                          <image>
+                              <Image url="@../images/id.png" />
+                          </image>
+                      </ImageView>
+                  </children>
+              </HBox>
+            <VBox fx:id="vbKeyInput" maxWidth="500.0" minWidth="500.0" prefWidth="500.0" spacing="10.0">
+               <children>
+                    <HBox fx:id="hbInputBlocks1" alignment="CENTER_LEFT" maxWidth="500.0" minWidth="500.0" prefWidth="500.0" spacing="10.0">
+                        <VBox.margin>
+                            <Insets />
+                        </VBox.margin>
+                        <children>
+                            <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                <image>
+                                    <Image url="@../images/key.png" />
+                                </image>
+                            </ImageView>
+                        </children>
+                    </HBox>
+                    <HBox fx:id="hbInputBlocks2" alignment="CENTER_LEFT" maxWidth="500.0" minWidth="500.0" prefWidth="500.0" spacing="10.0">
+                        <VBox.margin>
+                            <Insets />
+                        </VBox.margin>
+                        <children>
+                            <Label maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" prefHeight="25.0" prefWidth="25.0" />
+                        </children>
+                    </HBox>
+                    <HBox fx:id="hbInputBlocks3" alignment="CENTER_LEFT" maxWidth="500.0" minWidth="500.0" prefWidth="500.0" spacing="10.0">
+                        <VBox.margin>
+                            <Insets />
+                        </VBox.margin>
+                        <children>
+                            <Label maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" prefHeight="25.0" prefWidth="25.0" />
+                        </children>
+                    </HBox>
+                    <HBox fx:id="hbInputBlocks4" alignment="CENTER_LEFT" maxWidth="500.0" minWidth="500.0" prefWidth="500.0" spacing="10.0">
+                        <VBox.margin>
+                            <Insets />
+                        </VBox.margin>
+                        <children>
+                            <Label maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" prefHeight="25.0" prefWidth="25.0" />
+                        </children>
+                    </HBox>
+               </children>
+            </VBox>
+         </children>
+      </VBox>
     </children>
-    <padding>
-        <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
-    </padding>
 </VBox>

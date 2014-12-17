@@ -5,6 +5,7 @@
  */
 package ch.hsr.xclavis.crypto;
 
+import ch.hsr.xclavis.commons.SessionKey;
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -25,14 +26,20 @@ import org.bouncycastle.crypto.params.KeyParameter;
  * @author Gian
  */
 public class AESGCM {
-    private static final byte[] block = new byte[16];
+
+    private final static byte[] BLOCK = new byte[16];
     private final AEADParameters cipherParameters;
 
+    /**
+     *
+     * @param key
+     * @param iv
+     */
     public AESGCM(byte[] key, byte[] iv) {
-        this.cipherParameters = new AEADParameters(new KeyParameter(key), 128, iv);
+        this.cipherParameters = new AEADParameters(new KeyParameter(key), BLOCK.length * Byte.SIZE, iv);
     }
-    
-    public boolean encrypt(byte[] input, String output) {
+
+    public boolean encrypt(byte[] input, String output, SessionKey sessionKey) {
         try {
             AEADBlockCipher cipher = new GCMBlockCipher(new AESEngine());
             cipher.init(true, cipherParameters);
@@ -41,10 +48,33 @@ public class AESGCM {
                     DataOutputStream dos = new DataOutputStream(fos);
                     //BufferedOutputStream bos = new BufferedOutputStream(fos);
                     CipherOutputStream cos = new CipherOutputStream(dos, cipher)) {
-                cos.write(input);   
-            }  
-            
-            
+                // Plaintext ID and IV add the beginning of the file
+                dos.write(sessionKey.getID().getBytes());
+                dos.write(sessionKey.getIV());
+                // Encrypted Data
+                cos.write(input);
+            }
+
+            return true;
+        } catch (IOException ex) {
+            Logger.getLogger(AESGCM.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+
+    public boolean encrypt2(byte[] input, String output) {
+        try {
+            AEADBlockCipher cipher = new GCMBlockCipher(new AESEngine());
+            cipher.init(true, cipherParameters);
+
+            try (FileOutputStream fos = new FileOutputStream(output);
+                    DataOutputStream dos = new DataOutputStream(fos);
+                    //BufferedOutputStream bos = new BufferedOutputStream(fos);
+                    CipherOutputStream cos = new CipherOutputStream(dos, cipher)) {
+                // Encrypted Data
+                cos.write(input);
+            }
+
             return true;
         } catch (IOException ex) {
             Logger.getLogger(AESGCM.class.getName()).log(Level.SEVERE, null, ex);
@@ -61,8 +91,8 @@ public class AESGCM {
                     CipherInputStream cis = new CipherInputStream(fis, cipher);
                     FileOutputStream fos = new FileOutputStream(output)) {
                 int i;
-                while ((i = cis.read(block)) != -1) {
-                    fos.write(block, 0, i);
+                while ((i = cis.read(BLOCK)) != -1) {
+                    fos.write(BLOCK, 0, i);
                 }
             }
             return true;

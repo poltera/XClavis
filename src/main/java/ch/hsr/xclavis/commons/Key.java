@@ -5,6 +5,8 @@
  */
 package ch.hsr.xclavis.commons;
 
+import java.time.LocalDateTime;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 /**
@@ -13,27 +15,57 @@ import javafx.beans.property.StringProperty;
  */
 public class Key {
 
+    private SessionID sessionID;
     private StringProperty partner;
     private StringProperty date;
-    private StringProperty sessionID;
+    private StringProperty id;
     private StringProperty state;
 
-    public Key() {
+    /**
+     *
+     * @param sessionID
+     * @param partner
+     * @param state
+     */
+    public Key(SessionID sessionID, String partner, int state) {
+        this.sessionID = sessionID;
+        this.id = new SimpleStringProperty(sessionID.getID());
+        this.partner = new SimpleStringProperty(partner);
+        LocalDateTime now = LocalDateTime.now();
+        this.date = new SimpleStringProperty(now.getYear() + "-" + now.getMonthValue() + "-" + now.getDayOfMonth() + " " + now.getHour() + ":" + now.getMinute());
+        this.state = new SimpleStringProperty("Bereit");
     }
     
     public String getPartner() {
         return partner.get();
     }
     
+    public StringProperty partnerProperty() {
+        return partner;
+    }
+    
     public String getDate() {
         return date.get();
     }
     
-    public String getSessionID() {
-        return null;
+    public StringProperty dateProperty() {
+        return date;
+    }
+    
+    public SessionID getSessionID() {
+        return sessionID;
+    }
+    
+    public StringProperty idProperty() {
+        //return sessionID.
+        return id;
     }
     
     public int getState() {
         return 0;
+    }
+    
+    public StringProperty stateProperty() {
+        return state;
     }
 }

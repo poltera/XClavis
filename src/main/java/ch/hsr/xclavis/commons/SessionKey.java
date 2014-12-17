@@ -57,6 +57,10 @@ public class SessionKey {
         return sessionID.getID();
     }
 
+    public SessionID getSessionID() {
+        return sessionID;
+    }
+
     public String getType() {
         return sessionID.getType();
     }

@@ -7,27 +7,24 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox id="keyManagement" alignment="CENTER" prefHeight="650.0" prefWidth="650.0" spacing="25.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.hsr.xclavis.ui.controller.KeyManagementController">
+<VBox id="keyManagement" alignment="TOP_CENTER" maxWidth="650.0" minWidth="650.0" prefHeight="650.0" prefWidth="650.0" spacing="25.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.hsr.xclavis.ui.controller.KeyManagementController">
    <children>
-      <TableView fx:id="tableView" prefHeight="200.0" prefWidth="200.0">
+      <TableView fx:id="tableView" maxHeight="400.0" maxWidth="500.0" minHeight="400.0" minWidth="500.0" prefHeight="400.0" prefWidth="500.0">
         <columns>
-          <TableColumn fx:id="tcPartner" prefWidth="75.0" text="Partner" />
-          <TableColumn fx:id="tcDate" prefWidth="75.0" text="Datum" />
-            <TableColumn fx:id="tcSessionID" prefWidth="75.0" text="Sesssion ID" />
-            <TableColumn fx:id="tcState" prefWidth="75.0" text="Status" />
-            <TableColumn fx:id="tcDelete" prefWidth="75.0" text="Löschen" />
+            <TableColumn fx:id="tcID" prefWidth="75.0" text="%id" />
+          <TableColumn fx:id="tcPartner" prefWidth="75.0" text="%partner" />
+          <TableColumn fx:id="tcDate" prefWidth="75.0" text="%date" />
+            <TableColumn fx:id="tcState" prefWidth="75.0" text="%state" />
+            <TableColumn fx:id="tcDelete" prefWidth="75.0" text="%delete" />
         </columns>
       </TableView>
-      <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+      <HBox alignment="TOP_CENTER" maxWidth="500.0" minWidth="500.0" prefWidth="500.0" spacing="10.0">
          <children>
-            <TextField fx:id="tfName" text="Partner" />
+            <TextField fx:id="tfName" text="%partner" />
             <Slider fx:id="slKeyNumbers" blockIncrement="1.0" majorTickUnit="1.0" max="10.0" min="1.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0" />
-            <CheckBox fx:id="cbExtendedSecurity" mnemonicParsing="false" text="Erweiterte Sicherheit" />
-            <Button mnemonicParsing="false" onAction="#startKeyExchange" text="Beginnen" />
+            <CheckBox fx:id="cbExtendedSecurity" mnemonicParsing="false" text="%extended_security" />
+            <Button fx:id="btnBegin" mnemonicParsing="false" onAction="#startKeyExchange" text="%create" />
          </children>
       </HBox>
    </children>
-   <padding>
-      <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
-   </padding>
 </VBox>

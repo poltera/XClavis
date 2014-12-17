@@ -8,9 +8,11 @@ package ch.hsr.xclavis.ui.controller;
 import ch.hsr.xclavis.commons.ECDHKey;
 import ch.hsr.xclavis.commons.InputBlock;
 import ch.hsr.xclavis.commons.InputBlocks;
+import ch.hsr.xclavis.commons.Keys;
 import ch.hsr.xclavis.commons.SessionID;
 import ch.hsr.xclavis.commons.SessionKey;
 import ch.hsr.xclavis.commons.WebcamInfo;
+import ch.hsr.xclavis.helpers.QRModel;
 import ch.hsr.xclavis.ui.MainApp;
 import ch.hsr.xclavis.webcam.WebcamHandler;
 import java.net.URL;
@@ -20,8 +22,8 @@ import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -41,7 +43,19 @@ public class CodeReaderController implements Initializable {
     private SessionID sessionID;
 
     @FXML
+    private VBox vbWebcamInput;
+    @FXML
+    private HBox hbWebcamSelecter;
+    @FXML
+    private HBox hbWebcamImage;
+    @FXML
+    private Label lblWebcamLoad;
+    @FXML
+    private VBox vbManualInput;
+    @FXML
     private HBox hbInputSelecter;
+    @FXML
+    private VBox vbKeyInput;
     @FXML
     private HBox hbInputBlocks1;
     @FXML
@@ -51,15 +65,7 @@ public class CodeReaderController implements Initializable {
     @FXML
     private HBox hbInputBlocks4;
     @FXML
-    private Button btnDecrypt;
-    @FXML
-    private VBox vbWebcam;
-    @FXML
-    private HBox hbWebcamSelecter;
-    @FXML
     private ComboBox<WebcamInfo> cbWebcamSelecter;
-    @FXML
-    private ImageView imageViewWebcam;
 
     /**
      * Initializes the controller class.
@@ -70,6 +76,9 @@ public class CodeReaderController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         WebcamHandler webcamHandler = new WebcamHandler();
+        ImageView imageViewWebcam = new ImageView();
+        imageViewWebcam.setFitWidth(480);
+        imageViewWebcam.setPreserveRatio(true);
 
         // Show WebcamSelecter if more then one Webcam
         if (webcamHandler.getWebcamCount() > 1) {
@@ -81,16 +90,25 @@ public class CodeReaderController implements Initializable {
                 }
             });
         } else {
-            vbWebcam.getChildren().remove(hbWebcamSelecter);
+            vbWebcamInput.getChildren().remove(hbWebcamSelecter);
         }
 
-        // Show WebcamImage from first Webcam if any Webcam exists
+        // Show WebcamImage from first Webcam if one Webcam exists
         if (webcamHandler.existsWebcam()) {
             webcamHandler.initWebcam(0);
             imageViewWebcam.imageProperty().bind(webcamHandler.getStream());
+            hbWebcamImage.getChildren().remove(lblWebcamLoad);
+            hbWebcamImage.getChildren().add(imageViewWebcam);
         } else {
-            vbWebcam.getChildren().remove(imageViewWebcam);
+            vbWebcamInput.getChildren().remove(hbWebcamImage);
         }
+
+        // Listener for QRCode
+        webcamHandler.getScanedQRCode().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+            mainApp.getKeyData().addAll(new QRModel().getKeys(newValue).getKeys());
+            mainApp.showKeyManagement();
+            webcamHandler.shutdownWebcam();
+        });
 
         InputBlock inputSelecter = new InputBlock(blockLength, blockChecksumSize, PATTERN);
         inputSelecter.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
@@ -102,6 +120,8 @@ public class CodeReaderController implements Initializable {
             }
         });
         hbInputSelecter.getChildren().add(inputSelecter);
+        vbKeyInput.getChildren().removeAll(hbInputBlocks1, hbInputBlocks2, hbInputBlocks3, hbInputBlocks4);
+        vbManualInput.getChildren().remove(vbKeyInput);
     }
 
     /**
@@ -120,20 +140,29 @@ public class CodeReaderController implements Initializable {
             case SessionID.SESSION_KEY_128:
                 blocksSize = 7;
                 overallChecksumSize = 2;
+                vbKeyInput.getChildren().add(hbInputBlocks1);
                 break;
             case SessionID.SESSION_KEY_256:
                 blocksSize = 14;
                 overallChecksumSize = 4;
+                vbKeyInput.getChildren().add(hbInputBlocks1);
+                vbKeyInput.getChildren().add(hbInputBlocks2);
                 break;
             case SessionID.ECDH_REQ_256:
             case SessionID.ECDH_RES_256:
                 blocksSize = 14;
                 overallChecksumSize = 3;
+                vbKeyInput.getChildren().add(hbInputBlocks1);
+                vbKeyInput.getChildren().add(hbInputBlocks2);
                 break;
             case SessionID.ECDH_REQ_512:
             case SessionID.ECDH_RES_512:
                 blocksSize = 27;
                 overallChecksumSize = 4;
+                vbKeyInput.getChildren().add(hbInputBlocks1);
+                vbKeyInput.getChildren().add(hbInputBlocks2);
+                vbKeyInput.getChildren().add(hbInputBlocks3);
+                vbKeyInput.getChildren().add(hbInputBlocks4);
                 break;
         }
 
@@ -150,10 +179,10 @@ public class CodeReaderController implements Initializable {
                             ECDHKey ecdhKey = new ECDHKey(sessionID);
                             SessionKey sessionKey = ecdhKey.getSessionKey(inputBlocks.getValue());
 
-                            mainApp.getECDHKeyData().add(ecdhKey);
-                            mainApp.getSessionKeyData().add(sessionKey);
+                            Keys keys = new Keys();
+                            keys.addKey(ecdhKey);
 
-                            mainApp.showCodeOutput();
+                            mainApp.showCodeOutput(keys);
                         }
                     } catch (InterruptedException ex) {
                         Logger.getLogger(CodeReaderController.class.getName()).log(Level.SEVERE, null, ex);
@@ -163,17 +192,14 @@ public class CodeReaderController implements Initializable {
             inputBlocks.addBlock(inputBlock);
             if (i < 7) {
                 hbInputBlocks1.getChildren().add(inputBlock);
-                hbInputBlocks1.setVisible(true);
             } else if (i < 14) {
                 hbInputBlocks2.getChildren().add(inputBlock);
-                hbInputBlocks2.setVisible(true);
             } else if (i < 21) {
                 hbInputBlocks3.getChildren().add(inputBlock);
-                hbInputBlocks3.setVisible(true);
             } else if (i < 28) {
                 hbInputBlocks4.getChildren().add(inputBlock);
-                hbInputBlocks4.setVisible(true);
             }
         }
+        vbManualInput.getChildren().add(vbKeyInput);
     }
 }

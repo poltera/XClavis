@@ -31,6 +31,7 @@ import javafx.stage.Stage;
 public class TopMenuController implements Initializable {
 
     private MainApp mainApp;
+    private ResourceBundle rb;
     
     @FXML
     private VBox topMenu;
@@ -43,10 +44,13 @@ public class TopMenuController implements Initializable {
 
     /**
      * Initializes the controller class.
+     * 
+     * @param url
+     * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        this.rb = rb;
     }
 
     /**
@@ -61,12 +65,13 @@ public class TopMenuController implements Initializable {
     @FXML
     private void openFile(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Datei auswählen");
+        fileChooser.setTitle(rb.getString("select_file"));
         fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
         List<File> selectedFiles = fileChooser.showOpenMultipleDialog(new Stage());
         if (selectedFiles != null) {
             selectedFiles.stream().forEach((selectedFile) -> {
-                FileHandler.loadFile(selectedFile, mainApp.getFileData());
+                new FileHandler().loadFile(selectedFile, mainApp.getFileData());
+                mainApp.showFileSelecter();
             });
         }
     }

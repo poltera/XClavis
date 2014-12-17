@@ -54,7 +54,7 @@ public class QRCodeReaderTest {
             BufferedImage image = ImageIO.read(getClass().getResourceAsStream(testFile));
             QRCodeReader instance = new QRCodeReader();
             if (instance.checkImage(image)) {
-                System.out.println("QR-Code detected: " + instance.getString());
+                System.out.println("QR-Code detected: " + instance.getResult());
             } else {
                 fail("QR-Code not detected!");
             }
