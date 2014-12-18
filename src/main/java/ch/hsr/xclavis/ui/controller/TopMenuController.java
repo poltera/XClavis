@@ -5,7 +5,6 @@
  */
 package ch.hsr.xclavis.ui.controller;
 
-import ch.hsr.xclavis.helpers.FileHandler;
 import ch.hsr.xclavis.ui.MainApp;
 import java.io.File;
 import java.net.URL;
@@ -70,8 +69,8 @@ public class TopMenuController implements Initializable {
         List<File> selectedFiles = fileChooser.showOpenMultipleDialog(new Stage());
         if (selectedFiles != null) {
             selectedFiles.stream().forEach((selectedFile) -> {
-                new FileHandler().loadFile(selectedFile, mainApp.getFileData());
                 mainApp.showFileSelecter();
+                mainApp.getFiles().add(selectedFile);
             });
         }
     }

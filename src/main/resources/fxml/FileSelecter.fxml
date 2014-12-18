@@ -8,7 +8,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.*?>
 
-<VBox alignment="TOP_CENTER" maxWidth="500.0" minWidth="500.0" prefWidth="500.0" spacing="25.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.hsr.xclavis.ui.controller.FileSelecterController">
+<VBox alignment="TOP_CENTER" maxWidth="500.0" minWidth="500.0" prefWidth="500.0" spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.hsr.xclavis.ui.controller.FileSelecterController">
     <children>
       <VBox alignment="TOP_CENTER">
          <children>
@@ -16,7 +16,7 @@
               <Label alignment="TOP_CENTER" text="%file_selecter_file_limit" />
          </children>
       </VBox>
-        <TableView fx:id="tableView" onKeyPressed="#keyPressed">
+        <TableView fx:id="tableView" maxHeight="375.0" minHeight="375.0" onKeyPressed="#keyPressed" prefHeight="375.0">
             <columns>
                 <TableColumn fx:id="tcIcon" prefWidth="50.0" sortable="false" text="%icon" />
                 <TableColumn fx:id="tcFilename" prefWidth="150.0" text="%filename" />
@@ -29,16 +29,22 @@
                 <Insets />
             </VBox.margin>
         </TableView>
-      <HBox alignment="CENTER" spacing="10.0">
+      <HBox alignment="CENTER_LEFT" spacing="10.0">
          <children>
-            <Label text="%output_path" />
-            <TextField fx:id="tfOutputPath" disable="true" editable="false" maxWidth="150.0" />
+            <Label alignment="CENTER_RIGHT" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" text="%key" />
+            <ComboBox maxWidth="200.0" minWidth="200.0" prefWidth="200.0" promptText="%create_new_key" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" spacing="10.0">
+         <children>
+            <Label alignment="CENTER_RIGHT" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" text="%output_path" />
+            <TextField fx:id="tfOutputPath" disable="true" editable="false" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
             <Button mnemonicParsing="false" onAction="#changeOutputPath" text="%change" />
          </children>
       </HBox>
-        <HBox alignment="CENTER" maxWidth="500.0" minWidth="500.0" prefWidth="500.0">
+        <HBox fx:id="hbButtons" alignment="CENTER" maxWidth="500.0" minWidth="500.0" prefWidth="500.0">
             <children>
-                <Button fx:id="btnEncrypt" disable="true" mnemonicParsing="false" onAction="#encryptFiles" text="%encrypt">
+                <Button fx:id="btnEncrypt" mnemonicParsing="false" onAction="#encryptFiles" text="%encrypt">
                     <graphic>
                         <ImageView>
                             <image>
@@ -47,7 +53,7 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="btnDecrypt" disable="true" onAction="#decryptFiles" text="%decrypt">
+                <Button fx:id="btnDecrypt" onAction="#decryptFiles" text="%decrypt">
                     <graphic>
                         <ImageView>
                             <image>
@@ -56,7 +62,7 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="btnScanQR" disable="true" onAction="#scanQR" text="%scan_qr_code">
+                <Button fx:id="btnScanQR" onAction="#scanQR" text="%scan_qr_code">
                     <graphic>
                         <ImageView>
                             <image>

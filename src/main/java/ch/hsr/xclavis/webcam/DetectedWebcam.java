@@ -3,17 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ch.hsr.xclavis.commons;
+package ch.hsr.xclavis.webcam;
 
 /**
  *
  * @author Gian
  */
-public class WebcamInfo {
+public class DetectedWebcam {
     private String webcamName;
     private int webcamIndex;
     
-    public WebcamInfo(int webcamIndex, String webcamName) {
+    public DetectedWebcam(int webcamIndex, String webcamName) {
         this.webcamIndex = webcamIndex;
         this.webcamName = webcamName;
     }

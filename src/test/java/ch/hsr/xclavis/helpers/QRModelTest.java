@@ -5,10 +5,11 @@
  */
 package ch.hsr.xclavis.helpers;
 
-import ch.hsr.xclavis.commons.ECDHKey;
-import ch.hsr.xclavis.commons.Keys;
-import ch.hsr.xclavis.commons.SessionID;
-import ch.hsr.xclavis.commons.SessionKey;
+import ch.hsr.xclavis.keys.ECDHKey;
+import ch.hsr.xclavis.keys.Key;
+import ch.hsr.xclavis.keys.SessionID;
+import ch.hsr.xclavis.keys.SessionKey;
+import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -81,7 +82,7 @@ public class QRModelTest {
         qrModel.addSessionKey(sessionKey2);
         String result = qrModel.getModell();
 
-        Keys keys = qrModel.getKeys(result);
+        List<Key> keys = qrModel.getKeys(result);
     }
 
 }

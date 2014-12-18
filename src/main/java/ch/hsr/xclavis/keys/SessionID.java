@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ch.hsr.xclavis.commons;
+package ch.hsr.xclavis.keys;
 
 import ch.hsr.xclavis.crypto.RandomGenerator;
 import ch.hsr.xclavis.helpers.Base32;
@@ -28,12 +28,21 @@ public class SessionID {
     private String type;
     private String random;
 
+    /**
+     *
+     * @param type
+     */
     public SessionID(String type) {
         this.type = type;
         this.random = Base32.bitStringToBase32(RandomGenerator.getRandomBits(RANDOM_BITS));
         //CHECK IF EXISTS TBA
     }
 
+    /**
+     *
+     * @param type
+     * @param random
+     */
     public SessionID(String type, String random) {
         this.type = type;
         this.random = random;

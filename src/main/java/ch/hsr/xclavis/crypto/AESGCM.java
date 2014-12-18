@@ -5,7 +5,8 @@
  */
 package ch.hsr.xclavis.crypto;
 
-import ch.hsr.xclavis.commons.SessionKey;
+import ch.hsr.xclavis.keys.SessionKey;
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -39,6 +40,13 @@ public class AESGCM {
         this.cipherParameters = new AEADParameters(new KeyParameter(key), BLOCK.length * Byte.SIZE, iv);
     }
 
+    /**
+     *
+     * @param input
+     * @param output
+     * @param sessionKey
+     * @return
+     */
     public boolean encrypt(byte[] input, String output, SessionKey sessionKey) {
         try {
             AEADBlockCipher cipher = new GCMBlockCipher(new AESEngine());
@@ -82,7 +90,7 @@ public class AESGCM {
         }
     }
 
-    public boolean decrypt(String input, String output) {
+    public boolean decryptToFile(String input, String output) {
         try {
             AEADBlockCipher cipher = new GCMBlockCipher(new AESEngine());
             cipher.init(false, cipherParameters);
@@ -103,5 +111,29 @@ public class AESGCM {
             Logger.getLogger(AESGCM.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
+    }
+
+    public byte[] decryptToByteStream(String input) {
+        byte[] result = null;
+        try {
+            AEADBlockCipher cipher = new GCMBlockCipher(new AESEngine());
+            cipher.init(false, cipherParameters);
+
+            try (FileInputStream fis = new FileInputStream(input);
+                    CipherInputStream cis = new CipherInputStream(fis, cipher);
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                int i;
+                while ((i = cis.read(BLOCK)) != -1) {
+                    baos.write(BLOCK, 0, i);
+                }
+                result = baos.toByteArray();
+            }
+        } catch (InvalidCipherTextIOException ex) {
+            System.out.println("Hash for the file is not correct!");
+        } catch (IOException ex) {
+            Logger.getLogger(AESGCM.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return result;
     }
 }

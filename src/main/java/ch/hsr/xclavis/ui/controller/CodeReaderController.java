@@ -5,17 +5,18 @@
  */
 package ch.hsr.xclavis.ui.controller;
 
-import ch.hsr.xclavis.commons.ECDHKey;
+import ch.hsr.xclavis.keys.ECDHKey;
 import ch.hsr.xclavis.commons.InputBlock;
 import ch.hsr.xclavis.commons.InputBlocks;
-import ch.hsr.xclavis.commons.Keys;
-import ch.hsr.xclavis.commons.SessionID;
-import ch.hsr.xclavis.commons.SessionKey;
-import ch.hsr.xclavis.commons.WebcamInfo;
-import ch.hsr.xclavis.helpers.QRModel;
+import ch.hsr.xclavis.keys.Key;
+import ch.hsr.xclavis.keys.SessionID;
+import ch.hsr.xclavis.keys.SessionKey;
+import ch.hsr.xclavis.webcam.DetectedWebcam;
 import ch.hsr.xclavis.ui.MainApp;
 import ch.hsr.xclavis.webcam.WebcamHandler;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -65,7 +66,7 @@ public class CodeReaderController implements Initializable {
     @FXML
     private HBox hbInputBlocks4;
     @FXML
-    private ComboBox<WebcamInfo> cbWebcamSelecter;
+    private ComboBox<DetectedWebcam> cbWebcamSelecter;
 
     /**
      * Initializes the controller class.
@@ -83,7 +84,7 @@ public class CodeReaderController implements Initializable {
         // Show WebcamSelecter if more then one Webcam
         if (webcamHandler.getWebcamCount() > 1) {
             cbWebcamSelecter.setItems(webcamHandler.getWebcams());
-            cbWebcamSelecter.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends WebcamInfo> observable, WebcamInfo oldValue, WebcamInfo newValue) -> {
+            cbWebcamSelecter.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends DetectedWebcam> observable, DetectedWebcam oldValue, DetectedWebcam newValue) -> {
                 if (newValue != null) {
                     webcamHandler.initWebcam(newValue.getWebcamIndex());
                     imageViewWebcam.imageProperty().bind(webcamHandler.getStream());
@@ -105,7 +106,7 @@ public class CodeReaderController implements Initializable {
 
         // Listener for QRCode
         webcamHandler.getScanedQRCode().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
-            mainApp.getKeyData().addAll(new QRModel().getKeys(newValue).getKeys());
+            //mainApp.getFiles().addAll(new QRModel().getKeys(newValue).getKeys());
             mainApp.showKeyManagement();
             webcamHandler.shutdownWebcam();
         });
@@ -178,9 +179,8 @@ public class CodeReaderController implements Initializable {
                             // Calculating the ECDH response and the SessionKey
                             ECDHKey ecdhKey = new ECDHKey(sessionID);
                             SessionKey sessionKey = ecdhKey.getSessionKey(inputBlocks.getValue());
-
-                            Keys keys = new Keys();
-                            keys.addKey(ecdhKey);
+                            List<Key> keys = new ArrayList<>();
+                            keys.add(ecdhKey);
 
                             mainApp.showCodeOutput(keys);
                         }

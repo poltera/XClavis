@@ -1,10 +1,8 @@
 package ch.hsr.xclavis.ui;
 
-import ch.hsr.xclavis.commons.ECDHKey;
-import ch.hsr.xclavis.commons.Key;
-import ch.hsr.xclavis.commons.Keys;
-import ch.hsr.xclavis.commons.SelectedFile;
-import ch.hsr.xclavis.commons.SessionKey;
+import ch.hsr.xclavis.keys.KeyStore;
+import ch.hsr.xclavis.helpers.FileHandler;
+import ch.hsr.xclavis.keys.Key;
 import ch.hsr.xclavis.ui.controller.CodeOutputController;
 import ch.hsr.xclavis.ui.controller.CodeReaderController;
 import ch.hsr.xclavis.ui.controller.CryptionStateController;
@@ -13,14 +11,13 @@ import ch.hsr.xclavis.ui.controller.KeyManagementController;
 import ch.hsr.xclavis.ui.controller.RootPaneController;
 import ch.hsr.xclavis.ui.controller.TopMenuController;
 import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -33,55 +30,34 @@ public class MainApp extends Application {
     private Stage stage;
     private BorderPane rootLayout;
     private ResourceBundle bundle;
-    private ObservableList<SelectedFile> fileData;
-    private ObservableList<Key> keyData;
-    private ObservableList<SessionKey> sessionKeyData;
-    private ObservableList<ECDHKey> ecdhKeyData;
+    
+    private FileHandler files;
+    private KeyStore keys;
 
     /**
      * Constructor
      */
-    public MainApp() {
-        this.fileData = FXCollections.observableArrayList();
-        this.keyData = FXCollections.observableArrayList();
-        this.sessionKeyData = FXCollections.observableArrayList();
-        this.ecdhKeyData = FXCollections.observableArrayList();
+    public MainApp() {        
+        this.files = new FileHandler();
+        this.keys = new KeyStore();
     }
 
     /**
-     * Returns the Files as an observable list of SelectedFiles.
+     * Returns the Files.
      *
      * @return
      */
-    public ObservableList<SelectedFile> getFileData() {
-        return fileData;
+    public FileHandler getFiles() {
+        return files;
     }
-
+    
     /**
-     * Returns the Keys as an observable list of Key.
-     *
+     * Return the Keys.
+     * 
      * @return
      */
-    public ObservableList<Key> getKeyData() {
-        return keyData;
-    }
-
-    /**
-     * Returns the SessionKeys as an observable list of SelectedFiles.
-     *
-     * @return
-     */
-    public ObservableList<SessionKey> getSessionKeyData() {
-        return sessionKeyData;
-    }
-
-    /**
-     * Returns the ECDHKeys as an observable list of SelectedFiles.
-     *
-     * @return
-     */
-    public ObservableList<ECDHKey> getECDHKeyData() {
-        return ecdhKeyData;
+    public KeyStore getKeys() {
+        return keys;
     }
 
     @Override
@@ -219,7 +195,7 @@ public class MainApp extends Application {
      * Shows the Code Output inside the root layout.
      * @param keys
      */
-    public void showCodeOutput(Keys keys) {
+    public void showCodeOutput(List<Key> keys) {
         try {
             // Load file overview.
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/CodeOutput.fxml"), bundle);

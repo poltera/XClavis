@@ -5,7 +5,6 @@
  */
 package ch.hsr.xclavis.webcam;
 
-import ch.hsr.xclavis.commons.WebcamInfo;
 import ch.hsr.xclavis.qrcode.QRCodeReader;
 import com.github.sarxos.webcam.Webcam;
 import java.awt.image.BufferedImage;
@@ -29,7 +28,7 @@ public class WebcamHandler {
     private final static int fps = 24;
     private int sleepTimer;
 
-    private ObservableList<WebcamInfo> webcams;
+    private ObservableList<DetectedWebcam> webcams;
     private Webcam selectedWebcam;
     private BufferedImage bufferedImage;
     private boolean stopCamera;
@@ -58,7 +57,7 @@ public class WebcamHandler {
         return webcams.size();
     }
 
-    public ObservableList<WebcamInfo> getWebcams() {
+    public ObservableList<DetectedWebcam> getWebcams() {
         return webcams;
     }
 
@@ -133,7 +132,7 @@ public class WebcamHandler {
         int webcamCounter = 0;
 
         for (Webcam webcam : Webcam.getWebcams()) {
-            WebcamInfo webcamInfo = new WebcamInfo(webcamCounter, webcam.getName());
+            DetectedWebcam webcamInfo = new DetectedWebcam(webcamCounter, webcam.getName());
             webcams.add(webcamInfo);
             webcamCounter++;
         }

@@ -18,6 +18,9 @@ import java.text.NumberFormat;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
@@ -33,37 +36,84 @@ public class FileHandler {
 
     private final static String ENCRYPTED_FILE_EXTENSION = "enc";
 
-    public void loadFile(File file, ObservableList<SelectedFile> fileData) {
+    private final ObservableList<SelectedFile> files;
+    private final IntegerProperty mode;
+
+    public FileHandler() {
+        this.files = FXCollections.observableArrayList();
+        this.mode = new SimpleIntegerProperty(0);
+    }
+
+    public ObservableList<SelectedFile> getObservableFileList() {
+        return files;
+    }
+    
+    public IntegerProperty modeProperty() {
+        return mode;
+    }
+
+    public void add(File file) {
+        // Check if the file is no Directory, is a file and that we can read them.
         if (!file.isDirectory() && file.isFile() && file.canRead()) {
-            boolean exists = false;
-            for (SelectedFile existingFile : fileData) {
-                if (existingFile.getFile().equals(file)) {
-                    exists = true;
-                    break;
-                }
-            }            
-            if (!exists) {
-                String fileName = getName(file);
-                String fileSize = getSize(file);
-                String fileExtension = getExtension(file);
-                boolean fileEncrypted = isEncrypted(file);
-                
-                if (!isEncrypted(file)) {
-                    ImageView fileIcon = getIcon(file);
-                    SelectedFile selectedFile = new SelectedFile(file, fileIcon, fileName, fileExtension, fileSize, fileEncrypted);
-                    fileData.add(selectedFile);
-                } else {
+            // If is the first file in the list.
+            if (firstFile()) {
+                // If is the file is encrypted.
+                if (isEncrypted(file)) {
+                    String fileName = getName(file);
+                    String fileSize = getSize(file);
+                    String fileExtension = getExtension(file);
+                    boolean fileEncrypted = isEncrypted(file);
                     ImageView fileIcon = new ImageView(new Image(getClass().getResourceAsStream("/images/encrypted_icon.png")));
                     String fileID = getID(file);
                     byte[] fileIV = getIV(file);
                     SelectedFile selectedFile = new SelectedFile(file, fileIcon, fileName, fileExtension, fileSize, fileEncrypted, fileID, fileIV);
-                    fileData.add(selectedFile);
+                    files.add(selectedFile);
+                    mode.set(1);
+                } else {
+                    mode.set(2);
+                }
+            }
+            // If the file is not encrypted and we are in the encryption mode.
+            if (!isEncrypted(file) && mode.get() == 2) {
+                // If file not already exists in the list.
+                if (!existsFile(file)) {
+                    String fileName = getName(file);
+                    String fileSize = getSize(file);
+                    String fileExtension = getExtension(file);
+                    boolean fileEncrypted = isEncrypted(file);
+                    ImageView fileIcon = getIcon(file);
+                    SelectedFile selectedFile = new SelectedFile(file, fileIcon, fileName, fileExtension, fileSize, fileEncrypted);
+                    files.add(selectedFile);
                 }
             }
         }
     }
 
-    private static ImageView getIcon(File file) {
+    public void remove(SelectedFile selectedFile) {
+        files.remove(selectedFile);
+        
+        if (firstFile()) {
+            mode.set(0);
+        }
+    }
+
+    private boolean firstFile() {
+        return files.size() == 0;
+    }
+
+    private boolean existsFile(File file) {
+        boolean result = false;
+        for (SelectedFile existingFile : files) {
+            if (existingFile.getFile().equals(file)) {
+                result = true;
+                break;
+            }
+        }
+
+        return result;
+    }
+
+    private ImageView getIcon(File file) {
         ImageIcon iconSWT = (ImageIcon) FileSystemView.getFileSystemView().getSystemIcon(file); //16x16 Icon
         BufferedImage bufferedImage = new BufferedImage(iconSWT.getIconWidth(), iconSWT.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
         bufferedImage.getGraphics().drawImage(iconSWT.getImage(), 0, 0, iconSWT.getImageObserver());
@@ -74,7 +124,7 @@ public class FileHandler {
         return imageView;
     }
 
-    private static String getSize(File file) {
+    private String getSize(File file) {
         double bytesize = (double) file.length();
         NumberFormat n = NumberFormat.getInstance();
         n.setMaximumFractionDigits(2);
@@ -93,7 +143,7 @@ public class FileHandler {
         return size;
     }
 
-    private static String getName(File file) {
+    private String getName(File file) {
         String fileName = file.getName().substring(0, file.getName().lastIndexOf('.'));
 
         if (fileName.length() > 60) {
@@ -104,20 +154,20 @@ public class FileHandler {
         return fileName;
     }
 
-    private static String getExtension(File file) {
+    private String getExtension(File file) {
         String fileExtension = file.getName().substring(file.getName().lastIndexOf('.'));
         fileExtension = fileExtension.substring(1);
 
         return fileExtension;
     }
 
-    private static boolean isEncrypted(File file) {
+    private boolean isEncrypted(File file) {
         String fileExtension = getExtension(file);
 
         return fileExtension.equals(ENCRYPTED_FILE_EXTENSION);
     }
 
-    private static String getID(File file) {
+    private String getID(File file) {
         String id = "";
         if (isEncrypted(file)) {
             //4 Bytes ID
@@ -134,7 +184,7 @@ public class FileHandler {
         return id;
     }
 
-    private static byte[] getIV(File file) {
+    private byte[] getIV(File file) {
         byte[] iv = new byte[16];
         if (isEncrypted(file)) {
             //12 Bytes IV
@@ -154,7 +204,7 @@ public class FileHandler {
         return iv;
     }
 
-    public static Properties loadProperties() {
+    public Properties loadProperties() {
         Properties properties = new Properties();
         try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream("beispiel.properties"))) {
             properties.load(bis);
@@ -186,10 +236,5 @@ public class FileHandler {
         } finally {
             file.delete();
         }
-    }
-
-    //tba
-    public static boolean checkFileExists(String path) {
-        return false;
     }
 }

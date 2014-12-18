@@ -5,18 +5,18 @@
  */
 package ch.hsr.xclavis.ui.controller;
 
-import ch.hsr.xclavis.commons.Key;
-import ch.hsr.xclavis.commons.Keys;
 import ch.hsr.xclavis.ui.MainApp;
 import ch.hsr.xclavis.commons.SelectedFile;
-import ch.hsr.xclavis.commons.SessionID;
-import ch.hsr.xclavis.commons.SessionKey;
-import ch.hsr.xclavis.helpers.FileHandler;
+import ch.hsr.xclavis.keys.Key;
+import ch.hsr.xclavis.keys.SessionID;
+import ch.hsr.xclavis.keys.SessionKey;
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -30,6 +30,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
@@ -65,6 +66,8 @@ public class FileSelecterController implements Initializable {
     private Button btnScanQR;
     @FXML
     private TextField tfOutputPath;
+    @FXML
+    private HBox hbButtons;
 
     /**
      * Initializes the controller class.
@@ -98,17 +101,14 @@ public class FileSelecterController implements Initializable {
                         tableView.requestFocus();
                         tableView.getSelectionModel().select(p.getValue());
                         tableView.getFocusModel().focus(tableView.getSelectionModel().getSelectedIndex());
-                        mainApp.getFileData().remove(tableView.getSelectionModel().getSelectedItem());
+                        mainApp.getFiles().remove(tableView.getSelectionModel().getSelectedItem());
                         tableView.getSelectionModel().clearSelection();
                     });
 
             return new ReadOnlyObjectWrapper(btnDeleteRow);
         });
         tfOutputPath.setText(System.getProperty("user.home"));
-        btnEncrypt.setVisible(true);
-        btnEncrypt.setDisable(false);
-        btnDecrypt.setVisible(true);
-        btnDecrypt.setDisable(false);
+        hbButtons.getChildren().removeAll(btnEncrypt, btnDecrypt, btnScanQR);
     }
 
     /**
@@ -120,31 +120,39 @@ public class FileSelecterController implements Initializable {
         this.mainApp = mainApp;
 
         //Add observable list data to the table
-        tableView.setItems(mainApp.getFileData());
+        tableView.setItems(mainApp.getFiles().getObservableFileList());
+
+        mainApp.getFiles().modeProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
+            hbButtons.getChildren().removeAll(hbButtons.getChildren().sorted());
+            if (newValue.intValue() == 1) {
+                hbButtons.getChildren().add(btnDecrypt);
+            } else if (newValue.intValue() == 2) {
+                hbButtons.getChildren().add(btnEncrypt);
+            }
+        });
     }
 
     @FXML
     private void keyPressed(KeyEvent event) {
         if (event.getCode() == KeyCode.DELETE) {
-            mainApp.getFileData().remove(tableView.getSelectionModel().getSelectedItem());
+            mainApp.getFiles().remove(tableView.getSelectionModel().getSelectedItem());
             tableView.getSelectionModel().clearSelection();
         }
     }
 
     public void loadFile(File file) {
-        new FileHandler().loadFile(file, mainApp.getFileData());
+        mainApp.getFiles().add(file);
         tableView.setDisable(true);
     }
 
     @FXML
     private void encryptFiles(ActionEvent event) {
         SessionKey sessionKey = new SessionKey(SessionID.SESSION_KEY_128);
-        Keys keys = new Keys();
-        keys.addKey(sessionKey);
-        Key key = new Key(sessionKey.getSessionID(), "Self", 0);
-        mainApp.getKeyData().add(key);
+        List<Key> keys = new ArrayList<>();
+        keys.add(sessionKey);
+        mainApp.getKeys().add(sessionKey);
         mainApp.showCodeOutput(keys);
-        mainApp.showCryptionState(true, tfOutputPath.getText() + File.separator + "test.enc");
+        mainApp.showCryptionState(true, tfOutputPath.getText() + File.separator + "encryption.enc");
     }
 
     @FXML

@@ -5,6 +5,7 @@
  */
 package ch.hsr.xclavis.crypto;
 
+import java.math.BigInteger;
 import java.security.SecureRandom;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.generators.ECKeyPairGenerator;
@@ -25,49 +26,86 @@ public class ECDH {
 
     private final ECParameterSpec ecParameterSpec;
     private final ECDomainParameters ecDomainParameters;
-    private AsymmetricCipherKeyPair ecKeyPair;
+    private ECPrivateKeyParameters ecPrivateKeyParameters;
+    private ECPublicKeyParameters ecPublicKeyParameters;
 
+    /**
+     * ECDH with new KeyPair
+     * 
+     * @param ellipticCurve
+     */
     public ECDH(String ellipticCurve) {
         // Init the curve
         this.ecParameterSpec = ECNamedCurveTable.getParameterSpec(ellipticCurve);
         this.ecDomainParameters = new ECDomainParameters(this.ecParameterSpec.getCurve(), this.ecParameterSpec.getG(), this.ecParameterSpec.getN(), this.ecParameterSpec.getH());
-        
+
         // Generating a new KeyPair
-        this.ecKeyPair = getKeyPair();
+        generateKeyPair();
+    }
+
+    /**
+     * ECDH with existing Private and PublicKey
+     * 
+     * @param ellipticCurve
+     * @param privateKey
+     * @param publicKey
+     */
+    public ECDH(String ellipticCurve, byte[] privateKey, byte[] publicKey) {
+        // Init the curve
+        this.ecParameterSpec = ECNamedCurveTable.getParameterSpec(ellipticCurve);
+        this.ecDomainParameters = new ECDomainParameters(this.ecParameterSpec.getCurve(), this.ecParameterSpec.getG(), this.ecParameterSpec.getN(), this.ecParameterSpec.getH());
+
+        // Set the KeyPair
+        this.ecPrivateKeyParameters = byteToECPrivateKeyParam(privateKey);
+        this.ecPublicKeyParameters = byteToECPublicKeyParam(publicKey);
+    }
+
+    public byte[] getPrivateKey() {
+
+        return ecPrivateKeyParameters.getD().toByteArray();
     }
 
     public byte[] getPublicKey() {
-        ECPublicKeyParameters publicKeyParameters = (ECPublicKeyParameters) ecKeyPair.getPublic();
-        
-        return publicKeyParameters.getQ().getEncoded(true);
+
+        return ecPublicKeyParameters.getQ().getEncoded(true);
     }
 
-    public byte[] getAgreedKey(byte[] remotePublicKey) {
-        ECPrivateKeyParameters privateKey = (ECPrivateKeyParameters) ecKeyPair.getPrivate();
-        ECPublicKeyParameters publicKey = byteToECPublicKeyParam(remotePublicKey);
+    public byte[] getAgreedKey(byte[] publicKey) {
+        ECPublicKeyParameters remotePublicKey = byteToECPublicKeyParam(publicKey);
 
         ECDHCBasicAgreement basicAgreement = new ECDHCBasicAgreement();
-        basicAgreement.init(privateKey);
-        byte[] agreedKey = basicAgreement.calculateAgreement(publicKey).toByteArray();
+        basicAgreement.init(ecPrivateKeyParameters);
+        byte[] agreedKey = basicAgreement.calculateAgreement(remotePublicKey).toByteArray();
 
-        //if first byte zero
-        
         return agreedKey;
     }
 
-    private AsymmetricCipherKeyPair getKeyPair() {
+    private void generateKeyPair() {
         ECKeyGenerationParameters keyGenerationParameters = new ECKeyGenerationParameters(ecDomainParameters, new SecureRandom());
         ECKeyPairGenerator keyPairGenerator = new ECKeyPairGenerator();
         keyPairGenerator.init(keyGenerationParameters);
         AsymmetricCipherKeyPair keyPair = keyPairGenerator.generateKeyPair();
-
-        return keyPair;
+        
+        ecPrivateKeyParameters = (ECPrivateKeyParameters) keyPair.getPrivate();
+        ecPublicKeyParameters = (ECPublicKeyParameters) keyPair.getPublic();
+        
+        // Check if size of the PrivateKey is correct, 25% is the Length to long
+        if (ecPrivateKeyParameters.getD().toByteArray().length != ecParameterSpec.getCurve().getFieldSize() / Byte.SIZE) {
+            generateKeyPair();
+        }
     }
 
-    private ECPublicKeyParameters byteToECPublicKeyParam(byte[] publicKey) {    
+    private ECPublicKeyParameters byteToECPublicKeyParam(byte[] publicKey) {
         ECPoint ecPoint = ecParameterSpec.getCurve().decodePoint(publicKey);
         ECPublicKeyParameters ecPublicKey = new ECPublicKeyParameters(ecPoint, ecDomainParameters);
-        
+
         return ecPublicKey;
+    }
+    
+    private ECPrivateKeyParameters byteToECPrivateKeyParam(byte[] privateKey) {
+        BigInteger d = new BigInteger(1, privateKey);
+        ECPrivateKeyParameters ecPrivateKey = new ECPrivateKeyParameters(d, ecDomainParameters);
+        
+        return ecPrivateKey;
     }
 }

@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ch.hsr.xclavis.commons;
+package ch.hsr.xclavis.keys;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -21,19 +22,25 @@ public class Key {
     private StringProperty id;
     private StringProperty state;
 
-    /**
-     *
-     * @param sessionID
-     * @param partner
-     * @param state
-     */
-    public Key(SessionID sessionID, String partner, int state) {
+    public Key(SessionID sessionID) {
         this.sessionID = sessionID;
-        this.id = new SimpleStringProperty(sessionID.getID());
-        this.partner = new SimpleStringProperty(partner);
+        this.id = new SimpleStringProperty(this.sessionID.getID());
+        this.partner = new SimpleStringProperty();
         LocalDateTime now = LocalDateTime.now();
-        this.date = new SimpleStringProperty(now.getYear() + "-" + now.getMonthValue() + "-" + now.getDayOfMonth() + " " + now.getHour() + ":" + now.getMinute());
-        this.state = new SimpleStringProperty("Bereit");
+        this.date = new SimpleStringProperty(now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+        this.state = new SimpleStringProperty();
+    }
+    
+    public SessionID getSessionID() {
+        return sessionID;
+    }
+    
+    public String getID() {
+        return sessionID.getID();
+    }
+    
+    public StringProperty idProperty() {
+        return id;
     }
     
     public String getPartner() {
@@ -44,6 +51,10 @@ public class Key {
         return partner;
     }
     
+    public void setPartner(String partner) {
+        this.partner.set(partner);
+    }
+    
     public String getDate() {
         return date.get();
     }
@@ -52,14 +63,7 @@ public class Key {
         return date;
     }
     
-    public SessionID getSessionID() {
-        return sessionID;
-    }
-    
-    public StringProperty idProperty() {
-        //return sessionID.
-        return id;
-    }
+
     
     public int getState() {
         return 0;

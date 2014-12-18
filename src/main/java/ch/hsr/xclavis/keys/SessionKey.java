@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ch.hsr.xclavis.commons;
+package ch.hsr.xclavis.keys;
 
 import ch.hsr.xclavis.crypto.RandomGenerator;
 import ch.hsr.xclavis.helpers.Base32;
@@ -12,31 +12,47 @@ import ch.hsr.xclavis.helpers.Base32;
  *
  * @author Gian
  */
-public class SessionKey {
+public class SessionKey extends Key {
 
-    private SessionID sessionID;
     private final byte[] sessionKey;
     private byte[] iv;
 
+    /**
+     * Creates a new SessionKey.
+     *
+     * @param type
+     */
     public SessionKey(String type) {
-        this.sessionID = new SessionID(type);
-        this.sessionKey = RandomGenerator.getRandomBytes(this.sessionID.getFinalKeyLength() / Byte.SIZE);
+        super(new SessionID(type));
+        this.sessionKey = RandomGenerator.getRandomBytes(getSessionID().getFinalKeyLength() / Byte.SIZE);
         this.iv = RandomGenerator.getRandomBytes(12);
     }
 
-    public SessionKey(byte[] sessionKey, SessionID sessionID) {
-        this.sessionID = sessionID;
+    /**
+     * Creates a SessionKey with given Key and SessionID.
+     *
+     * @param sessionID
+     * @param sessionKey
+     */
+    public SessionKey(SessionID sessionID, byte[] sessionKey) {
+        super(sessionID);
         this.sessionKey = sessionKey;
         this.iv = RandomGenerator.getRandomBytes(12);
     }
 
-    public SessionKey(String base32SessionKey, SessionID sessionID) {
+    /**
+     * Creates a SessionKey with given Base32 Key and SessionID.
+     *
+     * @param sessionID
+     * @param base32SessionKey
+     */
+    public SessionKey(SessionID sessionID, String base32SessionKey) {
+        super(sessionID);
         // Converting back a Base32 String to its Byte Value gives an additional Byte
         byte[] byteSessionKey = Base32.base32ToByte(base32SessionKey);
         // Trim the additional Byte
         byte[] trimmedSessionKey = new byte[byteSessionKey.length - 1];
         System.arraycopy(byteSessionKey, 0, trimmedSessionKey, 0, byteSessionKey.length - 1);
-        this.sessionID = sessionID;
         this.sessionKey = trimmedSessionKey;
         this.iv = RandomGenerator.getRandomBytes(12);
     }
@@ -51,21 +67,5 @@ public class SessionKey {
 
     public void setIV(byte[] iv) {
         this.iv = iv;
-    }
-
-    public String getID() {
-        return sessionID.getID();
-    }
-
-    public SessionID getSessionID() {
-        return sessionID;
-    }
-
-    public String getType() {
-        return sessionID.getType();
-    }
-
-    public void setType(String type) {
-        this.sessionID.setType(type);
     }
 }

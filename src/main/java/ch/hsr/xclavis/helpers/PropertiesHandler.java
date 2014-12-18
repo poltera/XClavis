@@ -11,7 +11,7 @@ package ch.hsr.xclavis.helpers;
  */
 public class PropertiesHandler {
     public PropertiesHandler() {
-        FileHandler.loadProperties();
+        //FileHandler.loadProperties();
     }
     
 }

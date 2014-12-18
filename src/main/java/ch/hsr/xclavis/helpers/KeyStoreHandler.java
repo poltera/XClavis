@@ -5,8 +5,8 @@
  */
 package ch.hsr.xclavis.helpers;
 
-import ch.hsr.xclavis.commons.ECDHKey;
-import ch.hsr.xclavis.commons.SessionKey;
+import ch.hsr.xclavis.keys.ECDHKey;
+import ch.hsr.xclavis.keys.SessionKey;
 import java.util.ArrayList;
 import java.util.List;
 

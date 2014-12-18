@@ -5,7 +5,7 @@
  */
 package ch.hsr.xclavis.ui.controller;
 
-import ch.hsr.xclavis.commons.WebcamInfo;
+import ch.hsr.xclavis.webcam.DetectedWebcam;
 import ch.hsr.xclavis.crypter.Crypter;
 import ch.hsr.xclavis.ui.MainApp;
 import java.io.File;
@@ -50,7 +50,7 @@ public class CryptionStateController implements Initializable {
         Platform.runLater(() -> {
             if (encryption) {
                 lblCryptionState.setText(rb.getString("encryption_state"));
-                progressIndicator.progressProperty().bind(crypter.encrypt(mainApp.getFileData(), output));
+                progressIndicator.progressProperty().bind(crypter.encrypt(mainApp.getFiles().getObservableFileList(), output));
             } else {
 
             }         

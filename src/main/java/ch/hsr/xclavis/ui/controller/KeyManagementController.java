@@ -5,15 +5,15 @@
  */
 package ch.hsr.xclavis.ui.controller;
 
-import ch.hsr.xclavis.commons.ECDHKey;
-import ch.hsr.xclavis.commons.Key;
-import ch.hsr.xclavis.commons.Keys;
-import ch.hsr.xclavis.commons.SessionID;
-import ch.hsr.xclavis.commons.SessionKey;
+import ch.hsr.xclavis.keys.ECDHKey;
+import ch.hsr.xclavis.keys.Key;
+import ch.hsr.xclavis.keys.SessionID;
+import ch.hsr.xclavis.keys.SessionKey;
 import ch.hsr.xclavis.ui.MainApp;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -88,7 +88,7 @@ public class KeyManagementController implements Initializable {
                         tableView.requestFocus();
                         tableView.getSelectionModel().select(p.getValue());
                         tableView.getFocusModel().focus(tableView.getSelectionModel().getSelectedIndex());
-                        mainApp.getKeyData().remove(tableView.getSelectionModel().getSelectedItem());
+                        mainApp.getKeys().remove(tableView.getSelectionModel().getSelectedItem());
                         tableView.getSelectionModel().clearSelection();
                     });
 
@@ -107,23 +107,23 @@ public class KeyManagementController implements Initializable {
         this.mainApp = mainApp;
 
         //Add observable list data to the table
-        tableView.setItems(mainApp.getKeyData());
+        tableView.setItems(mainApp.getKeys().getObservableKeyList());
     }
 
     @FXML
     private void startKeyExchange(ActionEvent event) {
-        Keys keys = new Keys();
+        List<Key> keys = new ArrayList<>();
         for (int i = 0; i < slKeyNumbers.getValue(); i++) {
             if (!cbExtendedSecurity.isSelected()) {
                 SessionKey sessionKey = new SessionKey(SessionID.SESSION_KEY_128);
-                Key key = new Key(sessionKey.getSessionID(), tfName.getText(), 0); 
-                keys.addKey(sessionKey);
-                mainApp.getKeyData().add(key);
+                sessionKey.setPartner(tfName.getText());
+                keys.add(sessionKey);
+                mainApp.getKeys().add(sessionKey);
             } else {
                 ECDHKey ecdhKey = new ECDHKey(SessionID.ECDH_REQ_256);
-                Key key = new Key(ecdhKey.getSessionID(), tfName.getText(), 0);
-                keys.addKey(ecdhKey);
-                mainApp.getKeyData().add(key);
+                ecdhKey.setPartner(tfName.getText());
+                keys.add(ecdhKey);
+                mainApp.getKeys().add(ecdhKey);
             }
         }
         mainApp.showCodeOutput(keys);

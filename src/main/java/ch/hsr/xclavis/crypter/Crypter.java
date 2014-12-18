@@ -6,8 +6,8 @@
 package ch.hsr.xclavis.crypter;
 
 import ch.hsr.xclavis.commons.SelectedFile;
-import ch.hsr.xclavis.commons.SessionID;
-import ch.hsr.xclavis.commons.SessionKey;
+import ch.hsr.xclavis.keys.SessionID;
+import ch.hsr.xclavis.keys.SessionKey;
 import ch.hsr.xclavis.crypto.AESGCM;
 import ch.hsr.xclavis.helpers.FileZipper;
 import java.io.File;

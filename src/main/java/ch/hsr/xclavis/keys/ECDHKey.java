@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ch.hsr.xclavis.commons;
+package ch.hsr.xclavis.keys;
 
 import ch.hsr.xclavis.crypto.ECDH;
 import ch.hsr.xclavis.crypto.HMACSHA;
@@ -13,31 +13,34 @@ import ch.hsr.xclavis.helpers.Base32;
  *
  * @author Gian
  */
-public class ECDHKey {
+public class ECDHKey extends Key {
 
     public final static String ECDH_BRAINPOOL_256 = "brainpoolP256t1";
     public final static String ECDH_BRAINPOOL_512 = "brainpoolP512t1";
 
-    private SessionID sessionID;
-    private ECDH ecdh;
-    //private KeyPair keyPair;
-    //private ECPublicKey ecPublicKey;
-    //private ECPrivateKey ecPrivateKey;
+    private final ECDH ecdh;
 
     // ECDH Request
     public ECDHKey(String type) {
-        this.sessionID = new SessionID(type);
+        super(new SessionID(type));
         this.ecdh = new ECDH(getCurve());
-        //this.keyPair = this.ecdh.getKeyPair();
-        //this.ecPublicKey = (ECPublicKey) this.keyPair.getPublic();
-        //this.ecPrivateKey = (ECPrivateKey) this.keyPair.getPrivate();
     }
-
+    
     // ECDH Response
     public ECDHKey(SessionID sessionID) {
-        this.sessionID = sessionID;
+        super(sessionID);
         this.ecdh = new ECDH(getCurve());
         changeType();
+    }
+
+    // ECDH from KeyStore
+    public ECDHKey(SessionID sessionID, byte[] privateKey, byte[] publicKey) {
+        super(sessionID);
+        this.ecdh = new ECDH(getCurve(), privateKey, publicKey);
+    }
+    
+    public byte[] getPrivateKey() {
+        return ecdh.getPrivateKey();
     }
 
     public byte[] getPublicKey() {        
@@ -46,10 +49,10 @@ public class ECDHKey {
 
     public SessionKey getSessionKey(byte[] publicKey) {
         byte[] agreedKey = ecdh.getAgreedKey(publicKey);
-        HMACSHA hmacsha = new HMACSHA(sessionID.getKeyLength());
-        byte[] derivatedKey = hmacsha.getDerivatedKey(sessionID.getFinalKeyLength(), agreedKey);
+        HMACSHA hmacsha = new HMACSHA(getSessionID().getKeyLength());
+        byte[] derivatedKey = hmacsha.getDerivatedKey(getSessionID().getFinalKeyLength(), agreedKey);
         changeType();
-        SessionKey sessionKey = new SessionKey(derivatedKey, sessionID);
+        SessionKey sessionKey = new SessionKey(getSessionID(), derivatedKey);
 
         return sessionKey;
     }
@@ -61,24 +64,16 @@ public class ECDHKey {
         byte[] trimmedPublicKey = new byte[bytePublicKey.length - 1];
         System.arraycopy(bytePublicKey, 0, trimmedPublicKey, 0, bytePublicKey.length - 1);
         byte[] agreedKey = ecdh.getAgreedKey(trimmedPublicKey);
-        HMACSHA hmacsha = new HMACSHA(sessionID.getKeyLength());
-        byte[] derivatedKey = hmacsha.getDerivatedKey(sessionID.getFinalKeyLength(), agreedKey);
+        HMACSHA hmacsha = new HMACSHA(getSessionID().getKeyLength());
+        byte[] derivatedKey = hmacsha.getDerivatedKey(getSessionID().getFinalKeyLength(), agreedKey);
         changeType();
-        SessionKey sessionKey = new SessionKey(derivatedKey, sessionID);
+        SessionKey sessionKey = new SessionKey(getSessionID(), derivatedKey);
 
         return sessionKey;
     }
 
-    public String getID() {
-        return sessionID.getID();
-    }
-    
-    public SessionID getSessionID() {
-        return sessionID;
-    }
-
     private String getCurve() {
-        String type = sessionID.getType();
+        String type = getSessionID().getType();
         String curve = "";
         switch (type) {
             case SessionID.ECDH_REQ_256:
@@ -95,19 +90,19 @@ public class ECDHKey {
     }
 
     private void changeType() {
-        String type = sessionID.getType();
+        String type = getSessionID().getType();
         switch (type) {
             case SessionID.ECDH_REQ_256:
-                sessionID.setType(SessionID.ECDH_RES_256);
+                getSessionID().setType(SessionID.ECDH_RES_256);
                 break;
             case SessionID.ECDH_REQ_512:
-                sessionID.setType(SessionID.ECDH_RES_512);
+                getSessionID().setType(SessionID.ECDH_RES_512);
                 break;
             case SessionID.ECDH_RES_256:
-                sessionID.setType(SessionID.SESSION_KEY_128);
+                getSessionID().setType(SessionID.SESSION_KEY_128);
                 break;
             case SessionID.ECDH_RES_512:
-                sessionID.setType(SessionID.SESSION_KEY_256);
+                getSessionID().setType(SessionID.SESSION_KEY_256);
                 break;
         }
     }
