@@ -56,7 +56,7 @@ public class KeyStore {
     }
 
     public boolean existsKey(SessionID sessionID) {
-        if (keys.stream().anyMatch((key) -> (key.getSessionID().equals(sessionID)))) {
+        if (keys.stream().anyMatch((key) -> (key.getSessionID().getID().equals(sessionID.getID())))) {
             return true;
         }
 
@@ -65,7 +65,7 @@ public class KeyStore {
 
     public SessionKey getSessionKey(SessionID sessionID) {
         for (Key key : keys) {
-            if (key.getSessionID().equals(sessionID)) {
+            if (key.getSessionID().getID().equals(sessionID.getID())) {
                 return (SessionKey) key;
             }
         }
@@ -90,7 +90,7 @@ public class KeyStore {
      */
     public ECDHKey getECDHKey(SessionID sessionID) {
         for (Key key : keys) {
-            if (key.getSessionID().equals(sessionID)) {
+            if (key.getSessionID().getID().equals(sessionID.getID())) {
                 return (ECDHKey) key;
             }
         }

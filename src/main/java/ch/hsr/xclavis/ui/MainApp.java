@@ -1,8 +1,9 @@
 package ch.hsr.xclavis.ui;
 
 import ch.hsr.xclavis.keys.KeyStore;
-import ch.hsr.xclavis.helpers.FileHandler;
+import ch.hsr.xclavis.files.FileHandler;
 import ch.hsr.xclavis.keys.Key;
+import ch.hsr.xclavis.keys.SessionKey;
 import ch.hsr.xclavis.ui.controller.CodeOutputController;
 import ch.hsr.xclavis.ui.controller.CodeReaderController;
 import ch.hsr.xclavis.ui.controller.CryptionStateController;
@@ -145,10 +146,11 @@ public class MainApp extends Application {
     /**
      * Shows the Encryption Status inside the root layout.
      * 
+     * @param sessionKey
      * @param encryption, true for encryption and false for decryption
      * @param output, Path for the output files
      */
-    public void showCryptionState(boolean encryption, String output) {
+    public void showCryptionState(SessionKey sessionKey, boolean encryption, String output) {
         try {
             // Load file overview.
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/CryptionState.fxml"), bundle);
@@ -161,8 +163,7 @@ public class MainApp extends Application {
             CryptionStateController controller = loader.getController();
 
             controller.setMainApp(this);
-            controller.setOutputPath(output);
-            controller.setEncryption(encryption);
+            controller.setParameters(sessionKey, encryption, output);
 
         } catch (IOException ex) {
             Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);

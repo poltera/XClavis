@@ -5,7 +5,7 @@
  */
 package ch.hsr.xclavis.ui.controller;
 
-import ch.hsr.xclavis.helpers.QRModel;
+import ch.hsr.xclavis.qrcode.QRModel;
 import ch.hsr.xclavis.keys.ECDHKey;
 import ch.hsr.xclavis.keys.Key;
 import ch.hsr.xclavis.keys.SessionKey;

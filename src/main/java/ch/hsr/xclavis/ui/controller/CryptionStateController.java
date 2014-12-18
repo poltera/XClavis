@@ -6,7 +6,8 @@
 package ch.hsr.xclavis.ui.controller;
 
 import ch.hsr.xclavis.webcam.DetectedWebcam;
-import ch.hsr.xclavis.crypter.Crypter;
+import ch.hsr.xclavis.files.FileCrypter;
+import ch.hsr.xclavis.keys.SessionKey;
 import ch.hsr.xclavis.ui.MainApp;
 import java.io.File;
 import java.net.URL;
@@ -29,10 +30,11 @@ public class CryptionStateController implements Initializable {
 
     private MainApp mainApp;
     private ResourceBundle rb;
-    private Crypter crypter;
+    private FileCrypter crypter;
+    private SessionKey sessionKey;
     private String output;
     private boolean encryption;
-    
+
     @FXML
     private ProgressIndicator progressIndicator;
     @FXML
@@ -40,20 +42,22 @@ public class CryptionStateController implements Initializable {
 
     /**
      * Initializes the controller class.
+     *
      * @param url
      * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         this.rb = rb;
-        crypter = new Crypter();
+        crypter = new FileCrypter();
         Platform.runLater(() -> {
             if (encryption) {
                 lblCryptionState.setText(rb.getString("encryption_state"));
-                progressIndicator.progressProperty().bind(crypter.encrypt(mainApp.getFiles().getObservableFileList(), output));
+                progressIndicator.progressProperty().bind(crypter.encrypt(sessionKey, mainApp.getFiles().getObservableFileList(), output));
             } else {
-
-            }         
+                lblCryptionState.setText(rb.getString("decryption_state"));
+                progressIndicator.progressProperty().bind(crypter.decrypt(sessionKey, mainApp.getFiles().getObservableFileList().get(0), output));
+            }
         });
     }
 
@@ -66,11 +70,9 @@ public class CryptionStateController implements Initializable {
         this.mainApp = mainApp;
     }
 
-    public void setOutputPath(String output) {
-        this.output = output;
-    }
-
-    public void setEncryption(boolean encryption) {
+    public void setParameters(SessionKey sessionKey, boolean encryption, String output) {
+        this.sessionKey = sessionKey;
         this.encryption = encryption;
+        this.output = output;
     }
 }

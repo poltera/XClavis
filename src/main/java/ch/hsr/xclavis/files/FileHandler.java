@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ch.hsr.xclavis.helpers;
+package ch.hsr.xclavis.files;
 
-import ch.hsr.xclavis.commons.SelectedFile;
+import ch.hsr.xclavis.files.SelectedFile;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -96,6 +96,14 @@ public class FileHandler {
             mode.set(0);
         }
     }
+    
+    public void removeAll() {
+        files.stream().forEach((selectedFile) -> {
+            files.remove(selectedFile);
+        });
+        
+        mode.set(0);
+    }
 
     private boolean firstFile() {
         return files.size() == 0;
@@ -185,15 +193,12 @@ public class FileHandler {
     }
 
     private byte[] getIV(File file) {
-        byte[] iv = new byte[16];
+        byte[] iv = new byte[12];
         if (isEncrypted(file)) {
             //12 Bytes IV
             try (FileInputStream fis = new FileInputStream(file);
                     DataInputStream dis = new DataInputStream(fis)) {
-                dis.readByte();
-                dis.readByte();
-                dis.readByte();
-                dis.readByte();
+                dis.skipBytes(4);
                 for (int i = 0; i < 12; i++) {
                     iv[i] = dis.readByte();
                 }

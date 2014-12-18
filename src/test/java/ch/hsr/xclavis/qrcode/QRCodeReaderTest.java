@@ -5,7 +5,6 @@
  */
 package ch.hsr.xclavis.qrcode;
 
-import ch.hsr.xclavis.helpers.QRModel;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.logging.Level;

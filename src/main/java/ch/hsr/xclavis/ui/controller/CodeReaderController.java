@@ -11,6 +11,7 @@ import ch.hsr.xclavis.commons.InputBlocks;
 import ch.hsr.xclavis.keys.Key;
 import ch.hsr.xclavis.keys.SessionID;
 import ch.hsr.xclavis.keys.SessionKey;
+import ch.hsr.xclavis.qrcode.QRModel;
 import ch.hsr.xclavis.webcam.DetectedWebcam;
 import ch.hsr.xclavis.ui.MainApp;
 import ch.hsr.xclavis.webcam.WebcamHandler;
@@ -106,7 +107,7 @@ public class CodeReaderController implements Initializable {
 
         // Listener for QRCode
         webcamHandler.getScanedQRCode().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
-            //mainApp.getFiles().addAll(new QRModel().getKeys(newValue).getKeys());
+            mainApp.getKeys().add(new QRModel().getKeys(newValue));
             mainApp.showKeyManagement();
             webcamHandler.shutdownWebcam();
         });
@@ -175,13 +176,18 @@ public class CodeReaderController implements Initializable {
                 if (inputBlocks.areValid()) {
                     try {
                         Thread.sleep(500);
-                        if (sessionID.isECDHReq()) {
+                        if (sessionID.isSessionKey()) {
+                            SessionKey sessionKey = new SessionKey(sessionID, inputBlocks.getValue());
+                            mainApp.getKeys().add(sessionKey);
+                            mainApp.showKeyManagement();
+                        } else if (sessionID.isECDHReq()) {
                             // Calculating the ECDH response and the SessionKey
                             ECDHKey ecdhKey = new ECDHKey(sessionID);
+                            mainApp.getKeys().add(ecdhKey);
                             SessionKey sessionKey = ecdhKey.getSessionKey(inputBlocks.getValue());
+                            mainApp.getKeys().add(sessionKey);
                             List<Key> keys = new ArrayList<>();
                             keys.add(ecdhKey);
-
                             mainApp.showCodeOutput(keys);
                         }
                     } catch (InterruptedException ex) {

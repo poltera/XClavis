@@ -5,6 +5,7 @@
  */
 package ch.hsr.xclavis.helpers;
 
+import ch.hsr.xclavis.qrcode.QRModel;
 import ch.hsr.xclavis.keys.ECDHKey;
 import ch.hsr.xclavis.keys.Key;
 import ch.hsr.xclavis.keys.SessionID;

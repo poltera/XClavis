@@ -3,12 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ch.hsr.xclavis.helpers;
+package ch.hsr.xclavis.qrcode;
 
 import ch.hsr.xclavis.keys.ECDHKey;
 import ch.hsr.xclavis.keys.SessionID;
 import ch.hsr.xclavis.keys.SessionKey;
 import ch.hsr.xclavis.crypto.Checksum;
+import ch.hsr.xclavis.helpers.Base32;
+import ch.hsr.xclavis.helpers.KeySeparator;
 import ch.hsr.xclavis.keys.Key;
 import java.util.ArrayList;
 import java.util.List;

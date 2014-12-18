@@ -89,6 +89,8 @@ public class ECDHKey extends Key {
         return curve;
     }
 
+    
+    //EDIT!!!!!!!!!!!! TBA
     private void changeType() {
         String type = getSessionID().getType();
         switch (type) {

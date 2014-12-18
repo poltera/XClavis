@@ -6,7 +6,6 @@
 package ch.hsr.xclavis.ui.controller;
 
 import ch.hsr.xclavis.ui.MainApp;
-import ch.hsr.xclavis.helpers.FileHandler;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;

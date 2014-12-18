@@ -3,10 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ch.hsr.xclavis.helpers;
+package ch.hsr.xclavis.files;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -15,6 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 /**
@@ -23,12 +26,11 @@ import java.util.zip.ZipOutputStream;
  */
 public class FileZipper {
     
+    private byte[] buffer = new byte[2048];
+    
     public FileZipper() {
     }
     
-    
-    
-    //TBA PROPERTIES ITEM
     public byte[] getZippedBytes(List<File> files, boolean compression) {
         byte[] result = null;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -63,5 +65,22 @@ public class FileZipper {
             }
         }
         return result;
+    }
+    
+    public void getFilesFromZippedBytes(byte[] input, String output) {        
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(input);
+                ZipInputStream zis = new ZipInputStream(bais)) {
+            ZipEntry entry;
+            while ((entry = zis.getNextEntry()) != null) {
+                try (FileOutputStream fos = new FileOutputStream(output + File.separator + entry.getName())) {
+                    int length = 0;
+                    while ((length  = zis.read(buffer)) > 0) {
+                        fos.write(buffer, 0, length);
+                    }
+                }
+            }
+        } catch(IOException ex) {
+            Logger.getLogger(FileZipper.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

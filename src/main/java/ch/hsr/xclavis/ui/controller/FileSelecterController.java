@@ -6,7 +6,8 @@
 package ch.hsr.xclavis.ui.controller;
 
 import ch.hsr.xclavis.ui.MainApp;
-import ch.hsr.xclavis.commons.SelectedFile;
+import ch.hsr.xclavis.files.SelectedFile;
+import ch.hsr.xclavis.helpers.Base32;
 import ch.hsr.xclavis.keys.Key;
 import ch.hsr.xclavis.keys.SessionID;
 import ch.hsr.xclavis.keys.SessionKey;
@@ -22,6 +23,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -59,15 +61,17 @@ public class FileSelecterController implements Initializable {
     @FXML
     private TableColumn<SelectedFile, Button> tcDelete;
     @FXML
+    private ComboBox<String> cbExisitingKeys;
+    @FXML
+    private TextField tfOutputPath;
+    @FXML
+    private HBox hbButtons;
+    @FXML
     private Button btnEncrypt;
     @FXML
     private Button btnDecrypt;
     @FXML
     private Button btnScanQR;
-    @FXML
-    private TextField tfOutputPath;
-    @FXML
-    private HBox hbButtons;
 
     /**
      * Initializes the controller class.
@@ -130,6 +134,9 @@ public class FileSelecterController implements Initializable {
                 hbButtons.getChildren().add(btnEncrypt);
             }
         });
+        for (SessionKey sessionKey : mainApp.getKeys().getSessionKeys()) {
+            cbExisitingKeys.getItems().add(sessionKey.getSessionID().getID());
+        }
     }
 
     @FXML
@@ -140,24 +147,31 @@ public class FileSelecterController implements Initializable {
         }
     }
 
-    public void loadFile(File file) {
-        mainApp.getFiles().add(file);
-        tableView.setDisable(true);
-    }
-
     @FXML
     private void encryptFiles(ActionEvent event) {
         SessionKey sessionKey = new SessionKey(SessionID.SESSION_KEY_128);
+        sessionKey.setPartner("Self");
         List<Key> keys = new ArrayList<>();
         keys.add(sessionKey);
         mainApp.getKeys().add(sessionKey);
         mainApp.showCodeOutput(keys);
-        mainApp.showCryptionState(true, tfOutputPath.getText() + File.separator + "encryption.enc");
+        mainApp.showCryptionState(sessionKey, true, tfOutputPath.getText() + File.separator + "encryption.enc");
+        //mainApp.getFiles().removeAll();
     }
 
     @FXML
     private void decryptFiles(ActionEvent event) {
-
+        String id = mainApp.getFiles().getObservableFileList().get(0).getID();
+        byte[] iv = mainApp.getFiles().getObservableFileList().get(0).getIV();
+        SessionID sessionID = new SessionID(id.substring(0, 1), id.substring(1));
+        if (mainApp.getKeys().existsKey(sessionID)) {
+            SessionKey sessionKey = mainApp.getKeys().getSessionKey(sessionID);
+            sessionKey.setIV(iv);
+            mainApp.showCryptionState(sessionKey, false, tfOutputPath.getText());
+            //mainApp.getFiles().removeAll();
+        } else {
+            mainApp.showCodeReader();
+        }
     }
 
     @FXML

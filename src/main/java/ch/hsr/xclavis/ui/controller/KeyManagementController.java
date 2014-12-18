@@ -28,6 +28,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 /**
  * FXML Controller class
@@ -128,6 +130,14 @@ public class KeyManagementController implements Initializable {
         }
         mainApp.showCodeOutput(keys);
         //saveKeys(keys);
+    }
+
+    @FXML
+    private void keyPressed(KeyEvent event) {
+        if (event.getCode() == KeyCode.DELETE) {
+            mainApp.getKeys().remove(tableView.getSelectionModel().getSelectedItem());
+            tableView.getSelectionModel().clearSelection();
+        }
     }
 
 }

@@ -6,6 +6,7 @@
 package ch.hsr.xclavis.crypto;
 
 import ch.hsr.xclavis.keys.SessionKey;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
@@ -105,7 +106,7 @@ public class AESGCM {
             }
             return true;
         } catch (InvalidCipherTextIOException ex) {
-            //System.out.println("Hash for the file is not correct!");
+            System.out.println("Hash for the file is not correct!");
             return false;
         } catch (IOException ex) {
             Logger.getLogger(AESGCM.class.getName()).log(Level.SEVERE, null, ex);
@@ -133,7 +134,31 @@ public class AESGCM {
         } catch (IOException ex) {
             Logger.getLogger(AESGCM.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
+        return result;
+    }
+
+    public byte[] decryptToByteStream(byte[] input) {
+        byte[] result = null;
+        try {
+            AEADBlockCipher cipher = new GCMBlockCipher(new AESEngine());
+            cipher.init(false, cipherParameters);
+
+            try (ByteArrayInputStream bais = new ByteArrayInputStream(input);
+                    CipherInputStream cis = new CipherInputStream(bais, cipher);
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                int i;
+                while ((i = cis.read(BLOCK)) != -1) {
+                    baos.write(BLOCK, 0, i);
+                }
+                result = baos.toByteArray();
+            }
+        } catch (InvalidCipherTextIOException ex) {
+            System.out.println("Hash for the file is not correct!");
+        } catch (IOException ex) {
+            Logger.getLogger(AESGCM.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         return result;
     }
 }

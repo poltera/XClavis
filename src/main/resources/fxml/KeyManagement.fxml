@@ -9,7 +9,7 @@
 
 <VBox id="keyManagement" alignment="TOP_CENTER" maxWidth="650.0" minWidth="650.0" prefHeight="650.0" prefWidth="650.0" spacing="25.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.hsr.xclavis.ui.controller.KeyManagementController">
    <children>
-      <TableView fx:id="tableView" maxHeight="400.0" maxWidth="500.0" minHeight="400.0" minWidth="500.0" prefHeight="400.0" prefWidth="500.0">
+      <TableView fx:id="tableView" maxHeight="400.0" maxWidth="500.0" minHeight="400.0" minWidth="500.0" onKeyPressed="#keyPressed" prefHeight="400.0" prefWidth="500.0">
         <columns>
             <TableColumn fx:id="tcID" prefWidth="75.0" text="%id" />
           <TableColumn fx:id="tcPartner" prefWidth="75.0" text="%partner" />
