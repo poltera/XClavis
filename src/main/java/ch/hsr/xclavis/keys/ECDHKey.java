@@ -30,7 +30,7 @@ public class ECDHKey extends Key {
     public ECDHKey(SessionID sessionID) {
         super(sessionID);
         this.ecdh = new ECDH(getCurve());
-        changeType();
+        changeTypeToECDHRes();
     }
 
     // ECDH from KeyStore
@@ -51,9 +51,9 @@ public class ECDHKey extends Key {
         byte[] agreedKey = ecdh.getAgreedKey(publicKey);
         HMACSHA hmacsha = new HMACSHA(getSessionID().getKeyLength());
         byte[] derivatedKey = hmacsha.getDerivatedKey(getSessionID().getFinalKeyLength(), agreedKey);
-        changeType();
         SessionKey sessionKey = new SessionKey(getSessionID(), derivatedKey);
-
+        sessionKey.changeTypeToSessionKey();
+        
         return sessionKey;
     }
 
@@ -66,9 +66,9 @@ public class ECDHKey extends Key {
         byte[] agreedKey = ecdh.getAgreedKey(trimmedPublicKey);
         HMACSHA hmacsha = new HMACSHA(getSessionID().getKeyLength());
         byte[] derivatedKey = hmacsha.getDerivatedKey(getSessionID().getFinalKeyLength(), agreedKey);
-        changeType();
-        SessionKey sessionKey = new SessionKey(getSessionID(), derivatedKey);
-
+        SessionKey sessionKey = new SessionKey(new SessionID(getSessionID().getType(), getSessionID().getRandom()), derivatedKey);
+        sessionKey.changeTypeToSessionKey();
+        
         return sessionKey;
     }
 
@@ -87,25 +87,5 @@ public class ECDHKey extends Key {
         }
 
         return curve;
-    }
-
-    
-    //EDIT!!!!!!!!!!!! TBA
-    private void changeType() {
-        String type = getSessionID().getType();
-        switch (type) {
-            case SessionID.ECDH_REQ_256:
-                getSessionID().setType(SessionID.ECDH_RES_256);
-                break;
-            case SessionID.ECDH_REQ_512:
-                getSessionID().setType(SessionID.ECDH_RES_512);
-                break;
-            case SessionID.ECDH_RES_256:
-                getSessionID().setType(SessionID.SESSION_KEY_128);
-                break;
-            case SessionID.ECDH_RES_512:
-                getSessionID().setType(SessionID.SESSION_KEY_256);
-                break;
-        }
     }
 }

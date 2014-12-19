@@ -122,6 +122,7 @@ public class KeyStore {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             for (Key key : keys) {
                 if (key.getSessionID().isSessionKey()) {
+                    System.out.println("save: " + key.getID() + "   " + key.getSessionID().getID());
                     SessionKey sessionKey = (SessionKey) key;
                     baos.write(sessionKey.getID().getBytes());
                     baos.write(sessionKey.getKey());

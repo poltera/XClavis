@@ -59,6 +59,10 @@ public class SessionID {
     public void setType(String type) {
         this.type = type;
     }
+    
+    public String getRandom() {
+        return random;
+    }
 
     public int getKeyLength() {
         switch (getType()) {
