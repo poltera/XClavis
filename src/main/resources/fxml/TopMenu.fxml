@@ -42,35 +42,51 @@
                 </Menu>
             </menus>
         </MenuBar>
-      <HBox fx:id="toolBar" alignment="TOP_CENTER" maxWidth="650.0" minWidth="650.0" prefWidth="650.0">
-         <children>
-                <Button maxWidth="166.0" minWidth="166.0" onAction="#openFile" prefWidth="166.0" text="%open_file">
-                    <graphic>
+      <TabPane tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab text="%open_file">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+            </content>
+               <graphic>
                         <ImageView>
                             <image>
                                 <Image url="@../images/open.png" />
                             </image>
                         </ImageView>
-                    </graphic>
-                </Button>
-                <Button maxWidth="167.0" minWidth="167.0" onAction="#scanQR" prefWidth="167.0" text="%scan_qr_code">
-                    <graphic>
+               </graphic>
+          </Tab>
+            <Tab text="%scan_qr_code">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+              </content>
+               <graphic>
                         <ImageView>
                             <image>
                                 <Image url="@../images/scanner.png" />
                             </image>
                         </ImageView>
-                    </graphic>
-                </Button>
-                <Button maxWidth="167.0" minWidth="167.0" onAction="#keyManagement" prefWidth="167.0" text="%key_management">
-                    <graphic>
+               </graphic>
+            </Tab>
+          <Tab text="%key_management">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+            </content>
+               <graphic>
                         <ImageView>
                             <image>
                                 <Image url="@../images/key_management.png" />
                             </image>
                         </ImageView>
-                    </graphic>
-                </Button>
+               </graphic>
+          </Tab>
+        </tabs>
+      </TabPane>
+      <HBox fx:id="toolBar" alignment="TOP_CENTER" maxWidth="650.0" minWidth="650.0" prefWidth="650.0">
+         <children>
+                <Button maxWidth="166.0" minWidth="166.0" onAction="#openFile" prefWidth="166.0" text="%open_file" />
+                <Button maxWidth="167.0" minWidth="167.0" onAction="#scanQR" prefWidth="167.0" text="%scan_qr_code" />
+                <Button maxWidth="167.0" minWidth="167.0" onAction="#keyManagement" prefWidth="167.0" text="%key_management" />
          </children>
       </HBox>
     </children>
