@@ -12,8 +12,10 @@ import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.scene.control.TextInputDialog;
 import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.io.CipherInputStream;
 import org.bouncycastle.crypto.io.CipherOutputStream;
@@ -71,7 +73,7 @@ public class AESGCM {
         }
     }
 
-    public boolean encrypt2(byte[] input, String output) {
+    public boolean encryptKeyStore(byte[] input, String output) {
         try {
             AEADBlockCipher cipher = new GCMBlockCipher(new AESEngine());
             cipher.init(true, cipherParameters);
@@ -114,7 +116,7 @@ public class AESGCM {
         }
     }
 
-    public byte[] decryptToByteStream(String input) {
+    public byte[] decryptKeyStore(String input) {
         byte[] result = null;
         try {
             AEADBlockCipher cipher = new GCMBlockCipher(new AESEngine());
@@ -130,7 +132,14 @@ public class AESGCM {
                 result = baos.toByteArray();
             }
         } catch (InvalidCipherTextIOException ex) {
-            System.out.println("Hash for the file is not correct!");
+            TextInputDialog dialog = new TextInputDialog("password");
+            dialog.setTitle("XClavis");
+            dialog.setHeaderText("Passwort für die Entschlüsselung des KeyStores eingeben");
+            dialog.setContentText("");
+
+            Optional<String> password = dialog.showAndWait();
+            password.ifPresent(choice -> System.out.println("test"));
+            System.out.println("Wrong Password or Hash for the file is not correct!");
         } catch (IOException ex) {
             Logger.getLogger(AESGCM.class.getName()).log(Level.SEVERE, null, ex);
         }

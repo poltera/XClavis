@@ -143,7 +143,7 @@ public class KeyStore {
                     }
                 }
             }
-            aes.encrypt2(baos.toByteArray(), KEYSTORE_PATH);
+            aes.encryptKeyStore(baos.toByteArray(), KEYSTORE_PATH);
 
         } catch (IOException ex) {
             Logger.getLogger(KeyStore.class.getName()).log(Level.SEVERE, null, ex);
@@ -171,7 +171,7 @@ public class KeyStore {
         }
                 
         if (file.exists()) {
-            byte[] keysBytes = aes.decryptToByteStream(KEYSTORE_PATH);
+            byte[] keysBytes = aes.decryptKeyStore(KEYSTORE_PATH);
             int delimiters = 0;
             int length = 0;
 
