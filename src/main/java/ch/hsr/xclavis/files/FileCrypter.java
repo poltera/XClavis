@@ -5,11 +5,8 @@
  */
 package ch.hsr.xclavis.files;
 
-import ch.hsr.xclavis.files.SelectedFile;
-import ch.hsr.xclavis.keys.SessionID;
 import ch.hsr.xclavis.keys.SessionKey;
 import ch.hsr.xclavis.crypto.AESGCM;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.File;
@@ -33,8 +30,6 @@ public class FileCrypter {
     
     private byte[] buffer = new byte[2048];
     
-    private final static String ENCRYPTED_FILE_EXTENSION = "enc";
-    private final static String DELIMITER = "|";
     private final static boolean COMPRESSION = true;
 
     //private final List<SelectedFile> selectedFiles;
@@ -56,10 +51,18 @@ public class FileCrypter {
                     plaintextFiles.add(selectedFile.getFile());
                 });
                 updateProgress(1, 10);
+                long before = System.nanoTime();
+                // some amazing blocking function
+                
+
                 byte[] input = zip.getZippedBytes(plaintextFiles, COMPRESSION);
                 updateProgress(7, 10);
                 boolean result = aes.encrypt(input, output, sessionKey);
+                
+                long after = System.nanoTime();
+                long runningTimeMs = (after - before) / 1000000;
                 updateProgress(10, 10);
+                System.out.println("ZEIT: " + runningTimeMs);
                 return null;
             }
         };

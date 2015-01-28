@@ -43,8 +43,8 @@ public class Base32Test {
     @Test
     public void testBitStringToBase32() {
         System.out.println("bitStringToBase32");
-        String bitString = "010000100100001";
-        String expResult = "AB3";
+        String bitString = "0100001001000011101";
+        String expResult = "AB3U";
         String result = Base32.bitStringToBase32(bitString);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.

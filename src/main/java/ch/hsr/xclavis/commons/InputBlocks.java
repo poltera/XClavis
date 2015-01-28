@@ -32,8 +32,6 @@ public class InputBlocks {
 
     public boolean areValid() {
         if (areComplete()) {
-            System.out.println("Value: " + getValue());
-            System.out.println("Checksum: " + getChecksum());
             if (Checksum.verify(getValue(), getChecksum())) {
                 markCorrect();
                 return true;

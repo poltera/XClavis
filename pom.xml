@@ -22,6 +22,12 @@
     
     <!-- edited -->
     <dependencies>
+        <!-- ControlsFX -->
+        <dependency>
+            <groupId>org.controlsfx</groupId>
+            <artifactId>controlsfx</artifactId>
+            <version>8.20.8</version>
+        </dependency>
         <!-- Crypto -->
         <dependency>
             <groupId>org.bouncycastle</groupId>

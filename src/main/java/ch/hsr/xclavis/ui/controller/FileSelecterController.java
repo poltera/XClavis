@@ -7,7 +7,6 @@ package ch.hsr.xclavis.ui.controller;
 
 import ch.hsr.xclavis.ui.MainApp;
 import ch.hsr.xclavis.files.SelectedFile;
-import ch.hsr.xclavis.helpers.Base32;
 import ch.hsr.xclavis.keys.Key;
 import ch.hsr.xclavis.keys.SessionID;
 import ch.hsr.xclavis.keys.SessionKey;
@@ -149,7 +148,12 @@ public class FileSelecterController implements Initializable {
 
     @FXML
     private void encryptFiles(ActionEvent event) {
-        SessionKey sessionKey = new SessionKey(SessionID.SESSION_KEY_128);
+        SessionKey sessionKey;
+        if (mainApp.getProperties().getInteger("key_size") == 256) {
+            sessionKey = new SessionKey(SessionID.SESSION_KEY_256);
+        } else {
+            sessionKey = new SessionKey(SessionID.SESSION_KEY_128);
+        }
         sessionKey.setPartner("Self");
         List<Key> keys = new ArrayList<>();
         keys.add(sessionKey);

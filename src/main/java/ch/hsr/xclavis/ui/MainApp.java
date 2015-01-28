@@ -2,6 +2,7 @@ package ch.hsr.xclavis.ui;
 
 import ch.hsr.xclavis.keys.KeyStore;
 import ch.hsr.xclavis.files.FileHandler;
+import ch.hsr.xclavis.helpers.PropertiesHandler;
 import ch.hsr.xclavis.keys.Key;
 import ch.hsr.xclavis.keys.SessionKey;
 import ch.hsr.xclavis.ui.controller.CodeOutputController;
@@ -31,16 +32,27 @@ public class MainApp extends Application {
     private Stage stage;
     private BorderPane rootLayout;
     private ResourceBundle bundle;
-    
+
+    private PropertiesHandler properties;
     private FileHandler files;
     private KeyStore keys;
 
     /**
      * Constructor
      */
-    public MainApp() {        
+    public MainApp() {
+        this.properties = new PropertiesHandler();
         this.files = new FileHandler();
         this.keys = new KeyStore();
+    }
+
+    /**
+     * Returns the Properties.
+     *
+     * @return
+     */
+    public PropertiesHandler getProperties() {
+        return properties;
     }
 
     /**
@@ -51,14 +63,18 @@ public class MainApp extends Application {
     public FileHandler getFiles() {
         return files;
     }
-    
+
     /**
      * Return the Keys.
-     * 
+     *
      * @return
      */
     public KeyStore getKeys() {
         return keys;
+    }
+    
+    public Stage getStage() {
+        return stage;
     }
 
     @Override
@@ -145,7 +161,7 @@ public class MainApp extends Application {
 
     /**
      * Shows the Encryption Status inside the root layout.
-     * 
+     *
      * @param sessionKey
      * @param encryption, true for encryption and false for decryption
      * @param output, Path for the output files
@@ -194,6 +210,7 @@ public class MainApp extends Application {
 
     /**
      * Shows the Code Output inside the root layout.
+     *
      * @param keys
      */
     public void showCodeOutput(List<Key> keys) {

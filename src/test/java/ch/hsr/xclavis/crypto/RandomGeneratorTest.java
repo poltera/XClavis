@@ -24,32 +24,53 @@ import static org.junit.Assert.*;
  * @author Gian
  */
 public class RandomGeneratorTest {
-    
+
     public RandomGeneratorTest() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
 
     private final static String UNICODE_KEY = "\uD83D\uDD11";
+
     /**
      * Test of getRandomBytes method, of class RandomGenerator.
      */
     @Test
     public void testGetRandomBytes() {
+        byte[] bytes = RandomGenerator.getRandomBytes(16);
+
+        for (byte b : bytes) {
+
+            String s1 = String.format("%8s", Integer.toBinaryString(b & 0xFF)).replace(' ', '0');
+            System.out.print("{" + s1 + "} ");
+        }
+        System.out.println();
+        
+        String base32 = Base32.byteToBase32(bytes);
+        System.out.println(base32);
+        
+        byte[] bytes2 = Base32.base32ToByte(base32);
+        for (byte b : bytes2) {
+
+            String s1 = String.format("%8s", Integer.toBinaryString(b & 0xFF)).replace(' ', '0');
+            System.out.print("{" + s1 + "} ");
+        }
+        System.out.println();
+        
     }
 
     /**
@@ -57,8 +78,6 @@ public class RandomGeneratorTest {
      */
     @Test
     public void testGetRandomBits() {
-        for (Webcam webcam : Webcam.getWebcams()) {
-            System.out.println("Kamera gefunden: " + webcam.getName());
-        }
+
     }
 }

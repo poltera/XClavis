@@ -9,6 +9,9 @@ import ch.hsr.xclavis.crypto.AESGCM;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -23,18 +26,19 @@ import javafx.collections.ObservableList;
 public class KeyStore {
 
     //private final static String KEYSTORE_PATH = System.getProperty("user.home") + File.separator + ".xclavis" + File.separator + "keystore" + File.separator + "keystore.keys";
-    private final static String KEYSTORE_PATH = System.getProperty("user.home") + File.separator + "keystore.keys";
+    private static final String BASE_PATH = System.getProperty("user.home") + File.separator + ".xclavis" + File.separator;
+    private final static String KEYSTORE_PATH = BASE_PATH + "keystore.keys";
     private final static String DELIMITER = "|";
-    private final static byte[] KEYSTORE_KEY = "LSKSMDIALKSNBWEI".getBytes();
+    private byte[] keystoreKey = "LSKSMDIALKSNBWEI".getBytes();
     private final static byte[] KEYSTORE_IV = "LSJFGWWWSDSS".getBytes();
     private final static int DELIMITER_COUNT = 3;
     private final static int ID_LENGTH = 4;
 
-    private final AESGCM aes;
+    private AESGCM aes;
     private final ObservableList<Key> keys;
 
-    public KeyStore() {
-        this.aes = new AESGCM(KEYSTORE_KEY, KEYSTORE_IV);
+    public KeyStore() {        
+        this.aes = new AESGCM(keystoreKey, KEYSTORE_IV);
         this.keys = FXCollections.observableArrayList();
         loadKeys();
     }
@@ -145,9 +149,27 @@ public class KeyStore {
             Logger.getLogger(KeyStore.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    public void updateKeyStorePassword(String string) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            keystoreKey = digest.digest(string.getBytes("UTF-8"));
+            aes = new AESGCM(keystoreKey, KEYSTORE_IV);
+            saveKeys();            
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException ex) {
+            Logger.getLogger(KeyStore.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
 
     private void loadKeys() {
+        File base_path = new File(BASE_PATH);
         File file = new File(KEYSTORE_PATH);
+        
+        if (!base_path.exists()) {
+            base_path.mkdir();
+        }
+                
         if (file.exists()) {
             byte[] keysBytes = aes.decryptToByteStream(KEYSTORE_PATH);
             int delimiters = 0;

@@ -20,17 +20,26 @@
                 </Menu>
                 <Menu mnemonicParsing="false" text="%settings">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="%security" />
+                  <Menu mnemonicParsing="false" text="%security">
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#showKeyLengthSettings" text="%key_length" />
+                        <MenuItem mnemonicParsing="false" onAction="#showKeyStorePasswordSettings" text="%key_store_password" />
+                    </items>
+                  </Menu>
                         <Menu mnemonicParsing="false" text="%language">
                             <items>
                                 <MenuItem mnemonicParsing="false" onAction="#changeLanguageToGerman" text="%german" />
-                                <MenuItem mnemonicParsing="false" text="Unspecified Action" />
-                                <MenuItem mnemonicParsing="false" text="Unspecified Action" />
-                                <MenuItem mnemonicParsing="false" text="Unspecified Action" />
+                                <MenuItem mnemonicParsing="false" text="%french" />
+                                <MenuItem mnemonicParsing="false" text="%italian" />
+                                <MenuItem mnemonicParsing="false" text="%romansh" />
                                 <MenuItem mnemonicParsing="false" onAction="#changeLanguageToEnglish" text="%english" />
                             </items>
                         </Menu>
-                        <MenuItem mnemonicParsing="false" text="%general" />
+                  <Menu mnemonicParsing="false" text="%general">
+                    <items>
+                              <MenuItem mnemonicParsing="false" onAction="#showOutputPathSettings" text="%output_path" />
+                    </items>
+                  </Menu>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="%help">
@@ -44,7 +53,7 @@
         </MenuBar>
       <HBox fx:id="toolBar" alignment="TOP_CENTER" maxWidth="650.0" minWidth="650.0" prefWidth="650.0">
          <children>
-                <Button maxWidth="166.0" minWidth="166.0" onAction="#openFile" prefWidth="166.0" text="%open_file">
+                <Button maxWidth="166.0" minWidth="166.0" onAction="#showFileList" prefWidth="166.0" text="%file_list">
                     <graphic>
                         <ImageView>
                             <image>
@@ -53,7 +62,7 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button maxWidth="167.0" minWidth="167.0" onAction="#scanQR" prefWidth="167.0" text="%scan_qr_code">
+                <Button maxWidth="167.0" minWidth="167.0" onAction="#showQRScanner" prefWidth="167.0" text="%scan_qr_code">
                     <graphic>
                         <ImageView>
                             <image>
@@ -62,7 +71,7 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button maxWidth="167.0" minWidth="167.0" onAction="#keyManagement" prefWidth="167.0" text="%key_management">
+                <Button maxWidth="167.0" minWidth="167.0" onAction="#showKeyList" prefWidth="167.0" text="%key_management">
                     <graphic>
                         <ImageView>
                             <image>

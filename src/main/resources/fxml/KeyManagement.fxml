@@ -21,7 +21,7 @@
       <HBox alignment="TOP_CENTER" maxWidth="500.0" minWidth="500.0" prefWidth="500.0" spacing="10.0">
          <children>
             <TextField fx:id="tfName" text="%partner" />
-            <Slider fx:id="slKeyNumbers" blockIncrement="1.0" majorTickUnit="1.0" max="10.0" min="1.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0" />
+            <Slider fx:id="slKeyNumbers" blockIncrement="1.0" majorTickUnit="1.0" max="20.0" min="1.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0" />
             <CheckBox fx:id="cbExtendedSecurity" mnemonicParsing="false" text="%extended_security" />
             <Button fx:id="btnBegin" mnemonicParsing="false" onAction="#startKeyExchange" text="%create" />
          </children>

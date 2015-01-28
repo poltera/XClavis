@@ -5,6 +5,7 @@
  */
 package ch.hsr.xclavis.crypto;
 
+import ch.hsr.xclavis.helpers.Base32;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
@@ -67,7 +68,11 @@ public class ECDH {
 
     public byte[] getPublicKey() {
 
+        System.out.println("Test1: " + Base32.byteToBitString(ecPublicKeyParameters.getQ().getEncoded(false)));
+        System.out.println("Test2: " + Base32.byteToBitString(ecPublicKeyParameters.getQ().getEncoded(true)));
+        
         return ecPublicKeyParameters.getQ().getEncoded(true);
+        
     }
 
     public byte[] getAgreedKey(byte[] publicKey) {
@@ -76,7 +81,7 @@ public class ECDH {
         ECDHCBasicAgreement basicAgreement = new ECDHCBasicAgreement();
         basicAgreement.init(ecPrivateKeyParameters);
         byte[] agreedKey = basicAgreement.calculateAgreement(remotePublicKey).toByteArray();
-
+        
         return agreedKey;
     }
 

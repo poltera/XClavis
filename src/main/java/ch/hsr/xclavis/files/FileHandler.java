@@ -5,7 +5,6 @@
  */
 package ch.hsr.xclavis.files;
 
-import ch.hsr.xclavis.files.SelectedFile;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

@@ -5,20 +5,15 @@
  */
 package ch.hsr.xclavis.ui.controller;
 
-import ch.hsr.xclavis.webcam.DetectedWebcam;
 import ch.hsr.xclavis.files.FileCrypter;
 import ch.hsr.xclavis.keys.SessionKey;
 import ch.hsr.xclavis.ui.MainApp;
-import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
-import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
 
 /**
