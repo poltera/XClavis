@@ -15,6 +15,7 @@ import ch.hsr.xclavis.ui.controller.TopMenuController;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,6 +23,7 @@ import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
@@ -44,6 +46,10 @@ public class MainApp extends Application {
         this.properties = new PropertiesHandler();
         this.files = new FileHandler();
         this.keys = new KeyStore();
+        
+        while (!keys.isPasswordCorrect()) {
+            showPasswordInput();
+        }
     }
 
     /**
@@ -75,6 +81,16 @@ public class MainApp extends Application {
     
     public Stage getStage() {
         return stage;
+    }
+    
+    private void showPasswordInput() {
+            TextInputDialog dialog = new TextInputDialog("password");
+            dialog.setTitle("XClavis");
+            dialog.setHeaderText("XClavis Passwort eingeben");
+            dialog.setContentText("");
+
+            Optional<String> password = dialog.showAndWait();
+            password.ifPresent(choice -> keys = new KeyStore(choice));
     }
 
     @Override

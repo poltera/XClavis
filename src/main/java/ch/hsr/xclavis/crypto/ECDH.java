@@ -68,8 +68,8 @@ public class ECDH {
 
     public byte[] getPublicKey() {
 
-        System.out.println("Test1: " + Base32.byteToBitString(ecPublicKeyParameters.getQ().getEncoded(false)));
-        System.out.println("Test2: " + Base32.byteToBitString(ecPublicKeyParameters.getQ().getEncoded(true)));
+        //System.out.println("Test1: " + Base32.byteToBitString(ecPublicKeyParameters.getQ().getEncoded(false)));
+        //System.out.println("Test2: " + Base32.byteToBitString(ecPublicKeyParameters.getQ().getEncoded(true)));
         
         return ecPublicKeyParameters.getQ().getEncoded(true);
         

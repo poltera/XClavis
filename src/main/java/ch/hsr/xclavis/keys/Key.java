@@ -25,10 +25,10 @@ public class Key {
     public Key(SessionID sessionID) {
         this.sessionID = sessionID;
         this.id = new SimpleStringProperty(this.sessionID.getID());
-        this.partner = new SimpleStringProperty();
+        this.partner = new SimpleStringProperty("self");
         LocalDateTime now = LocalDateTime.now();
         this.date = new SimpleStringProperty(now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
-        this.state = new SimpleStringProperty();
+        this.state = new SimpleStringProperty("0");
     }
 
     public SessionID getSessionID() {
@@ -62,13 +62,21 @@ public class Key {
     public StringProperty dateProperty() {
         return date;
     }
+    
+    public void setDate(String date) {
+        this.date.set(date);
+    }
 
-    public int getState() {
-        return 0;
+    public String getState() {
+        return state.get();
     }
 
     public StringProperty stateProperty() {
         return state;
+    }
+    
+    public void setState(String state) {
+        this.state.set(state);
     }
 
     public void changeTypeToSessionKey() {

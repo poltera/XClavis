@@ -25,7 +25,7 @@ public class ECDHKey extends Key {
         super(new SessionID(type));
         this.ecdh = new ECDH(getCurve());
     }
-    
+
     // ECDH Response
     public ECDHKey(SessionID sessionID) {
         super(sessionID);
@@ -34,16 +34,30 @@ public class ECDHKey extends Key {
     }
 
     // ECDH from KeyStore
-    public ECDHKey(SessionID sessionID, byte[] privateKey, byte[] publicKey) {
+    public ECDHKey(SessionID sessionID, String base32PrivateKey, String base32PublicKey) {
         super(sessionID);
-        this.ecdh = new ECDH(getCurve(), privateKey, publicKey);
+        // Converting back a Base32 String to its Byte Value gives in some cases an additional Byte
+        byte[] bytePrivateKey = Base32.base32ToByte(base32PrivateKey);
+        byte[] bytePublicKey = Base32.base32ToByte(base32PublicKey);
+
+        // Trim the additional Byte
+        byte[] trimmedPrivateKey = new byte[bytePrivateKey.length - 1];
+        System.arraycopy(bytePrivateKey, 0, trimmedPrivateKey, 0, bytePrivateKey.length - 1);
+
+        if (bytePublicKey.length != 65) {
+            byte[] trimmedPublicKey = new byte[bytePublicKey.length - 1];
+            System.arraycopy(bytePublicKey, 0, trimmedPublicKey, 0, bytePublicKey.length - 1);
+            this.ecdh = new ECDH(getCurve(), trimmedPrivateKey, trimmedPublicKey);
+        } else {
+            this.ecdh = new ECDH(getCurve(), trimmedPrivateKey, bytePublicKey);
+        }
     }
-    
+
     public byte[] getPrivateKey() {
         return ecdh.getPrivateKey();
     }
 
-    public byte[] getPublicKey() {        
+    public byte[] getPublicKey() {
         return ecdh.getPublicKey();
     }
 
@@ -53,22 +67,27 @@ public class ECDHKey extends Key {
         byte[] derivatedKey = hmacsha.getDerivatedKey(getSessionID().getFinalKeyLength(), agreedKey);
         SessionKey sessionKey = new SessionKey(getSessionID(), derivatedKey);
         sessionKey.changeTypeToSessionKey();
-        
+
         return sessionKey;
     }
 
     public SessionKey getSessionKey(String base32PublicKey) {
-        // Converting back a Base32 String to its Byte Value gives an additional Byte
+        // Converting back a Base32 String to its Byte Value gives in some cases an additional Byte
         byte[] bytePublicKey = Base32.base32ToByte(base32PublicKey);
         // Trim the additional Byte
-        byte[] trimmedPublicKey = new byte[bytePublicKey.length - 1];
-        System.arraycopy(bytePublicKey, 0, trimmedPublicKey, 0, bytePublicKey.length - 1);
-        byte[] agreedKey = ecdh.getAgreedKey(trimmedPublicKey);
+        byte[] agreedKey;
+        if (bytePublicKey.length != 65) {
+            byte[] trimmedPublicKey = new byte[bytePublicKey.length - 1];
+            System.arraycopy(bytePublicKey, 0, trimmedPublicKey, 0, bytePublicKey.length - 1);
+            agreedKey = ecdh.getAgreedKey(trimmedPublicKey);
+        } else {
+            agreedKey = ecdh.getAgreedKey(bytePublicKey);
+        }
         HMACSHA hmacsha = new HMACSHA(getSessionID().getKeyLength());
         byte[] derivatedKey = hmacsha.getDerivatedKey(getSessionID().getFinalKeyLength(), agreedKey);
         SessionKey sessionKey = new SessionKey(new SessionID(getSessionID().getType(), getSessionID().getRandom()), derivatedKey);
         sessionKey.changeTypeToSessionKey();
-        
+
         return sessionKey;
     }
 

@@ -12,10 +12,8 @@ import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.scene.control.TextInputDialog;
 import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.io.CipherInputStream;
 import org.bouncycastle.crypto.io.CipherOutputStream;
@@ -132,13 +130,6 @@ public class AESGCM {
                 result = baos.toByteArray();
             }
         } catch (InvalidCipherTextIOException ex) {
-            TextInputDialog dialog = new TextInputDialog("password");
-            dialog.setTitle("XClavis");
-            dialog.setHeaderText("Passwort für die Entschlüsselung des KeyStores eingeben");
-            dialog.setContentText("");
-
-            Optional<String> password = dialog.showAndWait();
-            password.ifPresent(choice -> System.out.println("test"));
             System.out.println("Wrong Password or Hash for the file is not correct!");
         } catch (IOException ex) {
             Logger.getLogger(AESGCM.class.getName()).log(Level.SEVERE, null, ex);
@@ -169,5 +160,28 @@ public class AESGCM {
         }
 
         return result;
+    }
+
+    public boolean isKeyCorrect(String input) {
+        try {
+            AEADBlockCipher cipher = new GCMBlockCipher(new AESEngine());
+            cipher.init(false, cipherParameters);
+
+            try (FileInputStream fis = new FileInputStream(input);
+                    CipherInputStream cis = new CipherInputStream(fis, cipher);
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                int i;
+                while ((i = cis.read(BLOCK)) != -1) {
+                    baos.write(BLOCK, 0, i);
+                }
+            }
+        } catch (InvalidCipherTextIOException ex) {
+            return false;
+        } catch (IOException ex) {
+            Logger.getLogger(AESGCM.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return true;
+
     }
 }

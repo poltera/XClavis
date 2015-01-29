@@ -17,6 +17,8 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -134,10 +136,20 @@ public class TopMenuController implements Initializable {
         dialog.setContentText("");
 
         Optional<String> result = dialog.showAndWait();
-        result.ifPresent(choice -> mainApp.getKeys().updateKeyStorePassword(choice));
+        result.ifPresent(choice -> mainApp.getKeys().updatePassword(choice));
     }
 
     @FXML
     private void showOutputPathSettings(ActionEvent event) {
+    }
+
+    @FXML
+    private void showAbout(ActionEvent event) {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("XClavis");
+        alert.setHeaderText("Über");
+        alert.setContentText("Copyright 2015 Gian Poltéra, Alle Rechte vorbehalten\nVersion 0.97");
+
+        alert.showAndWait();
     }
 }

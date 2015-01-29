@@ -6,10 +6,12 @@
 package ch.hsr.xclavis.keys;
 
 import ch.hsr.xclavis.crypto.AESGCM;
+import ch.hsr.xclavis.helpers.Base32;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -32,15 +34,32 @@ public class KeyStore {
     private byte[] keystoreKey = "LSKSMDIALKSNBWEI".getBytes();
     private final static byte[] KEYSTORE_IV = "LSJFGWWWSDSS".getBytes();
     private final static int DELIMITER_COUNT = 3;
-    private final static int ID_LENGTH = 4;
 
     private AESGCM aes;
     private final ObservableList<Key> keys;
 
-    public KeyStore() {        
+    public KeyStore() {
         this.aes = new AESGCM(keystoreKey, KEYSTORE_IV);
         this.keys = FXCollections.observableArrayList();
-        loadKeys();
+
+        if (isPasswordCorrect()) {
+            loadKeys();
+        }
+    }
+
+    public KeyStore(String password) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            this.keystoreKey = digest.digest(password.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException | NoSuchAlgorithmException ex) {
+            Logger.getLogger(KeyStore.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        this.aes = new AESGCM(keystoreKey, KEYSTORE_IV);
+        this.keys = FXCollections.observableArrayList();
+
+        if (isPasswordCorrect()) {
+            loadKeys();
+        }
     }
 
     public ObservableList<Key> getObservableKeyList() {
@@ -125,19 +144,25 @@ public class KeyStore {
     public void saveKeys() {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             for (Key key : keys) {
+                baos.write(key.getID().getBytes());
+                baos.write(DELIMITER.getBytes());
+                baos.write(key.getDate().getBytes());
+                baos.write(DELIMITER.getBytes());
+                baos.write(key.getPartner().getBytes());
+                baos.write(DELIMITER.getBytes());
+                baos.write(key.getState().getBytes());
+                baos.write(DELIMITER.getBytes());
                 if (key.getSessionID().isSessionKey()) {
-                    System.out.println("save: " + key.getID() + "   " + key.getSessionID().getID());
                     SessionKey sessionKey = (SessionKey) key;
-                    baos.write(sessionKey.getID().getBytes());
-                    baos.write(sessionKey.getKey());
+                    baos.write(Base32.byteToBase32(sessionKey.getKey()).getBytes());
                     for (int i = 0; i < DELIMITER_COUNT; i++) {
                         baos.write(DELIMITER.getBytes());
                     }
                 } else if (key.getSessionID().isECDH()) {
                     ECDHKey ecdhKey = (ECDHKey) key;
-                    baos.write(ecdhKey.getID().getBytes());
-                    baos.write(ecdhKey.getPrivateKey());
-                    baos.write(ecdhKey.getPublicKey());
+                    baos.write(Base32.byteToBase32(ecdhKey.getPrivateKey()).getBytes());
+                    baos.write(DELIMITER.getBytes());
+                    baos.write(Base32.byteToBase32(ecdhKey.getPublicKey()).getBytes());
                     for (int i = 0; i < DELIMITER_COUNT; i++) {
                         baos.write(DELIMITER.getBytes());
                     }
@@ -149,72 +174,68 @@ public class KeyStore {
             Logger.getLogger(KeyStore.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void updateKeyStorePassword(String string) {
+
+    public boolean isPasswordCorrect() {
+        File base_path = new File(BASE_PATH);
+        File file = new File(KEYSTORE_PATH);
+
+        if (!base_path.exists()) {
+            base_path.mkdir();
+        }
+
+        if (file.exists()) {
+            return aes.isKeyCorrect(KEYSTORE_PATH);
+        }
+
+        return true;
+    }
+
+    public void updatePassword(String password) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            keystoreKey = digest.digest(string.getBytes("UTF-8"));
+            keystoreKey = digest.digest(password.getBytes("UTF-8"));
             aes = new AESGCM(keystoreKey, KEYSTORE_IV);
-            saveKeys();            
+            saveKeys();
         } catch (NoSuchAlgorithmException | UnsupportedEncodingException ex) {
             Logger.getLogger(KeyStore.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
     }
 
     private void loadKeys() {
         File base_path = new File(BASE_PATH);
         File file = new File(KEYSTORE_PATH);
-        
+
         if (!base_path.exists()) {
             base_path.mkdir();
         }
-                
+
         if (file.exists()) {
-            byte[] keysBytes = aes.decryptKeyStore(KEYSTORE_PATH);
-            int delimiters = 0;
-            int length = 0;
+            byte[] byteKeys = aes.decryptKeyStore(KEYSTORE_PATH);
 
-            for (int i = 0; i < keysBytes.length; i++) {
-                length++;
-                if (keysBytes[i] == DELIMITER.getBytes()[0]) {
-                    delimiters++;
-                    if (delimiters == DELIMITER_COUNT) {
-                        int keyLenght = length - DELIMITER_COUNT - ID_LENGTH;
+            // Separate Keys
+            String encodedKeys = "";
+            for (byte b : byteKeys) {
+                encodedKeys += (char) b;
+            }
+            String[] splittedKeys = encodedKeys.split("\\" + DELIMITER + "\\" + DELIMITER + "\\" + DELIMITER);
 
-                        byte[] idBytes = new byte[4];
-                        byte[] keyBytes = new byte[keyLenght];
+            // Separate Key
+            for (String key : splittedKeys) {
+                String[] splittedKey = key.split("\\" + DELIMITER);
 
-                        // src, src pos, dest, dest pos, length
-                        System.arraycopy(keysBytes, i - (length - 1), idBytes, 0, ID_LENGTH);
-                        System.arraycopy(keysBytes, i - (length - 1) + ID_LENGTH, keyBytes, 0, keyLenght);
-
-                        String id = "";
-                        for (byte b : idBytes) {
-                            id += (char) b;
-                        }
-                        SessionID sessionID = new SessionID(id.substring(0, 1), id.substring(1));
-
-                        if (sessionID.isSessionKey()) {
-                            SessionKey sessionKey = new SessionKey(sessionID, keyBytes);
-                            keys.add(sessionKey);
-                        } else if (sessionID.isECDH()) {
-                            int privateKeyLength = (keyBytes.length - 1) / 2;
-                            int publicKeyLength = ((keyBytes.length - 1) / 2) + 1;
-                            byte[] privateKey = new byte[privateKeyLength];
-                            byte[] publicKey = new byte[publicKeyLength];
-                            // src, src pos, dest, dest pos, length
-                            System.arraycopy(keyBytes, 0, privateKey, 0, privateKeyLength);
-                            System.arraycopy(keyBytes, privateKeyLength, publicKey, 0, publicKeyLength);
-                            ECDHKey ecdhKey = new ECDHKey(sessionID, privateKey, publicKey);
-                            keys.add(ecdhKey);
-                        }
-
-                        delimiters = 0;
-                        length = 0;
-                    }
-                } else {
-                    delimiters = 0;
+                SessionID sessionID = new SessionID(splittedKey[0].substring(0,1), splittedKey[0].substring(1));
+                if (sessionID.isSessionKey()) {
+                    SessionKey sessionKey = new SessionKey(sessionID, splittedKey[4]);
+                    sessionKey.setDate(splittedKey[1]);
+                    sessionKey.setPartner(splittedKey[2]);
+                    sessionKey.setState(splittedKey[3]);
+                    keys.add(sessionKey);
+                } else if (sessionID.isECDH()) {
+                    ECDHKey ecdhKey = new ECDHKey(sessionID, splittedKey[4], splittedKey[5]);
+                    ecdhKey.setDate(splittedKey[1]);
+                    ecdhKey.setPartner(splittedKey[2]);
+                    ecdhKey.setState(splittedKey[3]);
+                    keys.add(ecdhKey);
                 }
             }
         }
