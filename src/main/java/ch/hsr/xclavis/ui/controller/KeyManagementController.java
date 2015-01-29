@@ -117,12 +117,22 @@ public class KeyManagementController implements Initializable {
         List<Key> keys = new ArrayList<>();
         for (int i = 0; i < slKeyNumbers.getValue(); i++) {
             if (!cbExtendedSecurity.isSelected()) {
-                SessionKey sessionKey = new SessionKey(SessionID.SESSION_KEY_128);
+                SessionKey sessionKey;
+                if (mainApp.getProperties().getInteger("key_size") == 256) {
+                    sessionKey = new SessionKey(SessionID.SESSION_KEY_256);
+                } else {
+                    sessionKey = new SessionKey(SessionID.SESSION_KEY_128);
+                }
                 sessionKey.setPartner(tfName.getText());
                 keys.add(sessionKey);
                 mainApp.getKeys().add(sessionKey);
             } else {
-                ECDHKey ecdhKey = new ECDHKey(SessionID.ECDH_REQ_256);
+                ECDHKey ecdhKey;
+                if (mainApp.getProperties().getInteger("key_size") == 256) {
+                    ecdhKey = new ECDHKey(SessionID.ECDH_REQ_512);
+                } else {
+                    ecdhKey = new ECDHKey(SessionID.ECDH_REQ_256);
+                }
                 ecdhKey.setPartner(tfName.getText());
                 keys.add(ecdhKey);
                 mainApp.getKeys().add(ecdhKey);
