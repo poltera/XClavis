@@ -25,7 +25,7 @@ public class Key {
     public Key(SessionID sessionID) {
         this.sessionID = sessionID;
         this.id = new SimpleStringProperty(this.sessionID.getID());
-        this.partner = new SimpleStringProperty("self");
+        this.partner = new SimpleStringProperty("Self");
         LocalDateTime now = LocalDateTime.now();
         this.date = new SimpleStringProperty(now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
         this.state = new SimpleStringProperty("0");
@@ -77,31 +77,5 @@ public class Key {
     
     public void setState(String state) {
         this.state.set(state);
-    }
-
-    public void changeTypeToSessionKey() {
-        String type = sessionID.getType();
-        switch (type) {
-            case SessionID.ECDH_REQ_256:
-            case SessionID.ECDH_RES_256:
-                sessionID.setType(SessionID.SESSION_KEY_128);
-                break;
-            case SessionID.ECDH_REQ_512:
-            case SessionID.ECDH_RES_512:
-                sessionID.setType(SessionID.SESSION_KEY_256);
-                break;
-        }
-    }
-
-    public void changeTypeToECDHRes() {
-        String type = sessionID.getType();
-        switch (type) {
-            case SessionID.ECDH_REQ_256:
-                sessionID.setType(SessionID.ECDH_RES_256);
-                break;
-            case SessionID.ECDH_REQ_512:
-                sessionID.setType(SessionID.ECDH_RES_512);
-                break;
-        }
     }
 }

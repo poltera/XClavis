@@ -8,9 +8,9 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox id="cryptionState" alignment="TOP_CENTER" maxWidth="650.0" minWidth="650.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.hsr.xclavis.ui.controller.CryptionStateController">
+<VBox fx:id="cryptionState" alignment="TOP_CENTER" maxWidth="1.7976931348623157E308" minWidth="650.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.hsr.xclavis.ui.controller.CryptionStateController">
    <children>
-      <HBox maxWidth="500.0" minWidth="500.0" prefWidth="500.0" style="-fx-border-color: grey; -fx-border-radius: 5; -fx-background-color: E6E6E6;">
+      <HBox alignment="TOP_CENTER" maxWidth="500.0" minWidth="500.0" prefWidth="500.0" style="-fx-border-color: grey; -fx-border-radius: 5; -fx-background-color: E6E6E6;">
          <VBox.margin>
             <Insets />
          </VBox.margin>
@@ -36,7 +36,7 @@
             </HBox>
             <HBox alignment="TOP_RIGHT" maxWidth="189.0" minWidth="189.0" prefWidth="189.0">
                <children>
-                  <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="imgRemoveCryptionState" fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../images/delete1.png" />
                      </image>

@@ -7,22 +7,21 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox id="keyManagement" alignment="TOP_CENTER" maxWidth="650.0" minWidth="650.0" prefHeight="650.0" prefWidth="650.0" spacing="25.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.hsr.xclavis.ui.controller.KeyManagementController">
+<VBox id="keyManagement" alignment="TOP_CENTER" maxWidth="500.0" minWidth="500.0" prefWidth="500.0" spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.hsr.xclavis.ui.controller.KeyManagementController">
    <children>
-      <TableView fx:id="tableView" maxHeight="400.0" maxWidth="500.0" minHeight="400.0" minWidth="500.0" onKeyPressed="#keyPressed" prefHeight="400.0" prefWidth="500.0">
+      <TableView fx:id="tableView" maxHeight="375.0" minHeight="375.0" onKeyPressed="#keyPressed" prefHeight="375.0">
         <columns>
             <TableColumn fx:id="tcID" prefWidth="75.0" text="%id" />
-          <TableColumn fx:id="tcPartner" prefWidth="75.0" text="%partner" />
-          <TableColumn fx:id="tcDate" prefWidth="75.0" text="%date" />
-            <TableColumn fx:id="tcState" prefWidth="75.0" text="%state" />
-            <TableColumn fx:id="tcDelete" prefWidth="75.0" text="%delete" />
+          <TableColumn fx:id="tcPartner" prefWidth="150.0" text="%partner" />
+          <TableColumn fx:id="tcDate" prefWidth="150.0" text="%date" />
+            <TableColumn fx:id="tcState" prefWidth="50.0" text="%state" />
+            <TableColumn fx:id="tcDelete" prefWidth="73.0" text="%delete" />
         </columns>
       </TableView>
       <HBox alignment="TOP_CENTER" maxWidth="500.0" minWidth="500.0" prefWidth="500.0" spacing="10.0">
          <children>
             <TextField fx:id="tfName" text="%partner" />
-            <Slider fx:id="slKeyNumbers" blockIncrement="1.0" majorTickUnit="1.0" max="20.0" min="1.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0" />
-            <CheckBox fx:id="cbExtendedSecurity" mnemonicParsing="false" text="%extended_security" />
+            <Slider fx:id="slKeyNumbers" blockIncrement="1.0" majorTickUnit="1.0" max="10.0" min="1.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0" />
             <Button fx:id="btnBegin" mnemonicParsing="false" onAction="#startKeyExchange" text="%create" />
          </children>
       </HBox>

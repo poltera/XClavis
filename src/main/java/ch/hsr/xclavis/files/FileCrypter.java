@@ -24,12 +24,12 @@ import javafx.concurrent.Task;
  * @author Gian
  */
 public class FileCrypter {
+
     private final static int ID_SIZE = 4;
-    private final static int IV_SIZE = 96/Byte.SIZE;
-    
-    
+    private final static int IV_SIZE = 96 / Byte.SIZE;
+
     private byte[] buffer = new byte[2048];
-    
+
     private final static boolean COMPRESSION = true;
 
     //private final List<SelectedFile> selectedFiles;
@@ -40,29 +40,24 @@ public class FileCrypter {
     public FileCrypter() {
     }
 
-    public ReadOnlyDoubleProperty encrypt(SessionKey sessionKey, List<SelectedFile> selectedFiles, String output) {
+    public ReadOnlyDoubleProperty encrypt(SessionKey sessionKey, List<File> files, String output) {
         this.zip = new FileZipper();
         this.aes = new AESGCM(sessionKey.getKey(), sessionKey.getIV());
         Task task = new Task<Void>() {
             @Override
             public Void call() {
-                List<File> plaintextFiles = new ArrayList<>();
-                selectedFiles.forEach((selectedFile) -> {
-                    plaintextFiles.add(selectedFile.getFile());
-                });
                 updateProgress(1, 10);
                 long before = System.nanoTime();
-                // some amazing blocking function
-                
 
-                byte[] input = zip.getZippedBytes(plaintextFiles, COMPRESSION);
+                byte[] input = zip.getZippedBytes(files, COMPRESSION);
                 updateProgress(7, 10);
                 boolean result = aes.encrypt(input, output, sessionKey);
-                
+
                 long after = System.nanoTime();
                 long runningTimeMs = (after - before) / 1000000;
                 updateProgress(10, 10);
-                System.out.println("ZEIT: " + runningTimeMs);
+                System.out.println("encryption time: " + runningTimeMs);
+
                 return null;
             }
         };
@@ -71,18 +66,19 @@ public class FileCrypter {
         return task.progressProperty();
     }
 
-    public ReadOnlyDoubleProperty decrypt(SessionKey sessionKey, SelectedFile selectedFile, String output) {
+    public ReadOnlyDoubleProperty decrypt(SessionKey sessionKey, File file, String output) {
         this.zip = new FileZipper();
         this.aes = new AESGCM(sessionKey.getKey(), sessionKey.getIV());
         Task task = new Task<Void>() {
             @Override
             public Void call() {
                 updateProgress(1, 10);
-                byte[] encrypted = fileToByteArrayOutputStream(selectedFile.getFile());
+                byte[] encrypted = fileToByteArrayOutputStream(file);
                 byte[] decrypted = aes.decryptToByteStream(encrypted);
                 updateProgress(5, 10);
                 zip.getFilesFromZippedBytes(decrypted, output);
                 updateProgress(10, 10);
+
                 return null;
             }
         };

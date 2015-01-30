@@ -110,7 +110,7 @@ public class FileSelecterController implements Initializable {
 
             return new ReadOnlyObjectWrapper(btnDeleteRow);
         });
-        tfOutputPath.setText(System.getProperty("user.home"));
+
         hbButtons.getChildren().removeAll(btnEncrypt, btnDecrypt, btnScanQR);
     }
 
@@ -133,8 +133,25 @@ public class FileSelecterController implements Initializable {
                 hbButtons.getChildren().add(btnEncrypt);
             }
         });
-        for (SessionKey sessionKey : mainApp.getKeys().getSessionKeys()) {
-            cbExisitingKeys.getItems().add(sessionKey.getSessionID().getID());
+        mainApp.getKeys().getSessionKeys().stream().filter((sessionKey) -> (sessionKey.getState().equals("0"))).forEach((sessionKey) -> {
+            cbExisitingKeys.getItems().add(sessionKey.getSessionID().getID() + "-" + sessionKey.getPartner());
+        });
+        if (mainApp.getProperties().getString("output_path").equals("default")) {
+            tfOutputPath.setText(System.getProperty("user.home"));
+        } else {
+            tfOutputPath.setText(mainApp.getProperties().getString("output_path"));
+        }
+    }
+
+    public void updateView() {
+        cbExisitingKeys.getItems().clear();
+        mainApp.getKeys().getSessionKeys().stream().filter((sessionKey) -> (sessionKey.getState().equals("0"))).forEach((sessionKey) -> {
+            cbExisitingKeys.getItems().add(sessionKey.getSessionID().getID() + "-" + sessionKey.getPartner());
+        });
+        if (mainApp.getProperties().getString("output_path").equals("default")) {
+            tfOutputPath.setText(System.getProperty("user.home"));
+        } else {
+            tfOutputPath.setText(mainApp.getProperties().getString("output_path"));
         }
     }
 
@@ -148,19 +165,33 @@ public class FileSelecterController implements Initializable {
 
     @FXML
     private void encryptFiles(ActionEvent event) {
-        SessionKey sessionKey;
-        if (mainApp.getProperties().getInteger("key_size") == 256) {
-            sessionKey = new SessionKey(SessionID.SESSION_KEY_256);
+        if (cbExisitingKeys.getValue() == null) {
+            SessionKey sessionKey;
+            if (mainApp.getProperties().getInteger("key_size") == 256) {
+                sessionKey = new SessionKey(SessionID.SESSION_KEY_256);
+            } else {
+                sessionKey = new SessionKey(SessionID.SESSION_KEY_128);
+            }
+            sessionKey.setPartner("Self");
+            sessionKey.setState("1");
+            List<Key> keys = new ArrayList<>();
+            keys.add(sessionKey);
+            mainApp.getKeys().add(sessionKey);
+            mainApp.showCodeOutput(keys);
+            mainApp.showCryptionState(sessionKey, true, tfOutputPath.getText() + File.separator + "encryption.enc");
         } else {
-            sessionKey = new SessionKey(SessionID.SESSION_KEY_128);
+            String selectedKey = cbExisitingKeys.getValue();
+            String[] splittedKey = selectedKey.split("-");
+            String type = splittedKey[0].substring(0, 1);
+            String random = splittedKey[0].substring(1);
+            SessionID sessionID = new SessionID(type, random);
+            SessionKey sessionKey = mainApp.getKeys().getSessionKey(sessionID);
+            sessionKey.setState("1");
+            List<Key> keys = new ArrayList<>();
+            keys.add(sessionKey);
+            mainApp.showCodeOutput(keys);
+            mainApp.showCryptionState(sessionKey, true, tfOutputPath.getText() + File.separator + "encryption.enc");
         }
-        sessionKey.setPartner("Self");
-        List<Key> keys = new ArrayList<>();
-        keys.add(sessionKey);
-        mainApp.getKeys().add(sessionKey);
-        mainApp.showCodeOutput(keys);
-        mainApp.showCryptionState(sessionKey, true, tfOutputPath.getText() + File.separator + "encryption.enc");
-        //mainApp.getFiles().removeAll();
     }
 
     @FXML
@@ -172,7 +203,6 @@ public class FileSelecterController implements Initializable {
             SessionKey sessionKey = mainApp.getKeys().getSessionKey(sessionID);
             sessionKey.setIV(iv);
             mainApp.showCryptionState(sessionKey, false, tfOutputPath.getText());
-            //mainApp.getFiles().removeAll();
         } else {
             mainApp.showCodeReader();
         }
@@ -187,7 +217,11 @@ public class FileSelecterController implements Initializable {
         //TBA Check if permissions for write in this folder!!
         DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setTitle(rb.getString("select_folder"));
-        directoryChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        if (mainApp.getProperties().getString("output_path").equals("default")) {
+            directoryChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        } else {
+            directoryChooser.setInitialDirectory(new File(mainApp.getProperties().getString("output_path")));
+        }
         File selectedDirectory = directoryChooser.showDialog(new Stage());
         if (selectedDirectory != null) {
             tfOutputPath.setText(selectedDirectory.getAbsolutePath());

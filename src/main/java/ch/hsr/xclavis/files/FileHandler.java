@@ -19,7 +19,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
@@ -41,6 +43,12 @@ public class FileHandler {
     public FileHandler() {
         this.files = FXCollections.observableArrayList();
         this.mode = new SimpleIntegerProperty(0);
+        this.files.addListener((ListChangeListener.Change<? extends SelectedFile> c) -> {
+            if (files.isEmpty()) 
+            { 
+                mode.set(0);
+            }
+        });
     }
 
     public ObservableList<SelectedFile> getObservableFileList() {
@@ -97,9 +105,7 @@ public class FileHandler {
     }
     
     public void removeAll() {
-        files.stream().forEach((selectedFile) -> {
-            files.remove(selectedFile);
-        });
+        files.clear();
         
         mode.set(0);
     }

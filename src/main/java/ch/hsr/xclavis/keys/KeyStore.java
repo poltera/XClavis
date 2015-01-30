@@ -11,7 +11,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -67,10 +66,12 @@ public class KeyStore {
     }
 
     public void add(Key key) {
-        keys.add(key);
-        saveKeys();
+        if (!existsKey(key.getSessionID())) {
+            keys.add(key);
+            saveKeys();
+        }
     }
-
+    
     public void add(List<Key> keys) {
         keys.stream().forEach((key) -> {
             this.keys.add(key);
@@ -104,7 +105,7 @@ public class KeyStore {
 
         return sessionKeys;
     }
-
+    
     /**
      * Gives the ECDHKey with the specificated sessionID.
      *
@@ -114,6 +115,22 @@ public class KeyStore {
     public ECDHKey getECDHKey(SessionID sessionID) {
         for (Key key : keys) {
             if (key.getSessionID().getID().equals(sessionID.getID())) {
+                return (ECDHKey) key;
+            }
+        }
+
+        return null;
+    }
+    
+    /**
+     * Gives the ECDHKey with the specificated RandomValue from a sessionID.
+     *
+     * @param random
+     * @return ecdhKey
+     */
+    public ECDHKey getECDHKey(String random) {
+        for (Key key : keys) {
+            if (key.getSessionID().getRandom().equals(random)) {
                 return (ECDHKey) key;
             }
         }
@@ -185,6 +202,8 @@ public class KeyStore {
 
         if (file.exists()) {
             return aes.isKeyCorrect(KEYSTORE_PATH);
+        } else {
+            saveKeys();
         }
 
         return true;
@@ -221,9 +240,12 @@ public class KeyStore {
 
             // Separate Key
             for (String key : splittedKeys) {
+                if (key.length() < 10) {
+                    break;
+                }
                 String[] splittedKey = key.split("\\" + DELIMITER);
 
-                SessionID sessionID = new SessionID(splittedKey[0].substring(0,1), splittedKey[0].substring(1));
+                SessionID sessionID = new SessionID(splittedKey[0].substring(0, 1), splittedKey[0].substring(1));
                 if (sessionID.isSessionKey()) {
                     SessionKey sessionKey = new SessionKey(sessionID, splittedKey[4]);
                     sessionKey.setDate(splittedKey[1]);
@@ -238,6 +260,7 @@ public class KeyStore {
                     keys.add(ecdhKey);
                 }
             }
+
         }
     }
 }

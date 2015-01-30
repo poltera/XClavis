@@ -11,9 +11,6 @@ import ch.hsr.xclavis.keys.SessionKey;
 import ch.hsr.xclavis.crypto.Checksum;
 import ch.hsr.xclavis.helpers.Base32;
 import ch.hsr.xclavis.helpers.KeySeparator;
-import ch.hsr.xclavis.keys.Key;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -101,10 +98,10 @@ public class QRModel {
         model += lastBlock + overallChecksum + blockChecksum;
     }
 
-    public List<Key> getKeys(String string) {
-        List<Key> keys = new ArrayList<>();
+    public String[][] getKeys(String string) {
         String[] splittedKeys = string.split(UNICODE_ID);
-
+        String[][] keys = new String[splittedKeys.length - 1][2];
+        
         for (int i = 1; i < splittedKeys.length; i++) {
             String id = splittedKeys[i].substring(1, 1 + BLOCK_LENGTH);
             String key = splittedKeys[i].substring(10);
@@ -119,17 +116,12 @@ public class QRModel {
                 key += block.substring(0, BLOCK_LENGTH - BLOCK_CHECKSUM);
             }
             key = key.substring(0, (sessionID.getKeyLength() + sessionID.getAddCordLength()) / Base32.SIZE + 1);
-
-            if (sessionID.isSessionKey()) {
-                SessionKey sessionKey = new SessionKey(sessionID, key);
-                keys.add(sessionKey);
-
-            } else if (sessionID.isECDH()) {
-                ECDHKey ecdhKey = new ECDHKey(sessionID);
-                keys.add(ecdhKey);
-                SessionKey sessionKey = ecdhKey.getSessionKey(key);
-                keys.add(sessionKey);
-            }
+            
+            keys[i - 1][0] = sessionID.getID();
+            keys[i - 1][1] = key;
+            
+            System.out.println(sessionID.getID());
+            System.out.println(key);
         }
 
         return keys;

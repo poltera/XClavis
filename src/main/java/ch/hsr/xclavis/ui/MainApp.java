@@ -32,9 +32,19 @@ import javafx.stage.Stage;
 public class MainApp extends Application {
 
     private Stage stage;
-    private BorderPane rootLayout;
-    private ResourceBundle bundle;
 
+    private FXMLLoader codeOutputLoader, codeReaderLoader, cryptionStateLoader, fileSelecterLoader, keyManagementLoader, rootPaneLoader, topMenuLoader;
+    private CodeOutputController codeOutputController;
+    private CodeReaderController codeReaderController;
+    private CryptionStateController cryptionStateController;
+    private FileSelecterController fileSelecterController;
+    private KeyManagementController keyManagementController;
+    private RootPaneController rootPaneController;
+    private TopMenuController topMenuController;
+    private VBox codeOutputBox, codeReaderBox, cryptionStateBox, fileSelecterBox, keyManagementBox, topMenuBox;
+    private BorderPane rootPane;
+
+    private ResourceBundle bundle;
     private PropertiesHandler properties;
     private FileHandler files;
     private KeyStore keys;
@@ -46,7 +56,7 @@ public class MainApp extends Application {
         this.properties = new PropertiesHandler();
         this.files = new FileHandler();
         this.keys = new KeyStore();
-        
+
         while (!keys.isPasswordCorrect()) {
             showPasswordInput();
         }
@@ -78,101 +88,97 @@ public class MainApp extends Application {
     public KeyStore getKeys() {
         return keys;
     }
-    
-    public Stage getStage() {
-        return stage;
-    }
-    
-    private void showPasswordInput() {
-            TextInputDialog dialog = new TextInputDialog("password");
-            dialog.setTitle("XClavis");
-            dialog.setHeaderText("XClavis Passwort eingeben");
-            dialog.setContentText("");
 
-            Optional<String> password = dialog.showAndWait();
-            password.ifPresent(choice -> keys = new KeyStore(choice));
+    private void showPasswordInput() {
+        TextInputDialog dialog = new TextInputDialog("password");
+        dialog.setTitle("XClavis");
+        dialog.setHeaderText("XClavis Passwort eingeben");
+        dialog.setContentText("");
+
+        Optional<String> password = dialog.showAndWait();
+        password.ifPresent(choice -> keys = new KeyStore(choice));
     }
 
     @Override
     public void start(Stage stage) {
-        //try {
         this.stage = stage;
         this.stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/xclavis.png")));
         this.stage.setTitle("XClavis");
-        //this.stage.setResizable(false);
+        this.stage.setResizable(false);
         Locale locale = Locale.getDefault();
         this.bundle = ResourceBundle.getBundle("bundles.XClavis", locale);
-        //new PropertyResourceBundle(getClass().getResource("/bundles/XClavis_de.properties").openStream());
 
-        initRootLayout();
+        initAllWindows();
+        showRootPane();
         showTopMenu();
         showFileSelecter();
-
-        //} catch (IOException ex) {
-        //    Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
-        //}
     }
 
     /**
-     * Initializes the root layout.
+     * Initializes all windows.
      */
-    public void initRootLayout() {
+    public void initAllWindows() {
         try {
-            //  Load RootLayout.
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/RootPane.fxml"), bundle);
-            rootLayout = loader.load();
-            Scene scene = new Scene(rootLayout);
-            scene.getStylesheets().add("/styles/Styles.css");
-            stage.setScene(scene);
-            stage.show();
+            codeOutputLoader = getLoader("/fxml/CodeOutput.fxml");
+            codeOutputBox = codeOutputLoader.load();
+            codeOutputController = codeOutputLoader.getController();
+            codeOutputController.setMainApp(this);
 
-            // Give the controller access to the main app.
-            RootPaneController controller = loader.getController();
-            controller.setMainApp(this);
+            codeReaderLoader = getLoader("/fxml/CodeReader.fxml");
+            codeReaderBox = codeReaderLoader.load();
+            codeReaderController = codeReaderLoader.getController();
+            codeReaderController.setMainApp(this);
+
+            cryptionStateLoader = getLoader("/fxml/CryptionState.fxml");
+            cryptionStateBox = cryptionStateLoader.load();
+            cryptionStateController = cryptionStateLoader.getController();
+            cryptionStateController.setMainApp(this);
+
+            fileSelecterLoader = getLoader("/fxml/FileSelecter.fxml");
+            fileSelecterBox = fileSelecterLoader.load();
+            fileSelecterController = fileSelecterLoader.getController();
+            fileSelecterController.setMainApp(this);
+
+            keyManagementLoader = getLoader("/fxml/KeyManagement.fxml");
+            keyManagementBox = keyManagementLoader.load();
+            keyManagementController = keyManagementLoader.getController();
+            keyManagementController.setMainApp(this);
+
+            rootPaneLoader = getLoader("/fxml/RootPane.fxml");
+            rootPane = rootPaneLoader.load();
+            rootPaneController = rootPaneLoader.getController();
+            rootPaneController.setMainApp(this);
+
+            topMenuLoader = getLoader("/fxml/TopMenu.fxml");
+            topMenuBox = topMenuLoader.load();
+            topMenuController = topMenuLoader.getController();
+            topMenuController.setMainApp(this);
         } catch (IOException ex) {
             Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public void showRootPane() {
+        Scene scene = new Scene(rootPane);
+        scene.getStylesheets().add("/styles/Styles.css");
+        stage.setScene(scene);
+        stage.show();
     }
 
     /**
      * Shows the TopMenu at the top of the root layout.
      */
     public void showTopMenu() {
-        try {
-            // Load MainMenu.
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/TopMenu.fxml"), bundle);
-            VBox topMenu = loader.load();
-
-            // Set MainMenu at the top of root layout.
-            rootLayout.setTop(topMenu);
-
-            // Give the controller access to the main app.
-            TopMenuController controller = loader.getController();
-            controller.setMainApp(this);
-        } catch (IOException ex) {
-            Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        rootPane.setTop(topMenuBox);
     }
 
     /**
      * Shows the FileSelecter inside the root layout.
      */
     public void showFileSelecter() {
-        try {
-            // Load file overview.
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FileSelecter.fxml"), bundle);
-            VBox fileSelecter = loader.load();
-
-            // Set file overview into the center of root layout.
-            rootLayout.setCenter(fileSelecter);
-
-            // Give the controller access to the main app.
-            FileSelecterController controller = loader.getController();
-            controller.setMainApp(this);
-
-        } catch (IOException ex) {
-            Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        rootPane.setCenter(fileSelecterBox);
+        topMenuController.markFileSelecter();
+        fileSelecterController.updateView();
     }
 
     /**
@@ -183,45 +189,21 @@ public class MainApp extends Application {
      * @param output, Path for the output files
      */
     public void showCryptionState(SessionKey sessionKey, boolean encryption, String output) {
-        try {
-            // Load file overview.
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/CryptionState.fxml"), bundle);
-            VBox cryptionState = loader.load();
+        rootPane.setBottom(cryptionStateBox);
+        cryptionStateController.setParameters(sessionKey, encryption, output);
+    }
 
-            // Set file overview into the center of root layout.
-            rootLayout.setBottom(cryptionState);
-
-            // Give the controller access to the main app.
-            CryptionStateController controller = loader.getController();
-
-            controller.setMainApp(this);
-            controller.setParameters(sessionKey, encryption, output);
-
-        } catch (IOException ex) {
-            Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public void removeCryptionState() {
+        rootPane.setBottom(null);
     }
 
     /**
      * Shows the Code Reader inside the root layout.
      */
     public void showCodeReader() {
-        try {
-            // Load file overview.
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/CodeReader.fxml"), bundle);
-            VBox codeReader = loader.load();
-
-            // Set file overview into the center of root layout.
-            rootLayout.setCenter(codeReader);
-
-            // Give the controller access to the main app.
-            CodeReaderController controller = loader.getController();
-
-            controller.setMainApp(this);
-
-        } catch (IOException ex) {
-            Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        rootPane.setCenter(codeReaderBox);
+        topMenuController.markCodeReader();
+        codeReaderController.startWebcam();
     }
 
     /**
@@ -230,52 +212,28 @@ public class MainApp extends Application {
      * @param keys
      */
     public void showCodeOutput(List<Key> keys) {
-        try {
-            // Load file overview.
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/CodeOutput.fxml"), bundle);
-            VBox codeOuput = loader.load();
-
-            // Set file overview into the center of root layout.
-            rootLayout.setCenter(codeOuput);
-
-            // Give the controller access to the main app.
-            CodeOutputController controller = loader.getController();
-
-            controller.setMainApp(this);
-            controller.setKeys(keys);
-
-        } catch (IOException ex) {
-            Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        rootPane.setCenter(codeOutputBox);
+        codeOutputController.setKeys(keys);
     }
 
     /**
      * Shows the Key Management inside the root layout.
      */
     public void showKeyManagement() {
-        try {
-            // Load file overview.
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/KeyManagement.fxml"), bundle);
-            VBox keyManagement = loader.load();
-
-            // Set file overview into the center of root layout.
-            rootLayout.setCenter(keyManagement);
-
-            // Give the controller access to the main app.
-            KeyManagementController controller = loader.getController();
-
-            controller.setMainApp(this);
-
-        } catch (IOException ex) {
-            Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        rootPane.setCenter(keyManagementBox);
+        topMenuController.markKeyManagement();
     }
 
     public void changeLanguage(Locale locale) {
         bundle = ResourceBundle.getBundle("bundles.XClavis", locale);
-        initRootLayout();
+        initAllWindows();
+        showRootPane();
         showTopMenu();
         showFileSelecter();
+    }
+
+    private FXMLLoader getLoader(String path) {
+        return new FXMLLoader(getClass().getResource(path), bundle);
     }
 
     /**

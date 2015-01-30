@@ -59,7 +59,7 @@ public class SessionID {
     public void setType(String type) {
         this.type = type;
     }
-    
+
     public String getRandom() {
         return random;
     }
@@ -95,6 +95,40 @@ public class SessionID {
         return 0;
     }
 
+    public String getNextType() {
+        switch (type) {
+            case ECDH_REQ_256:
+                return ECDH_RES_256;
+            case ECDH_REQ_512:
+                return ECDH_RES_512;
+            case ECDH_RES_256:
+                return SESSION_KEY_128;
+            case ECDH_RES_512:
+                return SESSION_KEY_256;
+        }
+
+        return null;
+    }
+
+    public String getFinalType() {
+        switch (type) {
+            case SESSION_KEY_128:
+                return SESSION_KEY_128;
+            case SESSION_KEY_256:
+                return SESSION_KEY_256;            
+            case ECDH_REQ_256:
+                return SESSION_KEY_128;
+            case ECDH_REQ_512:
+                return SESSION_KEY_256;
+            case ECDH_RES_256:
+                return SESSION_KEY_128;
+            case ECDH_RES_512:
+                return SESSION_KEY_256;
+        }
+
+        return null;
+    }
+
     public int getAddCordLength() {
         if (isECDH()) {
             return Byte.SIZE;
@@ -105,6 +139,10 @@ public class SessionID {
 
     public boolean isECDHReq() {
         return (getType().equals(ECDH_REQ_256)) || (getType().equals(ECDH_REQ_512));
+    }
+
+    public boolean isECDHRes() {
+        return (getType().equals(ECDH_RES_256)) || (getType().equals(ECDH_RES_512));
     }
 
     public boolean isECDH() {

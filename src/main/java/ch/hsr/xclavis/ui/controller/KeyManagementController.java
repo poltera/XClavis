@@ -20,7 +20,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TableColumn;
@@ -43,8 +42,6 @@ public class KeyManagementController implements Initializable {
     private TextField tfName;
     @FXML
     private Slider slKeyNumbers;
-    @FXML
-    private CheckBox cbExtendedSecurity;
     @FXML
     private TableView<Key> tableView;
     @FXML
@@ -116,7 +113,7 @@ public class KeyManagementController implements Initializable {
     private void startKeyExchange(ActionEvent event) {
         List<Key> keys = new ArrayList<>();
         for (int i = 0; i < slKeyNumbers.getValue(); i++) {
-            if (!cbExtendedSecurity.isSelected()) {
+            if (!mainApp.getProperties().getBoolean("extended_security")) {
                 SessionKey sessionKey;
                 if (mainApp.getProperties().getInteger("key_size") == 256) {
                     sessionKey = new SessionKey(SessionID.SESSION_KEY_256);
@@ -134,6 +131,7 @@ public class KeyManagementController implements Initializable {
                     ecdhKey = new ECDHKey(SessionID.ECDH_REQ_256);
                 }
                 ecdhKey.setPartner(tfName.getText());
+                ecdhKey.setState("2");
                 keys.add(ecdhKey);
                 mainApp.getKeys().add(ecdhKey);
             }

@@ -19,12 +19,16 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -46,6 +50,12 @@ public class TopMenuController implements Initializable {
     private MenuItem miOpen;
     @FXML
     private HBox toolBar;
+    @FXML
+    private Button fileListBtn;
+    @FXML
+    private Button qrScannerBtn;
+    @FXML
+    private Button keyManagementBtn;
 
     /**
      * Initializes the controller class.
@@ -65,6 +75,24 @@ public class TopMenuController implements Initializable {
      */
     public void setMainApp(MainApp mainApp) {
         this.mainApp = mainApp;
+    }
+
+    public void markFileSelecter() {
+        fileListBtn.setStyle("-fx-base: #b6e7c9;");
+        qrScannerBtn.setStyle("-fx-base: #eaeaea;");
+        keyManagementBtn.setStyle("-fx-base: #eaeaea;");
+    }
+
+    public void markCodeReader() {
+        fileListBtn.setStyle("-fx-base: #eaeaea;");
+        qrScannerBtn.setStyle("-fx-base: #b6e7c9;");
+        keyManagementBtn.setStyle("-fx-base: #eaeaea;");
+    }
+
+    public void markKeyManagement() {
+        fileListBtn.setStyle("-fx-base: #eaeaea;");
+        qrScannerBtn.setStyle("-fx-base: #eaeaea;");
+        keyManagementBtn.setStyle("-fx-base: #b6e7c9;");
     }
 
     @FXML
@@ -141,6 +169,19 @@ public class TopMenuController implements Initializable {
 
     @FXML
     private void showOutputPathSettings(ActionEvent event) {
+        //TBA Check if permissions for write in this folder!!
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setTitle(rb.getString("select_folder"));
+        if (mainApp.getProperties().getString("output_path").equals("default")) {
+            directoryChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        } else {
+            directoryChooser.setInitialDirectory(new File(mainApp.getProperties().getString("output_path")));
+        }
+        File selectedDirectory = directoryChooser.showDialog(new Stage());
+        if (selectedDirectory != null) {
+            mainApp.getProperties().set("output_path", selectedDirectory.getAbsolutePath());
+            mainApp.showFileSelecter();
+        }
     }
 
     @FXML
@@ -151,5 +192,32 @@ public class TopMenuController implements Initializable {
         alert.setContentText("Copyright 2015 Gian Poltéra, Alle Rechte vorbehalten\nVersion 0.97");
 
         alert.showAndWait();
+    }
+
+    @FXML
+    private void showExtendedSecuritySettings(ActionEvent event) {
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("XClavis");
+        alert.setHeaderText("Aktivierung der erweiteren Sicherheit");
+        alert.setContentText("Sind Sie sicher, dass Sie die erweiterte Sicherheit aktivieren wollen?");
+
+        ButtonType buttonTypeSwitcher;
+        if (!mainApp.getProperties().getBoolean("extended_security")) {
+            buttonTypeSwitcher = new ButtonType("Aktivieren", ButtonData.OK_DONE);
+        } else {
+            buttonTypeSwitcher = new ButtonType("Deaktivieren", ButtonData.OK_DONE);
+        }
+        ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+
+        alert.getButtonTypes().setAll(buttonTypeSwitcher, buttonTypeCancel);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == buttonTypeSwitcher) {
+            if (!mainApp.getProperties().getBoolean("extended_security")) {
+                mainApp.getProperties().set("extended_security", true);
+            } else {
+                mainApp.getProperties().set("extended_security", false);
+            }
+        }
     }
 }

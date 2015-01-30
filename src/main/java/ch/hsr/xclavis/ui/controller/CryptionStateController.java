@@ -8,13 +8,17 @@ package ch.hsr.xclavis.ui.controller;
 import ch.hsr.xclavis.files.FileCrypter;
 import ch.hsr.xclavis.keys.SessionKey;
 import ch.hsr.xclavis.ui.MainApp;
+import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 /**
  * FXML Controller class
@@ -26,14 +30,13 @@ public class CryptionStateController implements Initializable {
     private MainApp mainApp;
     private ResourceBundle rb;
     private FileCrypter crypter;
-    private SessionKey sessionKey;
-    private String output;
-    private boolean encryption;
 
     @FXML
     private ProgressIndicator progressIndicator;
     @FXML
     private Label lblCryptionState;
+    @FXML
+    private ImageView imgRemoveCryptionState;
 
     /**
      * Initializes the controller class.
@@ -45,14 +48,14 @@ public class CryptionStateController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         this.rb = rb;
         crypter = new FileCrypter();
-        Platform.runLater(() -> {
-            if (encryption) {
-                lblCryptionState.setText(rb.getString("encryption_state"));
-                progressIndicator.progressProperty().bind(crypter.encrypt(sessionKey, mainApp.getFiles().getObservableFileList(), output));
-            } else {
-                lblCryptionState.setText(rb.getString("decryption_state"));
-                progressIndicator.progressProperty().bind(crypter.decrypt(sessionKey, mainApp.getFiles().getObservableFileList().get(0), output));
-            }
+        imgRemoveCryptionState.setOnMouseEntered((event) -> {
+            imgRemoveCryptionState.setImage(new Image(getClass().getResourceAsStream("/images/delete2.png")));
+        });
+        imgRemoveCryptionState.setOnMouseExited((event) -> {
+            imgRemoveCryptionState.setImage(new Image(getClass().getResourceAsStream("/images/delete1.png")));
+        });
+        imgRemoveCryptionState.setOnMouseClicked((event) -> {
+            mainApp.removeCryptionState();
         });
     }
 
@@ -66,8 +69,20 @@ public class CryptionStateController implements Initializable {
     }
 
     public void setParameters(SessionKey sessionKey, boolean encryption, String output) {
-        this.sessionKey = sessionKey;
-        this.encryption = encryption;
-        this.output = output;
+        if (encryption) {
+            lblCryptionState.setText(rb.getString("encryption_state"));
+            List<File> files = new ArrayList<>();
+            mainApp.getFiles().getObservableFileList().forEach((selectedFile) -> {
+                files.add(selectedFile.getFile());
+            });
+            progressIndicator.progressProperty().bind(crypter.encrypt(sessionKey, files, output));
+            mainApp.getFiles().removeAll();
+        } else {
+            
+            File file = new File(mainApp.getFiles().getObservableFileList().get(0).getFile().getPath());
+            lblCryptionState.setText(rb.getString("decryption_state"));
+            progressIndicator.progressProperty().bind(crypter.decrypt(sessionKey, file, output));
+            mainApp.getFiles().removeAll();
+        }
     }
 }

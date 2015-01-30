@@ -73,6 +73,19 @@ public class PropertiesHandler {
             return 0;
         }
     }
+    
+    public boolean getBoolean(String name) {
+        String property = properties.getProperty(name);
+        
+        switch (property) {
+            case "true":
+                return true;
+            case "false":
+                return false;
+        }
+        
+        return false;
+    }
 
     public void set(String name, String value) {
         properties.setProperty(name, value);
@@ -86,6 +99,11 @@ public class PropertiesHandler {
 
     public void set(String name, double value) {
         properties.setProperty(name, Double.toString(value));
+        save();
+    }
+    
+    public void set(String name, boolean value) {
+        properties.setProperty(name, Boolean.toString(value));
         save();
     }
 

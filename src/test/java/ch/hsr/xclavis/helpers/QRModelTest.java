@@ -82,8 +82,5 @@ public class QRModelTest {
         SessionKey sessionKey2 = new SessionKey(SessionID.SESSION_KEY_256);
         qrModel.addSessionKey(sessionKey2);
         String result = qrModel.getModell();
-
-        List<Key> keys = qrModel.getKeys(result);
     }
-
 }

@@ -19,8 +19,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -42,7 +40,8 @@ public class CodeReaderController implements Initializable {
     private MainApp mainApp;
     private final int blockLength = 5;
     private final int blockChecksumSize = 1;
-    private SessionID sessionID;
+    private SessionID manualSessionID;
+    private List<Key> ecdhResponseKeys;
 
     @FXML
     private VBox vbWebcamInput;
@@ -77,6 +76,32 @@ public class CodeReaderController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        ecdhResponseKeys = new ArrayList<>();
+
+        InputBlock inputSelecter = new InputBlock(blockLength, blockChecksumSize, PATTERN);
+        inputSelecter.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+            if (inputSelecter.isValid()) {
+                String type = inputSelecter.getValue().substring(0, 1);
+                String random = inputSelecter.getValue().substring(1);
+                manualSessionID = new SessionID(type, random);
+                addBlocks(type);
+            }
+        });
+        hbInputSelecter.getChildren().add(inputSelecter);
+        vbKeyInput.getChildren().removeAll(hbInputBlocks1, hbInputBlocks2, hbInputBlocks3, hbInputBlocks4);
+        vbManualInput.getChildren().remove(vbKeyInput);
+    }
+
+    /**
+     * Is called by the main application to give a reference back to itself.
+     *
+     * @param mainApp
+     */
+    public void setMainApp(MainApp mainApp) {
+        this.mainApp = mainApp;
+    }
+
+    public void startWebcam() {
         WebcamHandler webcamHandler = new WebcamHandler();
         ImageView imageViewWebcam = new ImageView();
         imageViewWebcam.setFitWidth(480);
@@ -107,32 +132,24 @@ public class CodeReaderController implements Initializable {
 
         // Listener for QRCode
         webcamHandler.getScanedQRCode().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
-            mainApp.getKeys().add(new QRModel().getKeys(newValue));
-            mainApp.showKeyManagement();
-            webcamHandler.shutdownWebcam();
-        });
-
-        InputBlock inputSelecter = new InputBlock(blockLength, blockChecksumSize, PATTERN);
-        inputSelecter.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
-            if (inputSelecter.isValid()) {
-                String type = inputSelecter.getValue().substring(0, 1);
-                String random = inputSelecter.getValue().substring(1);
-                sessionID = new SessionID(type, random);
-                addBlocks(type);
+            String[][] keys = new QRModel().getKeys(newValue);
+            if (keys.length > 0) {
+                ecdhResponseKeys.clear();
+                for (int i = 0; i < keys.length; i++) {
+                    SessionID sessionID = new SessionID(keys[i][0].substring(0, 1), keys[i][0].substring(1));
+                    String key = keys[i][1];
+                    addKeyToKeyStore(sessionID, key);
+                }
+                if (ecdhResponseKeys.size() > 0) {
+                    mainApp.showCodeOutput(ecdhResponseKeys);
+                } else {
+                    mainApp.showKeyManagement();
+                }
+                //webcamHandler.shutdownWebcam();
+                //imageViewWebcam.d
+                hbWebcamImage.getChildren().remove(imageViewWebcam);
             }
         });
-        hbInputSelecter.getChildren().add(inputSelecter);
-        vbKeyInput.getChildren().removeAll(hbInputBlocks1, hbInputBlocks2, hbInputBlocks3, hbInputBlocks4);
-        vbManualInput.getChildren().remove(vbKeyInput);
-    }
-
-    /**
-     * Is called by the main application to give a reference back to itself.
-     *
-     * @param mainApp
-     */
-    public void setMainApp(MainApp mainApp) {
-        this.mainApp = mainApp;
     }
 
     private void addBlocks(String type) {
@@ -174,24 +191,12 @@ public class CodeReaderController implements Initializable {
             InputBlock inputBlock = new InputBlock(blockLength, blockChecksumSize, PATTERN);
             inputBlock.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
                 if (inputBlocks.areValid()) {
-                    try {
-                        Thread.sleep(500);
-                        if (sessionID.isSessionKey()) {
-                            SessionKey sessionKey = new SessionKey(sessionID, inputBlocks.getValue());
-                            mainApp.getKeys().add(sessionKey);
-                            mainApp.showKeyManagement();
-                        } else if (sessionID.isECDHReq()) {
-                            // Calculating the ECDH response and the SessionKey
-                            ECDHKey ecdhKey = new ECDHKey(sessionID);
-                            mainApp.getKeys().add(ecdhKey);
-                            SessionKey sessionKey = ecdhKey.getSessionKey(inputBlocks.getValue());
-                            mainApp.getKeys().add(sessionKey);
-                            List<Key> keys = new ArrayList<>();
-                            keys.add(ecdhKey);
-                            mainApp.showCodeOutput(keys);
-                        }
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(CodeReaderController.class.getName()).log(Level.SEVERE, null, ex);
+                    ecdhResponseKeys.clear();
+                    addKeyToKeyStore(manualSessionID, newValue);
+                    if (ecdhResponseKeys.size() > 0) {
+                        mainApp.showCodeOutput(ecdhResponseKeys);
+                    } else {
+                        mainApp.showKeyManagement();
                     }
                 }
             });
@@ -207,5 +212,34 @@ public class CodeReaderController implements Initializable {
             }
         }
         vbManualInput.getChildren().add(vbKeyInput);
+    }
+
+    private void addKeyToKeyStore(SessionID sessionID, String key) {
+        if (sessionID.isSessionKey()) {
+            SessionKey sessionKey = new SessionKey(sessionID, key);
+            sessionKey.setPartner("Remote");
+            sessionKey.setState("3");
+            mainApp.getKeys().add(sessionKey);
+
+        } else if (sessionID.isECDHReq()) {
+            // Calculating the ECDH response and the SessionKey
+            ECDHKey ecdhKey = new ECDHKey(sessionID);
+            //mainApp.getKeys().add(ecdhKey);
+            SessionKey sessionKey = ecdhKey.getSessionKey(key);
+            sessionKey.setPartner("Remote");
+            sessionKey.setState("3");
+            mainApp.getKeys().add(sessionKey);
+            mainApp.getKeys().remove(ecdhKey);
+            ecdhResponseKeys.add(ecdhKey);
+
+        } else if (sessionID.isECDHRes()) {
+            // Load the ECDHKey from the KeyStore
+            ECDHKey ecdhKey = mainApp.getKeys().getECDHKey(sessionID.getRandom());
+            SessionKey sessionKey = ecdhKey.getSessionKey(key);
+            sessionKey.setPartner(ecdhKey.getPartner());
+            sessionKey.setState("0");
+            mainApp.getKeys().add(sessionKey);
+            mainApp.getKeys().remove(ecdhKey);
+        }
     }
 }

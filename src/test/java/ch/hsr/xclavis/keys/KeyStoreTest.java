@@ -86,11 +86,17 @@ public class KeyStoreTest {
         KeyStore instance = new KeyStore();
 
         SessionKey sessionKey128 = new SessionKey(SessionID.SESSION_KEY_128);
+        sessionKey128.setPartner("KeyStoreTest");
         SessionKey sessionKey256 = new SessionKey(SessionID.SESSION_KEY_256);
+        sessionKey256.setPartner("KeyStoreTest");
         ECDHKey ecdhKeyReq256 = new ECDHKey(SessionID.ECDH_REQ_256);
+        ecdhKeyReq256.setPartner("KeyStoreTest");
         ECDHKey ecdhKeyReq512 = new ECDHKey(SessionID.ECDH_REQ_512);
+        ecdhKeyReq512.setPartner("KeyStoreTest");
         ECDHKey ecdhKeyRes256 = new ECDHKey(SessionID.ECDH_RES_256);
+        ecdhKeyRes256.setPartner("KeyStoreTest");
         ECDHKey ecdhKeyRes512 = new ECDHKey(SessionID.ECDH_RES_512);
+        ecdhKeyRes512.setPartner("KeyStoreTest");
 
         System.out.println("ID: " + sessionKey128.getID() + " Date: " + sessionKey128.getDate() + " Partner: " + sessionKey128.getPartner() + " State: " + sessionKey128.getState());
         System.out.println("Key: " + Base32.byteToBase32(sessionKey128.getKey()));
@@ -119,12 +125,14 @@ public class KeyStoreTest {
         for (SessionKey sessionKey : sessionKeys) {
             System.out.println("ID: " + sessionKey.getID() + " Date: " + sessionKey.getDate() + " Partner: " + sessionKey.getPartner() + " State: " + sessionKey.getState());
             System.out.println("Key: " + Base32.byteToBase32(sessionKey.getKey()));
+            instance2.remove(sessionKey);
         }
 
         List<ECDHKey> ecdhKeys = instance2.getECDHKeys();
         for (ECDHKey ecdhKey : ecdhKeys) {
             System.out.println("ID: " + ecdhKey.getID() + " Date: " + ecdhKey.getDate() + " Partner: " + ecdhKey.getPartner() + " State: " + ecdhKey.getState());
             System.out.println("Private Key: " + Base32.byteToBase32(ecdhKey.getPrivateKey()) + " Public Key: " + Base32.byteToBase32(ecdhKey.getPublicKey()));
+            instance2.remove(ecdhKey);
         }
     }
 

@@ -23,6 +23,7 @@
                   <Menu mnemonicParsing="false" text="%security">
                     <items>
                       <MenuItem mnemonicParsing="false" onAction="#showKeyLengthSettings" text="%key_length" />
+                        <MenuItem mnemonicParsing="false" onAction="#showExtendedSecuritySettings" text="%extended_security" />
                         <MenuItem mnemonicParsing="false" onAction="#showKeyStorePasswordSettings" text="%key_store_password" />
                     </items>
                   </Menu>
@@ -53,7 +54,7 @@
         </MenuBar>
       <HBox fx:id="toolBar" alignment="TOP_CENTER" maxWidth="650.0" minWidth="650.0" prefWidth="650.0">
          <children>
-                <Button maxWidth="166.0" minWidth="166.0" onAction="#showFileList" prefWidth="166.0" text="%file_list">
+                <Button fx:id="fileListBtn" maxWidth="166.0" minWidth="166.0" onAction="#showFileList" prefWidth="166.0" text="%file_list">
                     <graphic>
                         <ImageView>
                             <image>
@@ -62,7 +63,7 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button maxWidth="167.0" minWidth="167.0" onAction="#showQRScanner" prefWidth="167.0" text="%scan_qr_code">
+                <Button fx:id="qrScannerBtn" maxWidth="167.0" minWidth="167.0" onAction="#showQRScanner" prefWidth="167.0" text="%scan_qr_code">
                     <graphic>
                         <ImageView>
                             <image>
@@ -71,7 +72,7 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button maxWidth="167.0" minWidth="167.0" onAction="#showKeyList" prefWidth="167.0" text="%key_management">
+                <Button fx:id="keyManagementBtn" maxWidth="167.0" minWidth="167.0" onAction="#showKeyList" prefWidth="167.0" text="%key_management">
                     <graphic>
                         <ImageView>
                             <image>

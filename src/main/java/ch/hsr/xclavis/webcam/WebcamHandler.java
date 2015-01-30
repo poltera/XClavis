@@ -25,7 +25,8 @@ import javafx.scene.image.Image;
  */
 public class WebcamHandler {
 
-    private final static int fps = 24;
+    private static final int FPS = 24;
+    private static final int QRFPS = 5;
     private int sleepTimer;
 
     private ObservableList<DetectedWebcam> webcams;
@@ -34,10 +35,13 @@ public class WebcamHandler {
     private boolean stopCamera;
     private QRCodeReader qrCodeReader;
     private StringProperty qrResult;
+    
+    private int qrFlopsCounter;
 
     public WebcamHandler() {
         this.webcams = FXCollections.observableArrayList();
-        sleepTimer = 1000 / fps;
+        this.sleepTimer = 1000 / FPS;
+        this.qrFlopsCounter = 0;
         this.selectedWebcam = null;
         this.stopCamera = false;
         scanWebcams();
@@ -87,6 +91,7 @@ public class WebcamHandler {
 
             @Override
             protected Void call() throws Exception {
+                
                 while (!stopCamera) {
                     if (selectedWebcam.isOpen()) {
                         try {
@@ -95,10 +100,15 @@ public class WebcamHandler {
                                     // Convert the Image for JavaFX
                                     Image image = SwingFXUtils.toFXImage(bufferedImage, null);
                                     imageProperty.set(image);
-                                    // Check if QR-Code is in Image
-                                    if (qrCodeReader.checkImage(bufferedImage)) {
-                                        qrResult.set(qrCodeReader.getResult());
+                                    qrFlopsCounter++;
+                                    if (qrFlopsCounter == 5) {
+                                        // Check if QR-Code is in Image
+                                        if (qrCodeReader.checkImage(bufferedImage)) {
+                                            qrResult.set(qrCodeReader.getResult());
+                                        }
+                                        qrFlopsCounter = 0;
                                     }
+
                                 });
                             }
                         } catch (Exception e) {

@@ -28,9 +28,8 @@ public class ECDHKey extends Key {
 
     // ECDH Response
     public ECDHKey(SessionID sessionID) {
-        super(sessionID);
+        super(new SessionID(sessionID.getNextType(), sessionID.getRandom()));
         this.ecdh = new ECDH(getCurve());
-        changeTypeToECDHRes();
     }
 
     // ECDH from KeyStore
@@ -61,16 +60,6 @@ public class ECDHKey extends Key {
         return ecdh.getPublicKey();
     }
 
-    public SessionKey getSessionKey(byte[] publicKey) {
-        byte[] agreedKey = ecdh.getAgreedKey(publicKey);
-        HMACSHA hmacsha = new HMACSHA(getSessionID().getKeyLength());
-        byte[] derivatedKey = hmacsha.getDerivatedKey(getSessionID().getFinalKeyLength(), agreedKey);
-        SessionKey sessionKey = new SessionKey(getSessionID(), derivatedKey);
-        sessionKey.changeTypeToSessionKey();
-
-        return sessionKey;
-    }
-
     public SessionKey getSessionKey(String base32PublicKey) {
         // Converting back a Base32 String to its Byte Value gives in some cases an additional Byte
         byte[] bytePublicKey = Base32.base32ToByte(base32PublicKey);
@@ -85,8 +74,8 @@ public class ECDHKey extends Key {
         }
         HMACSHA hmacsha = new HMACSHA(getSessionID().getKeyLength());
         byte[] derivatedKey = hmacsha.getDerivatedKey(getSessionID().getFinalKeyLength(), agreedKey);
-        SessionKey sessionKey = new SessionKey(new SessionID(getSessionID().getType(), getSessionID().getRandom()), derivatedKey);
-        sessionKey.changeTypeToSessionKey();
+        SessionID sessionID = new SessionID(getSessionID().getFinalType(), getSessionID().getRandom());
+        SessionKey sessionKey = new SessionKey(sessionID, derivatedKey);
 
         return sessionKey;
     }
