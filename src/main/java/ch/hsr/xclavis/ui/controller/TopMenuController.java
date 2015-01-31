@@ -204,9 +204,9 @@ public class TopMenuController implements Initializable {
 
         ButtonType buttonTypeSwitcher;
         if (!mainApp.getProperties().getBoolean("extended_security")) {
-            buttonTypeSwitcher = new ButtonType("Aktivieren", ButtonData.OK_DONE);
+            buttonTypeSwitcher = new ButtonType(rb.getString("activate"), ButtonData.OK_DONE);
         } else {
-            buttonTypeSwitcher = new ButtonType("Deaktivieren", ButtonData.OK_DONE);
+            buttonTypeSwitcher = new ButtonType(rb.getString("deactivate"), ButtonData.OK_DONE);
         }
         ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
 
