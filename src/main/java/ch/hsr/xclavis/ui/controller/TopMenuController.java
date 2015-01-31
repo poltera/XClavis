@@ -41,6 +41,7 @@ public class TopMenuController implements Initializable {
 
     private MainApp mainApp;
     private ResourceBundle rb;
+    private static final String POPUP_TITLE = "XClavis";
 
     @FXML
     private VBox topMenu;
@@ -133,9 +134,9 @@ public class TopMenuController implements Initializable {
         choices.add("256");
 
         ChoiceDialog<String> dialog = new ChoiceDialog<>(mainApp.getProperties().getString("key_size"), choices);
-        dialog.setTitle("Sicherheitseinstellungen");
-        dialog.setHeaderText("Schlüssellänge für die Verschlüsselung");
-        dialog.setContentText("Länge in Bit:");
+        dialog.setTitle(POPUP_TITLE);
+        dialog.setHeaderText(rb.getString("encryption_key_length"));
+        dialog.setContentText(rb.getString("bit_length") + ":");
 
         Optional<String> result = dialog.showAndWait();
         result.ifPresent(choice -> mainApp.getProperties().set("key_size", choice));
@@ -158,10 +159,10 @@ public class TopMenuController implements Initializable {
 
     @FXML
     private void showKeyStorePasswordSettings(ActionEvent event) {
-        TextInputDialog dialog = new TextInputDialog("password");
-        dialog.setTitle("Sicherheitseinstellungen");
-        dialog.setHeaderText("");
-        dialog.setContentText("");
+        TextInputDialog dialog = new TextInputDialog(rb.getString("password"));
+        dialog.setTitle(POPUP_TITLE);
+        dialog.setHeaderText(rb.getString("password_protection"));
+        dialog.setContentText(rb.getString("password") + ":");
 
         Optional<String> result = dialog.showAndWait();
         result.ifPresent(choice -> mainApp.getKeys().updatePassword(choice));
@@ -187,9 +188,9 @@ public class TopMenuController implements Initializable {
     @FXML
     private void showAbout(ActionEvent event) {
         Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("XClavis");
-        alert.setHeaderText("Über");
-        alert.setContentText("Copyright 2015 Gian Poltéra, Alle Rechte vorbehalten\nVersion 0.97");
+        alert.setTitle(POPUP_TITLE);
+        alert.setHeaderText(rb.getString("about"));
+        alert.setContentText(rb.getString("about_text"));
 
         alert.showAndWait();
     }
@@ -197,9 +198,9 @@ public class TopMenuController implements Initializable {
     @FXML
     private void showExtendedSecuritySettings(ActionEvent event) {
         Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("XClavis");
-        alert.setHeaderText("Aktivierung der erweiteren Sicherheit");
-        alert.setContentText("Sind Sie sicher, dass Sie die erweiterte Sicherheit aktivieren wollen?");
+        alert.setTitle(POPUP_TITLE);
+        alert.setHeaderText(rb.getString("extended_security"));
+        alert.setContentText(rb.getString("activating_extended_security"));
 
         ButtonType buttonTypeSwitcher;
         if (!mainApp.getProperties().getBoolean("extended_security")) {

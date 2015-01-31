@@ -44,7 +44,7 @@ public class MainApp extends Application {
     private VBox codeOutputBox, codeReaderBox, cryptionStateBox, fileSelecterBox, keyManagementBox, topMenuBox;
     private BorderPane rootPane;
 
-    private ResourceBundle bundle;
+    private ResourceBundle rb;
     private PropertiesHandler properties;
     private FileHandler files;
     private KeyStore keys;
@@ -53,6 +53,8 @@ public class MainApp extends Application {
      * Constructor
      */
     public MainApp() {
+        Locale locale = Locale.getDefault();
+        this.rb = ResourceBundle.getBundle("bundles.XClavis", locale);
         this.properties = new PropertiesHandler();
         this.files = new FileHandler();
         this.keys = new KeyStore();
@@ -90,9 +92,9 @@ public class MainApp extends Application {
     }
 
     private void showPasswordInput() {
-        TextInputDialog dialog = new TextInputDialog("password");
+        TextInputDialog dialog = new TextInputDialog(rb.getString("password"));
         dialog.setTitle("XClavis");
-        dialog.setHeaderText("XClavis Passwort eingeben");
+        dialog.setHeaderText(rb.getString("password_input"));
         dialog.setContentText("");
 
         Optional<String> password = dialog.showAndWait();
@@ -105,8 +107,6 @@ public class MainApp extends Application {
         this.stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/xclavis.png")));
         this.stage.setTitle("XClavis");
         this.stage.setResizable(false);
-        Locale locale = Locale.getDefault();
-        this.bundle = ResourceBundle.getBundle("bundles.XClavis", locale);
 
         initAllWindows();
         showRootPane();
@@ -225,7 +225,7 @@ public class MainApp extends Application {
     }
 
     public void changeLanguage(Locale locale) {
-        bundle = ResourceBundle.getBundle("bundles.XClavis", locale);
+        rb = ResourceBundle.getBundle("bundles.XClavis", locale);
         initAllWindows();
         showRootPane();
         showTopMenu();
@@ -233,7 +233,7 @@ public class MainApp extends Application {
     }
 
     private FXMLLoader getLoader(String path) {
-        return new FXMLLoader(getClass().getResource(path), bundle);
+        return new FXMLLoader(getClass().getResource(path), rb);
     }
 
     /**
