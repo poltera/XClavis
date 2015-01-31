@@ -70,7 +70,9 @@ public class FileSelecterController implements Initializable {
     @FXML
     private Button btnDecrypt;
     @FXML
-    private Button btnScanQR;
+    private Button btnCodeReader;
+    @FXML
+    private Button changeBtn;
 
     /**
      * Initializes the controller class.
@@ -111,7 +113,7 @@ public class FileSelecterController implements Initializable {
             return new ReadOnlyObjectWrapper(btnDeleteRow);
         });
 
-        hbButtons.getChildren().removeAll(btnEncrypt, btnDecrypt, btnScanQR);
+        hbButtons.getChildren().removeAll(btnEncrypt, btnDecrypt, btnCodeReader);
     }
 
     /**
@@ -128,9 +130,24 @@ public class FileSelecterController implements Initializable {
         mainApp.getFiles().modeProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
             hbButtons.getChildren().removeAll(hbButtons.getChildren().sorted());
             if (newValue.intValue() == 1) {
-                hbButtons.getChildren().add(btnDecrypt);
+                String id = mainApp.getFiles().getObservableFileList().get(0).getID();
+                byte[] iv = mainApp.getFiles().getObservableFileList().get(0).getIV();
+                SessionID sessionID = new SessionID(id.substring(0, 1), id.substring(1));
+                if (mainApp.getKeys().existsKey(sessionID)) {
+                    hbButtons.getChildren().add(btnDecrypt);
+                    changeBtn.setDisable(false);
+                } else {
+                    hbButtons.getChildren().add(btnCodeReader);
+                    changeBtn.setDisable(true);
+                }              
+                cbExisitingKeys.setDisable(true);
             } else if (newValue.intValue() == 2) {
                 hbButtons.getChildren().add(btnEncrypt);
+                cbExisitingKeys.setDisable(false);
+                changeBtn.setDisable(false);
+            } else {
+                cbExisitingKeys.setDisable(true);
+                changeBtn.setDisable(true);
             }
         });
         mainApp.getKeys().getSessionKeys().stream().filter((sessionKey) -> (sessionKey.getState().equals("0"))).forEach((sessionKey) -> {
@@ -209,10 +226,6 @@ public class FileSelecterController implements Initializable {
     }
 
     @FXML
-    private void scanQR(ActionEvent event) {
-    }
-
-    @FXML
     private void changeOutputPath(ActionEvent event) {
         //TBA Check if permissions for write in this folder!!
         DirectoryChooser directoryChooser = new DirectoryChooser();
@@ -225,6 +238,20 @@ public class FileSelecterController implements Initializable {
         File selectedDirectory = directoryChooser.showDialog(new Stage());
         if (selectedDirectory != null) {
             tfOutputPath.setText(selectedDirectory.getAbsolutePath());
+        }
+    }
+
+    @FXML
+    private void codeReader(ActionEvent event) {
+        String id = mainApp.getFiles().getObservableFileList().get(0).getID();
+        byte[] iv = mainApp.getFiles().getObservableFileList().get(0).getIV();
+        SessionID sessionID = new SessionID(id.substring(0, 1), id.substring(1));
+        if (mainApp.getKeys().existsKey(sessionID)) {
+            SessionKey sessionKey = mainApp.getKeys().getSessionKey(sessionID);
+            sessionKey.setIV(iv);
+            mainApp.showCryptionState(sessionKey, false, tfOutputPath.getText());
+        } else {
+            mainApp.showCodeReader();
         }
     }
 }

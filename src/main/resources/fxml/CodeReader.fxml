@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import javafx.scene.image.*?>
 <?import ch.hsr.xclavis.commons.*?>
 <?import javafx.geometry.*?>
@@ -14,6 +15,11 @@
     <children>
         <VBox fx:id="vbWebcamInput" alignment="TOP_CENTER" maxWidth="500.0" minWidth="500.0" prefWidth="500.0" spacing="10.0">
             <children>
+            <Label text="%webcam_code_input">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font></Label>
+            <Label fx:id="lblNoWebcam" text="%no_webcam" />
                 <HBox fx:id="hbWebcamSelecter" alignment="CENTER" spacing="25.0">
                     <children>
                         <Label text="%select_webcam" />
@@ -26,8 +32,12 @@
                </children></HBox>
             </children>
         </VBox>
-      <VBox fx:id="vbManualInput" maxWidth="500.0" minWidth="500.0" prefWidth="500.0" spacing="10.0">
+      <VBox fx:id="vbManualInput" alignment="TOP_CENTER" maxWidth="500.0" minWidth="500.0" prefWidth="500.0" spacing="10.0">
          <children>
+            <Label alignment="CENTER" text="%manual_code_input">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font></Label>
               <HBox fx:id="hbInputSelecter" alignment="CENTER" maxWidth="500.0" minWidth="500.0" prefWidth="500.0" spacing="10.0">
                   <VBox.margin>
                       <Insets />

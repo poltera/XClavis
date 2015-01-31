@@ -38,10 +38,12 @@ public class CodeReaderController implements Initializable {
     private final static String PATTERN = "[23456789abcdefghjklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ]";
 
     private MainApp mainApp;
+    private WebcamHandler webcamHandler;
     private final int blockLength = 5;
     private final int blockChecksumSize = 1;
     private SessionID manualSessionID;
     private List<Key> ecdhResponseKeys;
+    private boolean webcamStarted;
 
     @FXML
     private VBox vbWebcamInput;
@@ -67,6 +69,8 @@ public class CodeReaderController implements Initializable {
     private HBox hbInputBlocks4;
     @FXML
     private ComboBox<DetectedWebcam> cbWebcamSelecter;
+    @FXML
+    private Label lblNoWebcam;
 
     /**
      * Initializes the controller class.
@@ -76,7 +80,9 @@ public class CodeReaderController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        webcamHandler = new WebcamHandler();
         ecdhResponseKeys = new ArrayList<>();
+        webcamStarted = false;
 
         InputBlock inputSelecter = new InputBlock(blockLength, blockChecksumSize, PATTERN);
         inputSelecter.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
@@ -102,7 +108,6 @@ public class CodeReaderController implements Initializable {
     }
 
     public void startWebcam() {
-        WebcamHandler webcamHandler = new WebcamHandler();
         ImageView imageViewWebcam = new ImageView();
         imageViewWebcam.setFitWidth(480);
         imageViewWebcam.setPreserveRatio(true);
@@ -121,35 +126,43 @@ public class CodeReaderController implements Initializable {
         }
 
         // Show WebcamImage from first Webcam if one Webcam exists
-        if (webcamHandler.existsWebcam()) {
-            webcamHandler.initWebcam(0);
-            imageViewWebcam.imageProperty().bind(webcamHandler.getStream());
-            hbWebcamImage.getChildren().remove(lblWebcamLoad);
-            hbWebcamImage.getChildren().add(imageViewWebcam);
-        } else {
-            vbWebcamInput.getChildren().remove(hbWebcamImage);
-        }
+        if (!webcamStarted) {
+            if (webcamHandler.existsWebcam()) {
+                // Start the Webcam
+                webcamStarted = true;
+                webcamHandler.initWebcam(0);
+                imageViewWebcam.imageProperty().bind(webcamHandler.getStream());
+                hbWebcamImage.getChildren().remove(lblWebcamLoad);
+                vbWebcamInput.getChildren().remove(lblNoWebcam);
+                hbWebcamImage.getChildren().add(imageViewWebcam);
 
-        // Listener for QRCode
-        webcamHandler.getScanedQRCode().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
-            String[][] keys = new QRModel().getKeys(newValue);
-            if (keys.length > 0) {
-                ecdhResponseKeys.clear();
-                for (int i = 0; i < keys.length; i++) {
-                    SessionID sessionID = new SessionID(keys[i][0].substring(0, 1), keys[i][0].substring(1));
-                    String key = keys[i][1];
-                    addKeyToKeyStore(sessionID, key);
-                }
-                if (ecdhResponseKeys.size() > 0) {
-                    mainApp.showCodeOutput(ecdhResponseKeys);
-                } else {
-                    mainApp.showKeyManagement();
-                }
-                //webcamHandler.shutdownWebcam();
-                //imageViewWebcam.d
-                hbWebcamImage.getChildren().remove(imageViewWebcam);
+            } else {
+                vbWebcamInput.getChildren().remove(hbWebcamImage);
             }
-        });
+
+            // Listener for QRCode
+            webcamHandler.getScanedQRCode().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+                String[][] keys = new QRModel().getKeys(newValue);
+                if (keys.length > 0) {
+                    ecdhResponseKeys.clear();
+                    for (int i = 0; i < keys.length; i++) {
+                        SessionID sessionID = new SessionID(keys[i][0].substring(0, 1), keys[i][0].substring(1));
+                        String key = keys[i][1];
+                        addKeyToKeyStore(sessionID, key);
+                    }
+                    if (ecdhResponseKeys.size() > 0) {
+                        mainApp.showCodeOutput(ecdhResponseKeys);
+                    } else {
+                        mainApp.showKeyManagement();
+                    }
+                    // Stop the Webcam
+                    imageViewWebcam.imageProperty().unbind();
+                    hbWebcamImage.getChildren().remove(imageViewWebcam);
+                    webcamHandler.stopWebcam();
+                    webcamStarted = false;
+                }
+            });
+        }
     }
 
     private void addBlocks(String type) {
