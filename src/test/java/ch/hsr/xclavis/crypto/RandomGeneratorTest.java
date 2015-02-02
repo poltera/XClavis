@@ -1,17 +1,10 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Here comes the text of your license
+ * Each line should be prefixed with  * 
  */
 package ch.hsr.xclavis.crypto;
 
 import ch.hsr.xclavis.helpers.Base32;
-import com.github.sarxos.webcam.Webcam;
-import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
-import java.nio.charset.Charset;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -44,33 +37,38 @@ public class RandomGeneratorTest {
     public void tearDown() {
     }
 
-    private final static String UNICODE_KEY = "\uD83D\uDD11";
-
     /**
      * Test of getRandomBytes method, of class RandomGenerator.
      */
     @Test
     public void testGetRandomBytes() {
-        byte[] bytes = RandomGenerator.getRandomBytes(16);
-
-        for (byte b : bytes) {
-
-            String s1 = String.format("%8s", Integer.toBinaryString(b & 0xFF)).replace(' ', '0');
-            System.out.print("{" + s1 + "} ");
+        System.out.println("getRandomBytes");
+        int bytes = 16;
+        System.out.println("Request length: " + bytes);
+        int expResult = 16;
+        byte[] result = RandomGenerator.getRandomBytes(bytes);
+        System.out.println("Result: " + Base32.byteToBase32(result));
+        if (result.length != expResult) {
+            fail("Length of the random value not correct.");
         }
-        System.out.println();
         
-        String base32 = Base32.byteToBase32(bytes);
-        System.out.println(base32);
-        
-        byte[] bytes2 = Base32.base32ToByte(base32);
-        for (byte b : bytes2) {
-
-            String s1 = String.format("%8s", Integer.toBinaryString(b & 0xFF)).replace(' ', '0');
-            System.out.print("{" + s1 + "} ");
+        int bytes2 = 32;
+        System.out.println("Request length: " + bytes2);
+        int expResult2 = 32;
+        byte[] result2 = RandomGenerator.getRandomBytes(bytes2);
+        System.out.println("Result: " + Base32.byteToBase32(result2));
+        if (result2.length != expResult2) {
+            fail("Length of the random value not correct.");
         }
-        System.out.println();
         
+        int bytes3 = 64;
+        System.out.println("Request length: " + bytes3);
+        int expResult3 = 64;
+        byte[] result3 = RandomGenerator.getRandomBytes(bytes3);
+        System.out.println("Result: " + Base32.byteToBase32(result3));
+        if (result3.length != expResult3) {
+            fail("Length of the random value not correct.");
+        }
     }
 
     /**
@@ -78,6 +76,33 @@ public class RandomGeneratorTest {
      */
     @Test
     public void testGetRandomBits() {
+        System.out.println("getRandomBits");
+        int bits = 128;
+        System.out.println("Request length: " + bits);
+        int expResult = 128;
+        String result = RandomGenerator.getRandomBits(bits);
+        System.out.println("Result: " + Base32.bitStringToBase32(result));
+        if (result.length() != expResult) {
+            fail("Length of the random value not correct.");
+        }
 
+        int bits2 = 256;
+        System.out.println("Request length: " + bits2);
+        int expResult2 = 256;
+        String result2 = RandomGenerator.getRandomBits(bits2);
+        System.out.println("Result: " + Base32.bitStringToBase32(result2));
+        if (result2.length() != expResult2) {
+            fail("Length of the random value not correct.");
+        }
+
+        int bits3 = 512;
+        System.out.println("Request length: " + bits3);
+        int expResult3 = 512;
+        String result3 = RandomGenerator.getRandomBits(bits3);
+        System.out.println("Result: " + Base32.bitStringToBase32(result3));
+        if (result3.length() != expResult3) {
+            fail("Length of the random value not correct.");
+        }
     }
+
 }

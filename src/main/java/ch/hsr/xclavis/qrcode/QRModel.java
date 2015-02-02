@@ -115,7 +115,13 @@ public class QRModel {
             for (String block : blocks) {
                 key += block.substring(0, BLOCK_LENGTH - BLOCK_CHECKSUM);
             }
-            key = key.substring(0, (sessionID.getKeyLength() + sessionID.getAddCordLength()) / Base32.SIZE + 1);
+            int keyLength = sessionID.getKeyLength() + sessionID.getAddCordLength();
+            if ((keyLength % Base32.SIZE) == 0) {
+                keyLength = keyLength / Base32.SIZE;
+            } else {
+                keyLength = keyLength / Base32.SIZE + 1;
+            }
+            key = key.substring(0, keyLength);
             
             keys[i - 1][0] = sessionID.getID();
             keys[i - 1][1] = key;

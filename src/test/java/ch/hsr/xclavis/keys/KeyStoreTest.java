@@ -1,7 +1,6 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Here comes the text of your license
+ * Each line should be prefixed with  * 
  */
 package ch.hsr.xclavis.keys;
 
@@ -41,49 +40,11 @@ public class KeyStoreTest {
     }
 
     /**
-     * Test of getObservableKeyList method, of class KeyStore.
+     * Test all methods of class KeyStore.
      */
     @Test
-    public void testGetObservableKeyList() {
-
-    }
-
-    /**
-     * Test of add method, of class KeyStore.
-     */
-    @Test
-    public void testAdd_Key() {
-    }
-
-    /**
-     * Test of add method, of class KeyStore.
-     */
-    @Test
-    public void testAdd_List() {
-    }
-
-    /**
-     * Test of existsKey method, of class KeyStore.
-     */
-    @Test
-    public void testExistsKey() {
-    }
-
-    /**
-     * Test of getSessionKey method, of class KeyStore.
-     */
-    @Test
-    public void testGetSessionKey() {
-
-    }
-
-    /**
-     * Test of getSessionKeys method, of class KeyStore.
-     */
-    @Test
-    public void testGetSessionKeys() {
-        System.out.println("SaveKeys");
-        KeyStore instance = new KeyStore();
+    public void testKeyStore() {
+        System.out.println("AddKeys");
 
         SessionKey sessionKey128 = new SessionKey(SessionID.SESSION_KEY_128);
         sessionKey128.setPartner("KeyStoreTest");
@@ -98,6 +59,7 @@ public class KeyStoreTest {
         ECDHKey ecdhKeyRes512 = new ECDHKey(SessionID.ECDH_RES_512);
         ecdhKeyRes512.setPartner("KeyStoreTest");
 
+        System.out.println("Input:");
         System.out.println("ID: " + sessionKey128.getID() + " Date: " + sessionKey128.getDate() + " Partner: " + sessionKey128.getPartner() + " State: " + sessionKey128.getState());
         System.out.println("Key: " + Base32.byteToBase32(sessionKey128.getKey()));
         System.out.println("ID: " + sessionKey256.getID() + " Date: " + sessionKey256.getDate() + " Partner: " + sessionKey256.getPartner() + " State: " + sessionKey256.getState());
@@ -110,6 +72,8 @@ public class KeyStoreTest {
         System.out.println("Private Key: " + Base32.byteToBase32(ecdhKeyRes256.getPrivateKey()) + " Public Key: " + Base32.byteToBase32(ecdhKeyRes256.getPublicKey()));
         System.out.println("ID: " + ecdhKeyRes512.getID() + " Date: " + ecdhKeyRes512.getDate() + " Partner: " + ecdhKeyRes512.getPartner() + " State: " + ecdhKeyRes512.getState());
         System.out.println("Private Key: " + Base32.byteToBase32(ecdhKeyRes512.getPrivateKey()) + " Public Key: " + Base32.byteToBase32(ecdhKeyRes512.getPublicKey()));
+
+        KeyStore instance = new KeyStore();
 
         instance.add(sessionKey128);
         instance.add(sessionKey256);
@@ -135,34 +99,4 @@ public class KeyStoreTest {
             instance2.remove(ecdhKey);
         }
     }
-
-    /**
-     * Test of getECDHKey method, of class KeyStore.
-     */
-    @Test
-    public void testGetECDHKey() {
-
-    }
-
-    /**
-     * Test of getECDHKeys method, of class KeyStore.
-     */
-    @Test
-    public void testGetECDHKeys() {
-    }
-
-    /**
-     * Test of remove method, of class KeyStore.
-     */
-    @Test
-    public void testRemove() {
-    }
-
-    /**
-     * Test of saveKeys method, of class KeyStore.
-     */
-    @Test
-    public void testSaveKeys() {
-    }
-
 }

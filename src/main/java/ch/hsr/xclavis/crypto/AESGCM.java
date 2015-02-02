@@ -57,7 +57,7 @@ public class AESGCM {
                     DataOutputStream dos = new DataOutputStream(fos);
                     //BufferedOutputStream bos = new BufferedOutputStream(fos);
                     CipherOutputStream cos = new CipherOutputStream(dos, cipher)) {
-                // Plaintext ID and IV add the beginning of the file
+                // Plaintext ID and IV add at the beginning of the file
                 dos.write(sessionKey.getID().getBytes());
                 dos.write(sessionKey.getIV());
                 // Encrypted Data

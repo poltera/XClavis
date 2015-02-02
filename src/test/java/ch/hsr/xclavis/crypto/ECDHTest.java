@@ -1,14 +1,11 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Here comes the text of your license
+ * Each line should be prefixed with  * 
  */
 package ch.hsr.xclavis.crypto;
 
 import ch.hsr.xclavis.helpers.Base32;
-import java.security.Security;
 import java.util.Arrays;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -23,7 +20,6 @@ import static org.junit.Assert.*;
 public class ECDHTest {
 
     public ECDHTest() {
-
     }
 
     @BeforeClass
@@ -42,8 +38,11 @@ public class ECDHTest {
     public void tearDown() {
     }
 
+    /**
+     * Test ECDH Key Exchange Brainpool P256.
+     */
     @Test
-    public void testECDHKeyExchangeCurveBP256() {
+    public void testBrainpoolP256() {
         String curve1 = "brainpoolP256t1";
 
         System.out.println("start test the curve " + curve1);
@@ -52,8 +51,11 @@ public class ECDHTest {
         }
     }
 
+    /**
+     * Test ECDH Key Exchange Brainpool P512.
+     */
     @Test
-    public void testECDHKeyExchangeCurveBP512() {
+    public void testBrainpoolP512() {
         String curve2 = "brainpoolP512t1";
 
         System.out.println("start test the curve " + curve2);
@@ -67,7 +69,7 @@ public class ECDHTest {
         ECDH ecdh2 = new ECDH(curve);
 
         byte[] publicKey1 = ecdh1.getPublicKey();
-        System.out.println("PublicKey1: " + Base32.byteToBase32(publicKey1));   
+        System.out.println("PublicKey1: " + Base32.byteToBase32(publicKey1));
         System.out.println("PublicKey1 Length: " + publicKey1.length * Byte.SIZE);
 
         byte[] publicKey2 = ecdh2.getPublicKey();

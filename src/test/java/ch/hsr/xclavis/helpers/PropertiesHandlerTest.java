@@ -47,10 +47,11 @@ public class PropertiesHandlerTest {
         PropertiesHandler instance = new PropertiesHandler();
         instance.set(name, value);
         
-        String expResult = value;
+        System.out.println("Input: " + name);
+        String expResult = "XClavis";
         String result = instance.getString(name);
+        System.out.println("Result: " + result);
         instance.remove(name);
-        
         assertEquals(expResult, result);
     }
 
@@ -65,10 +66,11 @@ public class PropertiesHandlerTest {
         PropertiesHandler instance = new PropertiesHandler();
         instance.set(name, value);
         
-        int expResult = value;
+        System.out.println("Input: " + name);
+        int expResult = -159;
         int result = instance.getInteger(name);
+        System.out.println("Result: " + result);
         instance.remove(name);
-        
         assertEquals(expResult, result);
     }
 
@@ -83,11 +85,30 @@ public class PropertiesHandlerTest {
         PropertiesHandler instance = new PropertiesHandler();
         instance.set(name, value);
         
-        double expResult = value;
+        System.out.println("Input: " + name);
+        double expResult = 15.59;
         double result = instance.getDouble(name);
+        System.out.println("Result: " + result);
         instance.remove(name);
-        
         assertEquals(expResult, result, 0.0);
     }
-    
+
+    /**
+     * Test of getBoolean method, of class PropertiesHandler.
+     */
+    @Test
+    public void testGetBoolean() {
+        System.out.println("getBoolean");
+        String name = "boolean";
+        boolean value = true;
+        PropertiesHandler instance = new PropertiesHandler();
+        instance.set(name, value);
+        
+        System.out.println("Input: " + name);
+        boolean expResult = true;
+        boolean result = instance.getBoolean(name);
+        System.out.println("Result: " + result);
+        instance.remove(name);
+        assertEquals(expResult, result);
+    }    
 }

@@ -1,7 +1,6 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Here comes the text of your license
+ * Each line should be prefixed with  * 
  */
 package ch.hsr.xclavis.qrcode;
 
@@ -22,22 +21,22 @@ import static org.junit.Assert.*;
  * @author Gian
  */
 public class QRCodeReaderTest {
-    
+
     public QRCodeReaderTest() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
@@ -48,18 +47,37 @@ public class QRCodeReaderTest {
     @Test
     public void testCheckImage() {
         try {
-            String testFile = "/images/testqr.png";
-            System.out.println("Check QR Code Reader with png Image: " + testFile);
-            BufferedImage image = ImageIO.read(getClass().getResourceAsStream(testFile));
+            System.out.println("checkImage");
+            BufferedImage image = ImageIO.read(getClass().getResourceAsStream("/test/testqr.png"));
+            System.out.println("Input: " + "testqr.png");
             QRCodeReader instance = new QRCodeReader();
-            if (instance.checkImage(image)) {
-                System.out.println("QR-Code detected: " + instance.getResult());
-            } else {
-                fail("QR-Code not detected!");
-            }
+            boolean expResult = true;
+            boolean result = instance.checkImage(image);
+            System.out.println("Result: " + result);
+            assertEquals(expResult, result);
         } catch (IOException ex) {
             fail("File not found!");
         }
     }
-    
+
+    /**
+     * Test of getResult method, of class QRCodeReader.
+     */
+    @Test
+    public void testGetResult() {
+        System.out.println("getResult");
+        try {
+            System.out.println("checkImage");
+            BufferedImage image = ImageIO.read(getClass().getResourceAsStream("/test/testqr.png"));
+            System.out.println("Input: " + "testqr.png");
+            QRCodeReader instance = new QRCodeReader();
+            String expResult = "\ud83d\udd10\u0020XClavis\u0020\ud83c\udd94\u0020CEQ7J\n\uD83D\uDD11\u00202CBYJ-YA8HM-P6DTN-55DH2-LYT8W-UDAWT-EM4AT-D66XS-GGXVS-9U32L-LMS3W-NQG8Q-AD7GQ-JU6JS";
+            instance.checkImage(image);
+            String result = instance.getResult();;
+            System.out.println("Result: " + result);
+            assertEquals(expResult, result);
+        } catch (IOException ex) {
+            fail("File not found!");
+        }
+    }
 }
