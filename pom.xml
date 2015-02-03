@@ -4,21 +4,33 @@
 
     <groupId>ch.hsr</groupId>
     <artifactId>XClavis</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.99</version>
     <packaging>jar</packaging>
     
     <name>XClavis</name>
-    <url>https://www.xclavis.com/</url>
-
+    <description>Secure end-to-end encryptio with key exchange.</description>
+    <url>http://www.xclavis.com/</url>
+    
+    <licenses>
+        <license>
+            <name>BSD 3-clause style license</name>
+            <url>http://opensource.org/licenses/BSD-3-Clause</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    
+    <developers>
+        <developer>
+            <id>gpolt></id>
+            <name>Gian Poltéra</name>
+            <email>gian@poltera.com</email>
+        </developer>
+    </developers>
+    
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <mainClass>ch.hsr.xclavis.ui.MainApp</mainClass>
     </properties>
-
-    <organization>
-        <!-- Used as the 'Vendor' for JNLP generation -->
-        <name>HSR University of Applied Sciences Rapperswil Switzerland</name>
-    </organization>
     
     <!-- edited -->
     <dependencies>
