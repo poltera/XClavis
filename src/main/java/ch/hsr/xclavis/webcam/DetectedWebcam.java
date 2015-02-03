@@ -30,7 +30,7 @@ package ch.hsr.xclavis.webcam;
 
 /**
  *
- * @author Gian
+ * @author Gian Poltéra
  */
 public class DetectedWebcam {
     private String webcamName;

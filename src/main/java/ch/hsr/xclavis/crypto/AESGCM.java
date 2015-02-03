@@ -47,8 +47,9 @@ import org.bouncycastle.crypto.params.AEADParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 
 /**
+ * This class provides all AES cryption funtions in the GCM-mode.
  *
- * @author Gian
+ * @author Gian Poltéra
  */
 public class AESGCM {
 
@@ -56,20 +57,23 @@ public class AESGCM {
     private final AEADParameters cipherParameters;
 
     /**
+     * Create a new AESGCM instance with given key and iv.
      *
-     * @param key
-     * @param iv
+     * @param key the key for the encryption/decryption
+     * @param iv the initialvector for the encryption/decryption
      */
     public AESGCM(byte[] key, byte[] iv) {
         this.cipherParameters = new AEADParameters(new KeyParameter(key), BLOCK.length * Byte.SIZE, iv);
     }
 
     /**
+     * Encrypts a byte-array to a specific output file. At the beginning of the
+     * file, the SessionID and initialvector is added.
      *
-     * @param input
-     * @param output
-     * @param sessionKey
-     * @return
+     * @param input the byte-array to encrypt
+     * @param output the output-path for the encrypted file
+     * @param sessionKey for adding the SessionID and the IV to the file
+     * @return true, if the encryption was successfully or false if not
      */
     public boolean encrypt(byte[] input, String output, SessionKey sessionKey) {
         try {
@@ -94,6 +98,14 @@ public class AESGCM {
         }
     }
 
+    /**
+     * Encrypts a byte-array to a specific output file. No additional infos at
+     * the beginning of the file added.
+     *
+     * @param input the byte-array to encrypt
+     * @param output the output-path for the encrypted file
+     * @return true, if the encryption was successfully or false if not
+     */
     public boolean encryptKeyStore(byte[] input, String output) {
         try {
             AEADBlockCipher cipher = new GCMBlockCipher(new AESEngine());
@@ -114,6 +126,13 @@ public class AESGCM {
         }
     }
 
+    /**
+     * Decrypts a file to a specific destination.
+     *
+     * @param input the input-path for the encrypted file
+     * @param output the output-path for the decrypted file
+     * @return true, if the decryption was successfully or false if not
+     */
     public boolean decryptToFile(String input, String output) {
         try {
             AEADBlockCipher cipher = new GCMBlockCipher(new AESEngine());
@@ -137,6 +156,12 @@ public class AESGCM {
         }
     }
 
+    /**
+     * Decrypts a file to a byte-array.
+     *
+     * @param input the input-path for the encrypted file
+     * @return the decrypted byte-array
+     */
     public byte[] decryptKeyStore(String input) {
         byte[] result = null;
         try {
@@ -161,6 +186,12 @@ public class AESGCM {
         return result;
     }
 
+     /**
+     * Decrypts a byte-array to a byte-array.
+     *
+     * @param input the encrypted byte-array
+     * @return the decrypted byte-array
+     */
     public byte[] decryptToByteStream(byte[] input) {
         byte[] result = null;
         try {
@@ -185,6 +216,12 @@ public class AESGCM {
         return result;
     }
 
+    /**
+     * Checks if the key is valid for a specific encrypted file.
+     * 
+     * @param input the input-path for the encrypted file 
+     * @return true, if the key is correct or false otherwise
+     */
     public boolean isKeyCorrect(String input) {
         try {
             AEADBlockCipher cipher = new GCMBlockCipher(new AESEngine());
@@ -205,6 +242,5 @@ public class AESGCM {
         }
 
         return true;
-
     }
 }

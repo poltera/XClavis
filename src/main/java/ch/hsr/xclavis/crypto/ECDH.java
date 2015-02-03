@@ -28,7 +28,6 @@
  */
 package ch.hsr.xclavis.crypto;
 
-import ch.hsr.xclavis.helpers.Base32;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
@@ -43,8 +42,9 @@ import org.bouncycastle.jce.spec.ECParameterSpec;
 import org.bouncycastle.math.ec.ECPoint;
 
 /**
- *
- * @author Gian
+ * This class provides all elliptic curve Diffie-Hellman functions.
+ * 
+ * @author Gian Poltéra
  */
 public class ECDH {
 
@@ -54,9 +54,9 @@ public class ECDH {
     private ECPublicKeyParameters ecPublicKeyParameters;
 
     /**
-     * ECDH with new KeyPair
+     * Initials a new ECDH and creates a new KeyPair.
      * 
-     * @param ellipticCurve
+     * @param ellipticCurve the curve to be used
      */
     public ECDH(String ellipticCurve) {
         // Init the curve
@@ -68,11 +68,11 @@ public class ECDH {
     }
 
     /**
-     * ECDH with existing Private and PublicKey
+     * Initials a new ECDH with existing Private- and PublicKey.
      * 
-     * @param ellipticCurve
-     * @param privateKey
-     * @param publicKey
+     * @param ellipticCurve the curve to be used
+     * @param privateKey the PrivateKey of an existing ECDH
+     * @param publicKey the PublicKey of an existing ECDH
      */
     public ECDH(String ellipticCurve, byte[] privateKey, byte[] publicKey) {
         // Init the curve
@@ -84,20 +84,32 @@ public class ECDH {
         this.ecPublicKeyParameters = byteToECPublicKeyParam(publicKey);
     }
 
+    /**
+     * Gets the PrivateKey of an ECDH.
+     * 
+     * @return the PrivaKey as byte-array
+     */
     public byte[] getPrivateKey() {
 
         return ecPrivateKeyParameters.getD().toByteArray();
     }
 
+    /**
+     * Gets the encoded PublicKey of an ECDH.
+     * @return the encoded PublicKey as byte-array
+     */
     public byte[] getPublicKey() {
-
-        //System.out.println("Test1: " + Base32.byteToBitString(ecPublicKeyParameters.getQ().getEncoded(false)));
-        //System.out.println("Test2: " + Base32.byteToBitString(ecPublicKeyParameters.getQ().getEncoded(true)));
         
         return ecPublicKeyParameters.getQ().getEncoded(true);
         
     }
 
+    /**
+     * Gets the calculated AgreedKey with a PublicKey of the Remote-Partner.
+     * 
+     * @param publicKey of the Remote-Partner
+     * @return the AgreedKey as byte-array
+     */
     public byte[] getAgreedKey(byte[] publicKey) {
         ECPublicKeyParameters remotePublicKey = byteToECPublicKeyParam(publicKey);
 

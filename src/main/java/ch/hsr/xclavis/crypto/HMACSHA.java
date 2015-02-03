@@ -35,14 +35,20 @@ import org.bouncycastle.crypto.macs.HMac;
 import org.bouncycastle.crypto.params.KeyParameter;
 
 /**
- *
- * @author Gian
+ * This class provides the HMAC-SHA funtions.
+ * 
+ * @author Gian Poltéra
  */
 public class HMACSHA {
     private final static String KEY = "XClavis Key Exchange";
     private byte[] inputBuffer, outputBuffer, derivatedKey;
     private Digest digest;
 
+    /**
+     * Creates a new HMACSHA with specific SHA-length.
+     * 
+     * @param length for the used SHA-Digest, 256 or 512 Bit.
+     */
     public HMACSHA(int length) {
         this.outputBuffer = new byte[length / Byte.SIZE];
         this.inputBuffer = KEY.getBytes();
@@ -54,6 +60,13 @@ public class HMACSHA {
         }        
     }
 
+    /**
+     * Gets the DerivatedKey with individual length of a Key.
+     * 
+     * @param length of the required DerivatedKey 
+     * @param key to derivat
+     * @return
+     */
     public byte[] getDerivatedKey(int length, byte[] key) {
         derivatedKey = new byte[length / Byte.SIZE];
 
@@ -62,7 +75,7 @@ public class HMACSHA {
         mac.update(inputBuffer, 0, inputBuffer.length);
         mac.doFinal(outputBuffer, 0);
 
-        // Source Array, From Source, Destination Array, To Destination, Count
+        // Trim -> Source Array, From Source, Destination Array, To Destination, Count
         System.arraycopy(outputBuffer, 0, derivatedKey, 0, derivatedKey.length);
 
         return derivatedKey;

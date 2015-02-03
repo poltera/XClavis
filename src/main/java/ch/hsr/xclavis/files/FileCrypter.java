@@ -35,7 +35,6 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -43,26 +42,28 @@ import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.concurrent.Task;
 
 /**
- *
- * @author Gian
+ * This class encrypts and decrypts files.
+ * 
+ * @author Gian Poltéra
  */
 public class FileCrypter {
 
     private final static int ID_SIZE = 4;
     private final static int IV_SIZE = 96 / Byte.SIZE;
-
     private byte[] buffer = new byte[2048];
-
     private final static boolean COMPRESSION = true;
 
-    //private final List<SelectedFile> selectedFiles;
-    //private final String outputPath;
     private FileZipper zip;
     private AESGCM aes;
 
-    public FileCrypter() {
-    }
-
+    /**
+     * Encrypts a list of files to a specific output.
+     * 
+     * @param sessionKey for the encryption
+     * @param files list of files to encrypt
+     * @param output output-path for the encrpyted file
+     * @return the status of the encryption as a ReadOnlyDoubleProperty
+     */
     public ReadOnlyDoubleProperty encrypt(SessionKey sessionKey, List<File> files, String output) {
         this.zip = new FileZipper();
         this.aes = new AESGCM(sessionKey.getKey(), sessionKey.getIV());
@@ -71,11 +72,11 @@ public class FileCrypter {
             public Void call() {
                 updateProgress(1, 10);
                 long before = System.nanoTime();
-
+                // ZIP the files
                 byte[] input = zip.getZippedBytes(files, COMPRESSION);
                 updateProgress(7, 10);
+                // Encrypt the files
                 boolean result = aes.encrypt(input, output, sessionKey);
-
                 long after = System.nanoTime();
                 long runningTimeMs = (after - before) / 1000000;
                 updateProgress(10, 10);
@@ -89,6 +90,14 @@ public class FileCrypter {
         return task.progressProperty();
     }
 
+    /**
+     * Decrypts a file to a specific output.
+     * 
+     * @param sessionKey for the decryption
+     * @param file to decrypt
+     * @param output output-path for the decrpyted file
+     * @return the status of the encryption as a ReadOnlyDoubleProperty
+     */
     public ReadOnlyDoubleProperty decrypt(SessionKey sessionKey, File file, String output) {
         this.zip = new FileZipper();
         this.aes = new AESGCM(sessionKey.getKey(), sessionKey.getIV());
@@ -97,8 +106,10 @@ public class FileCrypter {
             public Void call() {
                 updateProgress(1, 10);
                 byte[] encrypted = fileToByteArrayOutputStream(file);
+                // Decrypt the file
                 byte[] decrypted = aes.decryptToByteStream(encrypted);
                 updateProgress(5, 10);
+                // DeZIP the files
                 zip.getFilesFromZippedBytes(decrypted, output);
                 updateProgress(10, 10);
 

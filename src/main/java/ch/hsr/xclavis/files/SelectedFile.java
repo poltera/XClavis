@@ -38,8 +38,9 @@ import javafx.beans.property.StringProperty;
 import javafx.scene.image.ImageView;
 
 /**
- *
- * @author Gian
+ * This class represents a selected file of a user.
+ * 
+ * @author Gian Poltéra
  */
 public class SelectedFile {
 
@@ -51,8 +52,17 @@ public class SelectedFile {
     private final BooleanProperty encrypted;
     private final StringProperty id;
     private final byte[] iv;
-    //private final StringProperty iv;
 
+    /**
+     * Creates a new SelectedFile that is not encrypted.
+     * 
+     * @param file the file
+     * @param icon the icon of the file
+     * @param name the name of the file
+     * @param extension the extension of the file
+     * @param size the size of the file
+     * @param encrypted true, for encrypted or false otherwise
+     */
     public SelectedFile(File file, ImageView icon, String name, String extension, String size, boolean encrypted) {
         this.file = new SimpleObjectProperty<>(file);
         this.icon = new SimpleObjectProperty<>(icon);
@@ -64,6 +74,18 @@ public class SelectedFile {
         this.iv = null;
     }
 
+    /**
+     * Creates a new SelectedFile that is encrypted.
+     * 
+     * @param file the file
+     * @param icon the icon of the file
+     * @param name the name of the file
+     * @param extension the extension of the file
+     * @param size the size of the file
+     * @param encrypted true, for encrypted or false otherwise
+     * @param id the SessionID of the encrypted file
+     * @param iv the initialvector of the encrpyted file
+     */
     public SelectedFile(File file, ImageView icon, String name, String extension, String size, boolean encrypted, String id, byte[] iv) {
         this.file = new SimpleObjectProperty<>(file);
         this.icon = new SimpleObjectProperty<>(icon);
@@ -75,58 +97,128 @@ public class SelectedFile {
         this.iv = iv;
     }
 
+    /**
+     * Gets the file.
+     * 
+     * @return the file
+     */
     public File getFile() {
         return file.get();
     }
 
+    /**
+     * Gets the icon of the file.
+     * 
+     * @return the icon as ImageView
+     */
     public ImageView getIcon() {
         return icon.get();
     }
 
+    /**
+     * Gets the icon of the file.
+     * 
+     * @return the icon as ObjectProperty
+     */
     public ObjectProperty iconProperty() {
         return icon;
     }
 
+    /**
+     * Gets the name of the file.
+     * 
+     * @return the name as String
+     */
     public String getName() {
         return name.get();
     }
 
+    /**
+     * Gets the name of the file.
+     * 
+     * @return the name as StringProperty
+     */
     public StringProperty nameProperty() {
         return name;
     }
 
+    /**
+     * Gets the extension of the file.
+     * 
+     * @return the extension as String
+     */
     public String getExtension() {
         return extension.get();
     }
 
+    /**
+     * Gets the extension of the file.
+     * 
+     * @return the extension as StringProperty
+     */
     public StringProperty extensionProperty() {
         return extension;
     }
 
+    /**
+     * Gets the size of the file.
+     * 
+     * @return the size as String
+     */
     public String getSize() {
         return size.get();
     }
 
+    /**
+     * Gets the size of the file.
+     * 
+     * @return the size as StringProperty
+     */
     public StringProperty sizeProperty() {
         return size;
     }
 
+    /**
+     * Returns the boolean value, whether a file is encrypted.
+     * 
+     * @return true, if the file is encrypted or false otherwise
+     */
     public boolean isEncrypted() {
         return encrypted.get();
     }
 
+    /**
+     * Returns the boolean value, whether a file is encrypted.
+     * 
+     * @return the cryption state as a BooleanProperty
+     */
     public BooleanProperty encryptedProperty() {
         return encrypted;
     }
 
+    /**
+     * Gets the SessionID of a file.
+     * 
+     * @return the SessionID as a String
+     */
     public String getID() {
         return id.get();
     }
 
+    /**
+     * Gets the SessionID of a file.
+     * 
+     * @return the SessionID as a StringProperty
+     */
     public StringProperty idProperty() {
         return id;
     }
 
+    /**
+     * Gets the initialvector of a file.
+     * 
+     * @return the IV as a byte-array
+     */
     public byte[] getIV() {
         return iv;
     }

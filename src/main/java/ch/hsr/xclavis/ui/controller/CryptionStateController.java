@@ -46,7 +46,7 @@ import javafx.scene.image.ImageView;
 /**
  * FXML Controller class
  *
- * @author Gian
+ * @author Gian Poltéra
  */
 public class CryptionStateController implements Initializable {
 

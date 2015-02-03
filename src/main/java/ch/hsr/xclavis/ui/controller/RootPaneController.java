@@ -40,7 +40,7 @@ import javafx.scene.layout.BorderPane;
 
 /**
  *
- * @author Gian
+ * @author Gian Poltéra
  */
 public class RootPaneController implements Initializable {
 

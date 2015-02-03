@@ -34,8 +34,9 @@ import javafx.geometry.Pos;
 import javafx.scene.control.TextField;
 
 /**
- *
- * @author Gian
+ * The class is used to create input block's for the manual input of a key.
+ * 
+ * @author Gian Poltéra
  */
 public class InputBlock extends TextField {
 
@@ -93,6 +94,11 @@ public class InputBlock extends TextField {
         }
     }
 
+    /**
+     * Check if the block is valid.
+     * 
+     * @return true if the block is valid and false otherwise
+     */
     public boolean isValid() {
         if (isComplete()) {
             if (Checksum.verify(getValue(), getChecksum())) {
@@ -108,6 +114,11 @@ public class InputBlock extends TextField {
         return false;
     }
     
+    /**
+     * Gets the checksum of a block.
+     * 
+     * @return the checksum as a String
+     */
     public String getChecksum() {
         String checksum = "";
         if (isComplete()) {
@@ -117,6 +128,11 @@ public class InputBlock extends TextField {
         return checksum;
     }
 
+    /**
+     * Gets the value of a block.
+     * 
+     * @return the value as a String
+     */
     public String getValue() {
         String value = "";
         if (isComplete()) {

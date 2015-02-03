@@ -42,6 +42,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 
+/**
+ *
+ * @author Gian Poltéra
+ */
 public class QRCodeGenerator {
 
     private static final MatrixToImageConfig DEFAULT_CONFIG = new MatrixToImageConfig();

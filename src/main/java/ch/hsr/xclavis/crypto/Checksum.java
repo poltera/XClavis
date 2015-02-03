@@ -31,10 +31,22 @@ package ch.hsr.xclavis.crypto;
 import ch.hsr.xclavis.helpers.Base32;
 import java.math.BigInteger;
 
+/**
+ * This class calculates and verifys a checksum over a specific value.
+ * 
+ * @author Gian Poltéra
+ */
 public class Checksum {
 
     private static final BigInteger BIG32 = BigInteger.valueOf(32);
 
+    /**
+     * Gets the checksum with individual length for a string.
+     * 
+     * @param string the string to calculate the checksum
+     * @param length the length of the checksum
+     * @return the checksum as a string
+     */
     public static String get(String string, int length) {
         //Initial the bitstring
         BigInteger bitString = BigInteger.ZERO;
@@ -57,6 +69,13 @@ public class Checksum {
         return checksum;
     }
 
+    /**
+     * Verifys the checksum of a string.
+     * 
+     * @param string the string to verify the checksum
+     * @param checksum the checksum to compare
+     * @return true, if the checksum is valid or false otherwise
+     */
     public static boolean verify(String string, String checksum) {
         //Initial the bitstring
         BigInteger bitString = BigInteger.ZERO;

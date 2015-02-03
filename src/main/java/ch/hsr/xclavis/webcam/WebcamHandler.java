@@ -31,8 +31,6 @@ package ch.hsr.xclavis.webcam;
 import ch.hsr.xclavis.qrcode.QRCodeReader;
 import com.github.sarxos.webcam.Webcam;
 import java.awt.image.BufferedImage;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -46,7 +44,7 @@ import javafx.scene.image.Image;
 
 /**
  *
- * @author Gian
+ * @author Gian Poltéra
  */
 public class WebcamHandler {
 

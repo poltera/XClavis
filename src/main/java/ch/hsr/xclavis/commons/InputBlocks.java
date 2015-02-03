@@ -34,8 +34,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
- * @author Gian
+ * This class is used to manage the various input block's.
+ * 
+ * @author Gian Poltéra
  */
 public class InputBlocks {
 
@@ -43,16 +44,32 @@ public class InputBlocks {
     private final int numBlocks;
     private final int checksumSize;
 
+    /**
+     * Create new InputBlocks with individual length.
+     * 
+     * @param numBlocks the number of blocks
+     * @param checksumSize the size of the checksum
+     */
     public InputBlocks(int numBlocks, int checksumSize) {
         this.inputBlocks = new ArrayList<>();
         this.numBlocks = numBlocks;
         this.checksumSize = checksumSize;
     }
 
+    /**
+     * Add a new block to the InputBlocks.
+     * 
+     * @param inputBlock
+     */
     public void addBlock(InputBlock inputBlock) {
         inputBlocks.add(inputBlock);
     }
 
+    /**
+     * Check if the overall checksum of all blocks are valid.
+     * 
+     * @return true if all blocks are valid, false otherwise
+     */
     public boolean areValid() {
         if (areComplete()) {
             if (Checksum.verify(getValue(), getChecksum())) {
@@ -66,6 +83,11 @@ public class InputBlocks {
         return false;
     }
 
+    /**
+     * Gets the value of all blocks.
+     * 
+     * @return the value as a String
+     */
     public String getValue() {
         String value = "";
 
@@ -77,6 +99,11 @@ public class InputBlocks {
         return value;
     }
 
+    /**
+     * Gets the overall checksum for all blocks.
+     * 
+     * @return the checksum as a String
+     */
     public String getChecksum() {
         String checksum = "";
 

@@ -58,7 +58,7 @@ import javafx.stage.Stage;
 /**
  * FXML Controller class
  *
- * @author Gian
+ * @author Gian Poltéra
  */
 public class TopMenuController implements Initializable {
 

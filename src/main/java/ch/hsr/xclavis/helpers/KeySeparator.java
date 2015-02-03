@@ -28,6 +28,10 @@
  */
 package ch.hsr.xclavis.helpers;
 
+/**
+ *
+ * @author Gian Poltéra
+ */
 public class KeySeparator {
 		
 	public static String[] getSeparated(String string, int length) {

@@ -44,16 +44,21 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 /**
- *
- * @author Gian
+ * This class zips and dezips files.
+ * 
+ * @author Gian Poltéra
  */
 public class FileZipper {
     
     private byte[] buffer = new byte[2048];
     
-    public FileZipper() {
-    }
-    
+    /**
+     * Gets zipped-bytes from a filelist.
+     * 
+     * @param files the file list to zip
+     * @param compression true, for activate or false for deactivate compression
+     * @return the zipped-byted as byte-array
+     */
     public byte[] getZippedBytes(List<File> files, boolean compression) {
         byte[] result = null;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -90,6 +95,12 @@ public class FileZipper {
         return result;
     }
     
+    /**
+     * Dezip a file and write the dezipped files to a specific output.
+     * 
+     * @param input the byte-array of the zipped-file
+     * @param output the output-path for the dezipped-files
+     */
     public void getFilesFromZippedBytes(byte[] input, String output) {        
         try (ByteArrayInputStream bais = new ByteArrayInputStream(input);
                 ZipInputStream zis = new ZipInputStream(bais)) {

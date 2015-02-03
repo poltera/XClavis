@@ -29,20 +29,15 @@
 package ch.hsr.xclavis.files;
 
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.NumberFormat;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -53,35 +48,53 @@ import javax.swing.ImageIcon;
 import javax.swing.filechooser.FileSystemView;
 
 /**
+ * This class handles the selected files of a user.
  *
- * @author Gian
+ * @author Gian Poltéra
  */
 public class FileHandler {
 
     private final static String ENCRYPTED_FILE_EXTENSION = "enc";
-
     private final ObservableList<SelectedFile> files;
     private final IntegerProperty mode;
 
+    /**
+     * Creates a new FileHandler instance.
+     *
+     */
     public FileHandler() {
         this.files = FXCollections.observableArrayList();
         this.mode = new SimpleIntegerProperty(0);
         this.files.addListener((ListChangeListener.Change<? extends SelectedFile> c) -> {
-            if (files.isEmpty()) 
-            { 
+            if (files.isEmpty()) {
                 mode.set(0);
             }
         });
     }
 
+    /**
+     * Gets the filelist as a Observable object.
+     *
+     * @return the filelist as ObservableList
+     */
     public ObservableList<SelectedFile> getObservableFileList() {
         return files;
     }
-    
+
+    /**
+     * Returns the mode in which the FileHandler is.
+     *
+     * @return the mode as a IntegerProperty
+     */
     public IntegerProperty modeProperty() {
         return mode;
     }
 
+    /**
+     * Adds a file to the FileHandler.
+     *
+     * @param file the file to be added
+     */
     public void add(File file) {
         // Check if the file is no Directory, is a file and that we can read them.
         if (!file.isDirectory() && file.isFile() && file.canRead()) {
@@ -119,17 +132,25 @@ public class FileHandler {
         }
     }
 
+    /**
+     * Removes a SelectedFile from the FileHandler.
+     *
+     * @param selectedFile the SelectedFile to be remove
+     */
     public void remove(SelectedFile selectedFile) {
         files.remove(selectedFile);
-        
+
         if (firstFile()) {
             mode.set(0);
         }
     }
-    
+
+    /**
+     * Removes all SelectedFiles from the FileHandler.
+     */
     public void removeAll() {
         files.clear();
-        
+
         mode.set(0);
     }
 
@@ -235,39 +256,5 @@ public class FileHandler {
             }
         }
         return iv;
-    }
-
-    public Properties loadProperties() {
-        Properties properties = new Properties();
-        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream("beispiel.properties"))) {
-            properties.load(bis);
-        } catch (IOException ex) {
-            Logger.getLogger(FileHandler.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return properties;
-    }
-
-    public static void saveProperties(Properties properties, String path) {
-        try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(""))) {
-
-        } catch (IOException ex) {
-            Logger.getLogger(FileHandler.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public static boolean checkWritePermissions(String path) {
-        File file = new File(path);
-        try (FileOutputStream fos = new FileOutputStream(file)) {
-            for (int i = 0; i < 10000; i++) {
-                byte[] byteTest = Integer.toString(i).getBytes();
-                fos.write(byteTest);
-            }
-            return true;
-        } catch (IOException ex) {
-            return false;
-        } finally {
-            file.delete();
-        }
     }
 }

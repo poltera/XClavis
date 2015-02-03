@@ -61,7 +61,7 @@ import javafx.stage.Stage;
 /**
  * FXML Controller class
  *
- * @author Gian
+ * @author Gian Poltéra
  */
 public class FileSelecterController implements Initializable {
 

@@ -56,7 +56,7 @@ import javafx.scene.input.KeyEvent;
 /**
  * FXML Controller class
  *
- * @author Gian
+ * @author Gian Poltéra
  */
 public class KeyManagementController implements Initializable {
 

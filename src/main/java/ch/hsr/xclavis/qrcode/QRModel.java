@@ -37,7 +37,7 @@ import ch.hsr.xclavis.helpers.KeySeparator;
 
 /**
  *
- * @author Gian
+ * @author Gian Poltéra
  */
 public class QRModel {
 

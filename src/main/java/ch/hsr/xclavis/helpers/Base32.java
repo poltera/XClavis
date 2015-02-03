@@ -28,6 +28,10 @@
  */
 package ch.hsr.xclavis.helpers;
 
+/**
+ *
+ * @author Gian Poltéra
+ */
 public class Base32 {
     public final static int SIZE = 5;
     private final static String[] BASE32_CHARACTERS = {"2", "3", "4", "5", "6", "7",

@@ -45,7 +45,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author Gian
+ * @author Gian Poltéra
  */
 public class PropertiesHandler {
 

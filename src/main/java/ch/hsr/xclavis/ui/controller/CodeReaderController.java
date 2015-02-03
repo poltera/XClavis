@@ -54,7 +54,7 @@ import javafx.scene.layout.VBox;
 /**
  * FXML Controller class
  *
- * @author Gian
+ * @author Gian Poltéra
  */
 public class CodeReaderController implements Initializable {
 

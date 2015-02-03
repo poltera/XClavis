@@ -35,7 +35,7 @@ import javafx.beans.property.StringProperty;
 
 /**
  *
- * @author Gian
+ * @author Gian Poltéra
  */
 public class Key {
 

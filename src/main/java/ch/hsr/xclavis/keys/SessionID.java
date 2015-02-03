@@ -33,7 +33,7 @@ import ch.hsr.xclavis.helpers.Base32;
 
 /**
  *
- * @author Gian
+ * @author Gian Poltéra
  */
 public class SessionID {
 

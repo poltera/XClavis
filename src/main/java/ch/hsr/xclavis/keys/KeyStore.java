@@ -45,7 +45,7 @@ import javafx.collections.ObservableList;
 
 /**
  *
- * @author Gian
+ * @author Gian Poltéra
  */
 public class KeyStore {
 

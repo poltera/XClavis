@@ -31,26 +31,37 @@ package ch.hsr.xclavis.crypto;
 import ch.hsr.xclavis.helpers.Base32;
 import java.security.SecureRandom;
 
+/**
+ * This class calculates the random-values for the entire project.
+ *
+ * @author Gian Poltéra
+ */
 public class RandomGenerator {
-	/**
-	 * Create a random-value with individual byte-length
-	 * 
-	 * @param bytes the byte-length of the random-value
-	 * @return random-value
-	 */
-	public static byte[] getRandomBytes(int bytes) {
-            SecureRandom random = new SecureRandom();
-            byte[] randomBytes = new byte[bytes];
-            random.nextBytes(randomBytes);
 
-            return randomBytes;
-	}
-        
-        public static String getRandomBits(int bits) {
-            byte[] randomBytes = getRandomBytes(bits/Byte.SIZE + 1);
-            String randomBits = Base32.byteToBitString(randomBytes);
-            
-            return randomBits.substring(0, bits);
-        }
+    /**
+     * Creates a random-value with individual byte-length.
+     *
+     * @param bytes the byte-length of the random-value
+     * @return random-value as byte-array
+     */
+    public static byte[] getRandomBytes(int bytes) {
+        SecureRandom random = new SecureRandom();
+        byte[] randomBytes = new byte[bytes];
+        random.nextBytes(randomBytes);
+
+        return randomBytes;
+    }
+
+    /**
+     * Creates a random-value with individual bit-length.
+     * 
+     * @param bits the bits-length of the random-value
+     * @return random-value as string
+     */
+    public static String getRandomBits(int bits) {
+        byte[] randomBytes = getRandomBytes(bits / Byte.SIZE + 1);
+        String randomBits = Base32.byteToBitString(randomBytes);
+
+        return randomBits.substring(0, bits);
+    }
 }
-
