@@ -43,16 +43,21 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 
 /**
- *
+ * This class provides the method for creating a QR-Code as a image.
+ * 
  * @author Gian Poltéra
  */
 public class QRCodeGenerator {
 
     private static final MatrixToImageConfig DEFAULT_CONFIG = new MatrixToImageConfig();
 
-    public QRCodeGenerator() {
-    }
-
+    /**
+     * Creates a QR-Code Image from a string.
+     * 
+     * @param code the string to be encoded
+     * @param size the size of the output image in pixels
+     * @return the created QR-Code as a Image
+     */
     public Image createQR(String code, int size) {
         try {
             Map<EncodeHintType, Object> hints = new HashMap<>();

@@ -29,22 +29,39 @@
 package ch.hsr.xclavis.webcam;
 
 /**
- *
+ * This class represents a detected webcam from a user.
+ * 
  * @author Gian Poltéra
  */
 public class DetectedWebcam {
     private String webcamName;
     private int webcamIndex;
     
+    /**
+     * Creates a new DetectedWebcam.
+     * 
+     * @param webcamIndex the index number from the webcam
+     * @param webcamName the name of the webcam
+     */
     public DetectedWebcam(int webcamIndex, String webcamName) {
         this.webcamIndex = webcamIndex;
         this.webcamName = webcamName;
     }
     
+    /**
+     * Gets the name from the webcam.
+     * 
+     * @return the name as a string
+     */
     public String getWebcamName() {
         return webcamName;
     }
     
+    /**
+     * Gets the index from the webcam.
+     * 
+     * @return the index as a integer
+     */
     public int getWebcamIndex() {
         return webcamIndex;
     }

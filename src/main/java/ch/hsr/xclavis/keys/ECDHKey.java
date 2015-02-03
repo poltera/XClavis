@@ -33,7 +33,8 @@ import ch.hsr.xclavis.crypto.HMACSHA;
 import ch.hsr.xclavis.helpers.Base32;
 
 /**
- *
+ * This class represents a ECDH-Key and is a subclass of Key.
+ * 
  * @author Gian Poltéra
  */
 public class ECDHKey extends Key {
@@ -43,26 +44,43 @@ public class ECDHKey extends Key {
 
     private final ECDH ecdh;
 
-    // ECDH Request
-    public ECDHKey(String type) {
+    /**
+     * Creates a complete new ECDHKey.
+     * Is used in a ECDH request.
+     * 
+     * @param type the type of the key to be created
+     */
+        public ECDHKey(String type) {
         super(new SessionID(type));
         this.ecdh = new ECDH(getCurve());
     }
 
-    // ECDH Response
-    public ECDHKey(SessionID sessionID) {
+    /**
+     * Creates a new ECDHKey with given SessionID.
+     * Is used in a ECDH response.
+     * 
+     * @param sessionID the sessionID of obtained ECDHKey
+     */
+        public ECDHKey(SessionID sessionID) {
         super(new SessionID(sessionID.getNextType(), sessionID.getRandom()));
         this.ecdh = new ECDH(getCurve());
     }
 
-    // ECDH from KeyStore
-    public ECDHKey(SessionID sessionID, String base32PrivateKey, String base32PublicKey) {
+    /**
+     * Creates a new ECDHKey with given SessionID, PrivateKey and PublicKey.
+     * Is used in the load from the KeyStore.
+     * 
+     * @param sessionID the SessionId of the key
+     * @param base32PrivateKey the PrivateKey as a base32 string
+     * @param base32PublicKey the PublicKey as a base32 string
+     */
+        public ECDHKey(SessionID sessionID, String base32PrivateKey, String base32PublicKey) {
         super(sessionID);
-        // Converting back a Base32 String to its Byte Value gives in some cases an additional Byte
+        // Converting back a base32 string to its byte value gives in some cases an additional byte
         byte[] bytePrivateKey = Base32.base32ToByte(base32PrivateKey);
         byte[] bytePublicKey = Base32.base32ToByte(base32PublicKey);
 
-        // Trim the additional Byte
+        // Trim the additional byte
         byte[] trimmedPrivateKey = new byte[bytePrivateKey.length - 1];
         System.arraycopy(bytePrivateKey, 0, trimmedPrivateKey, 0, bytePrivateKey.length - 1);
 
@@ -75,18 +93,34 @@ public class ECDHKey extends Key {
         }
     }
 
+    /**
+     * Gets the PrivateKey.
+     * 
+     * @return the PrivateKey as a byte-array
+     */
     public byte[] getPrivateKey() {
         return ecdh.getPrivateKey();
     }
 
+    /**
+     * Gets the PublicKey.
+     * 
+     * @return the PublicKey as a byte-array
+     */
     public byte[] getPublicKey() {
         return ecdh.getPublicKey();
     }
 
+    /**
+     * Gets the calculated SessionKey from a remote PublicKey.
+     * 
+     * @param base32PublicKey the PublicKey from the remote partner
+     * @return the SessionKey
+     */
     public SessionKey getSessionKey(String base32PublicKey) {
-        // Converting back a Base32 String to its Byte Value gives in some cases an additional Byte
+        // Converting back a base32 string to its byte value gives in some cases an additional byte
         byte[] bytePublicKey = Base32.base32ToByte(base32PublicKey);
-        // Trim the additional Byte
+        // Trim the additional byte
         byte[] agreedKey;
         if (bytePublicKey.length != 65) {
             byte[] trimmedPublicKey = new byte[bytePublicKey.length - 1];

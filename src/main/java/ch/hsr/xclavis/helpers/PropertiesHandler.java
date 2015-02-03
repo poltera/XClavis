@@ -44,7 +44,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * This class handles and stores the properties of the project.
+ * 
  * @author Gian Poltéra
  */
 public class PropertiesHandler {
@@ -57,6 +58,9 @@ public class PropertiesHandler {
     private final String regexInteger = "^-?\\d+$";
     private String regexDouble = regexDecimal + "|" + regexInteger;
 
+    /**
+     * Creates a new PropertiesHandler instance.
+     */
     public PropertiesHandler() {
         properties = new Properties();
         File base_path = new File(BASE_PATH);
@@ -73,10 +77,22 @@ public class PropertiesHandler {
         }
     }
 
+    /**
+     * Gets the value of a property as a string.
+     * 
+     * @param name the name of the property
+     * @return the value as a string
+     */
     public String getString(String name) {
         return properties.getProperty(name);
     }
 
+    /**
+     * Gets the value of a property as a integer.
+     * 
+     * @param name the name of the property
+     * @return the value as a integer
+     */
     public int getInteger(String name) {
         String property = properties.getProperty(name);
 
@@ -87,6 +103,12 @@ public class PropertiesHandler {
         }
     }
 
+    /**
+     * Gets the value of a property as a double.
+     * 
+     * @param name the name of the property
+     * @return the value as a double
+     */
     public double getDouble(String name) {
         String property = properties.getProperty(name);
 
@@ -97,6 +119,12 @@ public class PropertiesHandler {
         }
     }
     
+    /**
+     * Gets the value of a property as a boolean.
+     * 
+     * @param name the name of the property
+     * @return the value as a boolean
+     */
     public boolean getBoolean(String name) {
         String property = properties.getProperty(name);
         
@@ -110,26 +138,55 @@ public class PropertiesHandler {
         return false;
     }
 
+    /**
+     * Sets the value of a property from a string.
+     * 
+     * @param name the name of the property
+     * @param value the value of the property
+     */
     public void set(String name, String value) {
         properties.setProperty(name, value);
         save();
     }
 
+    /**
+     * Sets the value of a property from a integer.
+     * 
+     * @param name the name of the property
+     * @param value the value of the property
+     */
     public void set(String name, int value) {
         properties.setProperty(name, Integer.toString(value));
         save();
     }
 
+    /**
+     * Sets the value of a property from a double.
+     * 
+     * @param name the name of the property
+     * @param value the value of the property
+     */
     public void set(String name, double value) {
         properties.setProperty(name, Double.toString(value));
         save();
     }
     
+    /**
+     * Sets the value of a property from a boolean.
+     * 
+     * @param name the name of the property
+     * @param value the value of the property
+     */
     public void set(String name, boolean value) {
         properties.setProperty(name, Boolean.toString(value));
         save();
     }
 
+    /**
+     * Removes a property from the PropertiesHandler.
+     * 
+     * @param name the name of the property
+     */
     public void remove(String name) {
         properties.remove(name);
         save();

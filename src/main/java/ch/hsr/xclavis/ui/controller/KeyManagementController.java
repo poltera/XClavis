@@ -55,6 +55,7 @@ import javafx.scene.input.KeyEvent;
 
 /**
  * FXML Controller class
+ * Shows the created and obtained keys.
  *
  * @author Gian Poltéra
  */
@@ -116,8 +117,6 @@ public class KeyManagementController implements Initializable {
 
             return new ReadOnlyObjectWrapper(btnDeleteRow);
         });
-//        btnEncrypt.setVisible(true);
-//        btnEncrypt.setDisable(false);
     }
 
     /**
@@ -170,5 +169,4 @@ public class KeyManagementController implements Initializable {
             tableView.getSelectionModel().clearSelection();
         }
     }
-
 }

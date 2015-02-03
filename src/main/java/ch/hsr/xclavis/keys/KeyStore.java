@@ -44,12 +44,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 /**
+ * This class handles and save the keys of the project.
  *
  * @author Gian Poltéra
  */
 public class KeyStore {
 
-    //private final static String KEYSTORE_PATH = System.getProperty("user.home") + File.separator + ".xclavis" + File.separator + "keystore" + File.separator + "keystore.keys";
     private static final String BASE_PATH = System.getProperty("user.home") + File.separator + ".xclavis" + File.separator;
     private final static String KEYSTORE_PATH = BASE_PATH + "keystore.keys";
     private final static String DELIMITER = "|";
@@ -60,6 +60,10 @@ public class KeyStore {
     private AESGCM aes;
     private final ObservableList<Key> keys;
 
+    /**
+     * Creates a new KeyStore and load the keys without password from the
+     * harrdisk.
+     */
     public KeyStore() {
         this.aes = new AESGCM(keystoreKey, KEYSTORE_IV);
         this.keys = FXCollections.observableArrayList();
@@ -69,6 +73,11 @@ public class KeyStore {
         }
     }
 
+    /**
+     * Creates a new KeyStore and load the keys with password from the harrdisk.
+     *
+     * @param password the password for the KeyStore stored on the harddisk
+     */
     public KeyStore(String password) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -84,17 +93,32 @@ public class KeyStore {
         }
     }
 
+    /**
+     * Gets the key list from the KeyStore.
+     *
+     * @return the key list as a ObseravableList
+     */
     public ObservableList<Key> getObservableKeyList() {
         return keys;
     }
 
+    /**
+     * Adds a key to the KeyStore.
+     *
+     * @param key the key to be added
+     */
     public void add(Key key) {
         if (!existsKey(key.getSessionID())) {
             keys.add(key);
             saveKeys();
         }
     }
-    
+
+    /**
+     * Adds a list of keys to the KeyStore.
+     *
+     * @param keys the keys to be added
+     */
     public void add(List<Key> keys) {
         keys.stream().forEach((key) -> {
             this.keys.add(key);
@@ -102,6 +126,12 @@ public class KeyStore {
         saveKeys();
     }
 
+    /**
+     * Checks whether a key exists in the KeyStore.
+     *
+     * @param sessionID the SessionID to be searched
+     * @return true, if the key exists or false otherwise
+     */
     public boolean existsKey(SessionID sessionID) {
         if (keys.stream().anyMatch((key) -> (key.getSessionID().getID().equals(sessionID.getID())))) {
             return true;
@@ -110,6 +140,12 @@ public class KeyStore {
         return false;
     }
 
+    /**
+     * Gets the SessionKey with the specified SessionID.
+     *
+     * @param sessionID the SessionID for which the SessionKey to be returned
+     * @return the SessionKey
+     */
     public SessionKey getSessionKey(SessionID sessionID) {
         for (Key key : keys) {
             if (key.getSessionID().getID().equals(sessionID.getID())) {
@@ -120,6 +156,11 @@ public class KeyStore {
         return null;
     }
 
+    /**
+     * Gets all SessionKey's as a list.
+     *
+     * @return the SessionKey's a List
+     */
     public List<SessionKey> getSessionKeys() {
         List<SessionKey> sessionKeys = new ArrayList<>();
         keys.stream().filter((key) -> (key.getSessionID().isSessionKey())).forEach((key) -> {
@@ -128,12 +169,12 @@ public class KeyStore {
 
         return sessionKeys;
     }
-    
+
     /**
-     * Gives the ECDHKey with the specificated sessionID.
+     * Gets the ECDHKey with the specified SessionID.
      *
-     * @param sessionID
-     * @return ecdhKey
+     * @param sessionID the SessionID for which the SessionKey to be returned
+     * @return the ECDHKey
      */
     public ECDHKey getECDHKey(SessionID sessionID) {
         for (Key key : keys) {
@@ -144,12 +185,12 @@ public class KeyStore {
 
         return null;
     }
-    
+
     /**
-     * Gives the ECDHKey with the specificated RandomValue from a sessionID.
+     * Gets the ECDHKey with the specified random value from the SessionID.
      *
-     * @param random
-     * @return ecdhKey
+     * @param random the ranom value for which the ECDHKey to be returned
+     * @return the ECDHKey
      */
     public ECDHKey getECDHKey(String random) {
         for (Key key : keys) {
@@ -161,6 +202,11 @@ public class KeyStore {
         return null;
     }
 
+    /**
+     * Gets all ECDHKey's as a list.
+     *
+     * @return the ECDHKey's a List
+     */
     public List<ECDHKey> getECDHKeys() {
         List<ECDHKey> ecdhKeys = new ArrayList<>();
         keys.stream().filter((key) -> (key.getSessionID().isECDH())).forEach((key) -> {
@@ -173,7 +219,7 @@ public class KeyStore {
     /**
      * Removes a key from the KeyStore.
      *
-     * @param key
+     * @param key the key to be removed
      */
     public void remove(Key key) {
         keys.remove(key);
@@ -181,40 +227,11 @@ public class KeyStore {
         saveKeys();
     }
 
-    public void saveKeys() {
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            for (Key key : keys) {
-                baos.write(key.getID().getBytes());
-                baos.write(DELIMITER.getBytes());
-                baos.write(key.getDate().getBytes());
-                baos.write(DELIMITER.getBytes());
-                baos.write(key.getPartner().getBytes());
-                baos.write(DELIMITER.getBytes());
-                baos.write(key.getState().getBytes());
-                baos.write(DELIMITER.getBytes());
-                if (key.getSessionID().isSessionKey()) {
-                    SessionKey sessionKey = (SessionKey) key;
-                    baos.write(Base32.byteToBase32(sessionKey.getKey()).getBytes());
-                    for (int i = 0; i < DELIMITER_COUNT; i++) {
-                        baos.write(DELIMITER.getBytes());
-                    }
-                } else if (key.getSessionID().isECDH()) {
-                    ECDHKey ecdhKey = (ECDHKey) key;
-                    baos.write(Base32.byteToBase32(ecdhKey.getPrivateKey()).getBytes());
-                    baos.write(DELIMITER.getBytes());
-                    baos.write(Base32.byteToBase32(ecdhKey.getPublicKey()).getBytes());
-                    for (int i = 0; i < DELIMITER_COUNT; i++) {
-                        baos.write(DELIMITER.getBytes());
-                    }
-                }
-            }
-            aes.encryptKeyStore(baos.toByteArray(), KEYSTORE_PATH);
-
-        } catch (IOException ex) {
-            Logger.getLogger(KeyStore.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
+    /**
+     * Checks if the password for KeyStore on the harddisk is correct.
+     * 
+     * @return true, if the password is correct or false otherwise
+     */
     public boolean isPasswordCorrect() {
         File base_path = new File(BASE_PATH);
         File file = new File(KEYSTORE_PATH);
@@ -232,6 +249,11 @@ public class KeyStore {
         return true;
     }
 
+    /**
+     * Updates the password of the KeyStore.
+     * 
+     * @param password the new password for the KeyStore
+     */
     public void updatePassword(String password) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -284,6 +306,40 @@ public class KeyStore {
                 }
             }
 
+        }
+    }
+
+    private void saveKeys() {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            for (Key key : keys) {
+                baos.write(key.getID().getBytes());
+                baos.write(DELIMITER.getBytes());
+                baos.write(key.getDate().getBytes());
+                baos.write(DELIMITER.getBytes());
+                baos.write(key.getPartner().getBytes());
+                baos.write(DELIMITER.getBytes());
+                baos.write(key.getState().getBytes());
+                baos.write(DELIMITER.getBytes());
+                if (key.getSessionID().isSessionKey()) {
+                    SessionKey sessionKey = (SessionKey) key;
+                    baos.write(Base32.byteToBase32(sessionKey.getKey()).getBytes());
+                    for (int i = 0; i < DELIMITER_COUNT; i++) {
+                        baos.write(DELIMITER.getBytes());
+                    }
+                } else if (key.getSessionID().isECDH()) {
+                    ECDHKey ecdhKey = (ECDHKey) key;
+                    baos.write(Base32.byteToBase32(ecdhKey.getPrivateKey()).getBytes());
+                    baos.write(DELIMITER.getBytes());
+                    baos.write(Base32.byteToBase32(ecdhKey.getPublicKey()).getBytes());
+                    for (int i = 0; i < DELIMITER_COUNT; i++) {
+                        baos.write(DELIMITER.getBytes());
+                    }
+                }
+            }
+            aes.encryptKeyStore(baos.toByteArray(), KEYSTORE_PATH);
+
+        } catch (IOException ex) {
+            Logger.getLogger(KeyStore.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

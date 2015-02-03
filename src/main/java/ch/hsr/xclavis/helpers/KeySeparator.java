@@ -29,12 +29,20 @@
 package ch.hsr.xclavis.helpers;
 
 /**
- *
+ * This class provides the methods to separate and put together a string.
+ * 
  * @author Gian Poltéra
  */
 public class KeySeparator {
 		
-	public static String[] getSeparated(String string, int length) {
+    /**
+     * Gets a separate string-array of a string.
+     * 
+     * @param string the string to separate
+     * @param length the length of each block
+     * @return the separated string as a string-array
+     */
+    public static String[] getSeparated(String string, int length) {
 		//Specifically worth
 		double blockscalc = (double) string.length() / (double) length;
 		//Round up
@@ -56,7 +64,13 @@ public class KeySeparator {
 		return blocks;
 	}
 	
-	public static String putTogether(String[] blocks) {		
+    /**
+     * Gets the composited string of a string-array.
+     * 
+     * @param blocks the separated blocks
+     * @return the composited value as a string
+     */
+    public static String putTogether(String[] blocks) {		
 		String string = "";
 		
 		for (String block : blocks) {

@@ -43,7 +43,8 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 
 /**
- *
+ * This class handles the webcams.
+ * 
  * @author Gian Poltéra
  */
 public class WebcamHandler {
@@ -61,6 +62,9 @@ public class WebcamHandler {
     
     private int qrFlopsCounter;
 
+    /**
+     * Creates a new WebcamHandler.
+     */
     public WebcamHandler() {
         this.webcams = FXCollections.observableArrayList();
         this.sleepTimer = 1000 / FPS;
@@ -72,6 +76,11 @@ public class WebcamHandler {
         this.qrResult = new SimpleStringProperty("");
     }
 
+    /**
+     * Checks if a webcam exists.
+     * 
+     * @return true, if a webcam exists or false otherwise
+     */
     public boolean existsWebcam() {
         if (webcams.size() > 0) {
             return true;
@@ -80,14 +89,29 @@ public class WebcamHandler {
         return false;
     }
 
+    /**
+     * Gets the number of webcams detected.
+     * 
+     * @return the number of detected webcams as a integer
+     */
     public int getWebcamCount() {
         return webcams.size();
     }
 
+    /**
+     * Gets the DetectedWebcam's as a list.
+     * 
+     * @return the detectedWebcam's as a ObservableList
+     */
     public ObservableList<DetectedWebcam> getWebcams() {
         return webcams;
     }
 
+    /**
+     * Initializes a webcam.
+     * 
+     * @param webcamIndex the index of the webcam to be initialized
+     */
     public void initWebcam(final int webcamIndex) {
         Task<Void> webcamInitializer = new Task<Void>() {
 
@@ -97,16 +121,18 @@ public class WebcamHandler {
                     close();
                 }
                 selectedWebcam = Webcam.getWebcams().get(webcamIndex);
-                //selectedWebcam.setViewSize(WebcamResolution.QVGA.getSize());
                 selectedWebcam.open();
-                //startWebcamStream();
                 return null;
             }
         };
         new Thread(webcamInitializer).start();
-        //fpBottomPane.setDisable(false);
     }
 
+    /**
+     * Gets the webcam stream as an image.
+     * 
+     * @return the webcam stream as a ObjectProperty
+     */
     public ObjectProperty<Image> getStream() {
         stopCamera = false;
         ObjectProperty<Image> imageProperty = new SimpleObjectProperty<>();
@@ -151,10 +177,18 @@ public class WebcamHandler {
         return imageProperty;
     }
 
+    /**
+     * Gets a scanned QR-Code.
+     * 
+     * @return the scanned QR-Code as a StringProperty
+     */
     public StringProperty getScanedQRCode() {
         return qrResult;
     }
 
+    /**
+     * Stops the actual running webcam.
+     */
     public void stopWebcam() {
         stopCamera = true;
         close();
@@ -168,7 +202,7 @@ public class WebcamHandler {
             webcams.add(webcamInfo);
             webcamCounter++;
         }
-        // Stop searching Webcams
+//        Stop searching Webcams
 //        WebcamDiscoveryService discovery = Webcam.getDiscoveryService();
 //        discovery.stop();
     }

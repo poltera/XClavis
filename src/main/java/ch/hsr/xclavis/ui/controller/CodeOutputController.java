@@ -43,7 +43,8 @@ import javafx.scene.image.ImageView;
 
 /**
  * FXML Controller class
- *
+ * Shows the QR-Codes.
+ * 
  * @author Gian Poltéra
  */
 public class CodeOutputController implements Initializable {
@@ -73,6 +74,11 @@ public class CodeOutputController implements Initializable {
         this.mainApp = mainApp;
     }
     
+    /**
+     * Sets the keys for the QR-Code output.
+     * 
+     * @param keys the keys for the QR-Code output
+     */
     public void setKeys(List<Key> keys) {
         QRModel qrModell = new QRModel();
         
@@ -84,6 +90,6 @@ public class CodeOutputController implements Initializable {
             }
         });
         
-        imageView.setImage(new QRCodeGenerator().createQR(qrModell.getModell(), 500));
+        imageView.setImage(new QRCodeGenerator().createQR(qrModell.getModel(), 500));
     }
 }

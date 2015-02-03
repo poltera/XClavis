@@ -32,7 +32,8 @@ import ch.hsr.xclavis.crypto.RandomGenerator;
 import ch.hsr.xclavis.helpers.Base32;
 
 /**
- *
+ * This class represents a SessionID and is used from all key-types.
+ * 
  * @author Gian Poltéra
  */
 public class SessionID {
@@ -52,41 +53,67 @@ public class SessionID {
     private String random;
 
     /**
-     *
-     * @param type
+     * Creates a complete new SessionID.
+     * 
+     * @param type the type of the key, for which to be created a new SessionID
      */
     public SessionID(String type) {
         this.type = type;
         this.random = Base32.bitStringToBase32(RandomGenerator.getRandomBits(RANDOM_BITS));
-        //CHECK IF EXISTS TBA
     }
 
     /**
-     *
-     * @param type
-     * @param random
+     * Create a new SessionID with given type and random value.
+     * 
+     * @param type the type of the SessionID
+     * @param random the random value of the SessionID
      */
     public SessionID(String type, String random) {
         this.type = type;
         this.random = random;
     }
 
+    /**
+     * Gets the ID of a SessionID.
+     * 
+     * @return the ID as a string
+     */
     public String getID() {
         return type + random;
     }
 
+    /**
+     * Gets the type of a SessionID.
+     * 
+     * @return the type as a string
+     */
     public String getType() {
         return type;
     }
 
+    /**
+     * Sets the type of a SessionID.
+     * 
+     * @param type the type of the SessionID
+     */
     public void setType(String type) {
         this.type = type;
     }
 
+    /**
+     * Gets the random value of a SessionID.
+     * 
+     * @return the random value as a string
+     */
     public String getRandom() {
         return random;
     }
 
+    /**
+     * Gets the key length of a SessionID by type.
+     * 
+     * @return the key length as a integer
+     */
     public int getKeyLength() {
         switch (getType()) {
             case SESSION_KEY_128:
@@ -103,6 +130,11 @@ public class SessionID {
         return 0;
     }
 
+    /**
+     * Gets the final key length of a SessionID by type.
+     * 
+     * @return the final key length as a integer
+     */
     public int getFinalKeyLength() {
         switch (type) {
             case SESSION_KEY_128:
@@ -118,6 +150,11 @@ public class SessionID {
         return 0;
     }
 
+    /**
+     * Gets the next type of a SessionID.
+     * 
+     * @return the next type as a string
+     */
     public String getNextType() {
         switch (type) {
             case ECDH_REQ_256:
@@ -133,6 +170,11 @@ public class SessionID {
         return null;
     }
 
+    /**
+     * Gets the final type of a SessionID.
+     * 
+     * @return the final type as a string
+     */
     public String getFinalType() {
         switch (type) {
             case SESSION_KEY_128:
@@ -152,6 +194,12 @@ public class SessionID {
         return null;
     }
 
+    /**
+     * Gets the additional key bits for some SessionIDs.
+     * The additional key bits are the result of the additional coordinate-information at ECDH keys.
+     * 
+     * @return the additional key bits as a integer
+     */
     public int getAddCordLength() {
         if (isECDH()) {
             return Byte.SIZE;
@@ -160,18 +208,38 @@ public class SessionID {
         return 0;
     }
 
+    /**
+     * Returns the information whether the type of a SessionID is  a ECDH request.
+     * 
+     * @return true, if the type is a ECDH request or false otherwise.
+     */
     public boolean isECDHReq() {
         return (getType().equals(ECDH_REQ_256)) || (getType().equals(ECDH_REQ_512));
     }
 
+    /**
+     * Returns the information whether the type of a SessionID is  a ECDH response.
+     * 
+     * @return true, if the type is a ECDH response or false otherwise.
+     */
     public boolean isECDHRes() {
         return (getType().equals(ECDH_RES_256)) || (getType().equals(ECDH_RES_512));
     }
 
+    /**
+     * Returns the information whether the type of a SessionID is  a ECDH.
+     * 
+     * @return true, if the type is a ECDH or false otherwise.
+     */
     public boolean isECDH() {
         return (getType().equals(ECDH_REQ_256)) || (getType().equals(ECDH_REQ_512)) || (getType().equals(ECDH_RES_256)) || (getType().equals(ECDH_RES_512));
     }
 
+    /**
+     * Returns the information whether the type of a SessionID is  a SessionKey.
+     * 
+     * @return true, if the type is a SessionKey or false otherwise.
+     */
     public boolean isSessionKey() {
         return (getType().equals(SESSION_KEY_128)) || (getType().equals(SESSION_KEY_256));
     }

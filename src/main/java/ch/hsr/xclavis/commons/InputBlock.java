@@ -44,6 +44,13 @@ public class InputBlock extends TextField {
     private final int checksumLength;
     private final String pattern;
 
+    /**
+     * Creates a new InputBlock with individual length.
+     * 
+     * @param blockLength the length of the block
+     * @param checksumLength the length of the checksum
+     * @param pattern the pattern that the block accepts
+     */
     public InputBlock(int blockLength, int checksumLength, String pattern) {
         super();
         super.setAlignment(Pos.CENTER);

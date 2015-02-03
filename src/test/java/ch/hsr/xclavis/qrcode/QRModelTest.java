@@ -94,7 +94,7 @@ public class QRModelTest {
         instance.addECDHKey(ecdhKeyRes256);
         instance.addECDHKey(ecdhKeyRes512);
 
-        String modell = instance.getModell();
+        String modell = instance.getModel();
         System.out.println("Result: " + modell);
 
         System.out.println("getKeys");

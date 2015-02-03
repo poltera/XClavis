@@ -57,6 +57,7 @@ import javafx.stage.Stage;
 
 /**
  * FXML Controller class
+ * Shows the top menu.
  *
  * @author Gian Poltéra
  */
@@ -101,18 +102,27 @@ public class TopMenuController implements Initializable {
         this.mainApp = mainApp;
     }
 
+    /**
+     * Marks in the menu the FileSelecter button.
+     */
     public void markFileSelecter() {
         fileListBtn.setStyle("-fx-base: #b6e7c9;");
         qrScannerBtn.setStyle("-fx-base: #eaeaea;");
         keyManagementBtn.setStyle("-fx-base: #eaeaea;");
     }
 
+    /**
+     * Marks in the menu the CodeReader button.
+     */
     public void markCodeReader() {
         fileListBtn.setStyle("-fx-base: #eaeaea;");
         qrScannerBtn.setStyle("-fx-base: #b6e7c9;");
         keyManagementBtn.setStyle("-fx-base: #eaeaea;");
     }
 
+    /**
+     * Marks in the menu the KeyManagement button.
+     */
     public void markKeyManagement() {
         fileListBtn.setStyle("-fx-base: #eaeaea;");
         qrScannerBtn.setStyle("-fx-base: #eaeaea;");

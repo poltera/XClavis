@@ -36,6 +36,7 @@ import ch.hsr.xclavis.helpers.Base32;
 import ch.hsr.xclavis.helpers.KeySeparator;
 
 /**
+ * This class generates from any number of keys a QR model and vice versa.
  *
  * @author Gian Poltéra
  */
@@ -55,7 +56,7 @@ public class QRModel {
     private String model;
 
     /**
-     * Helper Class for creating the specific QR-Model for the QR-Output.
+     * Creates a new QRModel.
      */
     public QRModel() {
         // Title
@@ -64,35 +65,76 @@ public class QRModel {
     }
 
     /**
-     * Add a SessionKey to the QR-Model.
+     * Adds a SessionKey to the QRModel.
      *
-     * @param sessionKey
+     * @param sessionKey the SessionKey to be added
      */
     public void addSessionKey(SessionKey sessionKey) {
-        addModell(sessionKey.getID(), sessionKey.getKey());
+        addModel(sessionKey.getID(), sessionKey.getKey());
     }
 
     /**
-     * Add a ECDHKey to the QR-Model
+     * Adds a ECDHKey to the QRModel.
      *
-     * @param ecdhKey
+     * @param ecdhKey the ECDHKey to be added
      */
     public void addECDHKey(ECDHKey ecdhKey) {
-        addModell(ecdhKey.getID(), ecdhKey.getPublicKey());
+        addModel(ecdhKey.getID(), ecdhKey.getPublicKey());
     }
 
     /**
-     * Returns the finished QR-Model.
+     * Gets the finished QRModel.
      *
-     * @return QRModell as String
+     * @return the QR-Model as String
      */
-    public String getModell() {
+    public String getModel() {
         System.out.println(model);
 
         return model;
     }
 
-    private void addModell(String id, byte[] key) {
+    /**
+     * Gets the keys from a QRModel.
+     * 
+     * @param string the QRModel
+     * @return the keys as a 2D string-array
+     */
+    public String[][] getKeys(String string) {
+        String[] splittedKeys = string.split(UNICODE_ID);
+        String[][] keys = new String[splittedKeys.length - 1][2];
+
+        for (int i = 1; i < splittedKeys.length; i++) {
+            String id = splittedKeys[i].substring(1, 1 + BLOCK_LENGTH);
+            String key = splittedKeys[i].substring(10);
+            String type = id.substring(0, 1);
+            String random = id.substring(1, BLOCK_LENGTH - BLOCK_CHECKSUM);
+            SessionID sessionID = new SessionID(type, random);
+
+            // Remove the delemiters and checksums from the key
+            String[] blocks = key.split(DELIMITER);
+            key = "";
+            for (String block : blocks) {
+                key += block.substring(0, BLOCK_LENGTH - BLOCK_CHECKSUM);
+            }
+            int keyLength = sessionID.getKeyLength() + sessionID.getAddCordLength();
+            if ((keyLength % Base32.SIZE) == 0) {
+                keyLength = keyLength / Base32.SIZE;
+            } else {
+                keyLength = keyLength / Base32.SIZE + 1;
+            }
+            key = key.substring(0, keyLength);
+
+            keys[i - 1][0] = sessionID.getID();
+            keys[i - 1][1] = key;
+
+            System.out.println(sessionID.getID());
+            System.out.println(key);
+        }
+
+        return keys;
+    }
+
+    private void addModel(String id, byte[] key) {
         numKeys++;
         // Info Block, TYP 1 Character, ID 3 Character, CHECKSUM 1 Character
         String infoBlock = id;
@@ -119,40 +161,5 @@ public class QRModel {
         String overallChecksum = Checksum.get(Base32.byteToBase32(key), overallChecksumLength);
         String blockChecksum = Checksum.get(lastBlock + overallChecksum, BLOCK_CHECKSUM);
         model += lastBlock + overallChecksum + blockChecksum;
-    }
-
-    public String[][] getKeys(String string) {
-        String[] splittedKeys = string.split(UNICODE_ID);
-        String[][] keys = new String[splittedKeys.length - 1][2];
-        
-        for (int i = 1; i < splittedKeys.length; i++) {
-            String id = splittedKeys[i].substring(1, 1 + BLOCK_LENGTH);
-            String key = splittedKeys[i].substring(10);
-            String type = id.substring(0, 1);
-            String random = id.substring(1, BLOCK_LENGTH - BLOCK_CHECKSUM);
-            SessionID sessionID = new SessionID(type, random);
-
-            // Remove the delemiters and checksums from the key
-            String[] blocks = key.split(DELIMITER);
-            key = "";
-            for (String block : blocks) {
-                key += block.substring(0, BLOCK_LENGTH - BLOCK_CHECKSUM);
-            }
-            int keyLength = sessionID.getKeyLength() + sessionID.getAddCordLength();
-            if ((keyLength % Base32.SIZE) == 0) {
-                keyLength = keyLength / Base32.SIZE;
-            } else {
-                keyLength = keyLength / Base32.SIZE + 1;
-            }
-            key = key.substring(0, keyLength);
-            
-            keys[i - 1][0] = sessionID.getID();
-            keys[i - 1][1] = key;
-            
-            System.out.println(sessionID.getID());
-            System.out.println(key);
-        }
-
-        return keys;
     }
 }

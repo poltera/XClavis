@@ -38,17 +38,27 @@ import com.google.zxing.common.HybridBinarizer;
 import java.awt.image.BufferedImage;
 
 /**
- *
+ * This class provides the method for reading a QR-Code from a image.
+ * 
  * @author Gian Poltéra
  */
 public class QRCodeReader {
 
     private Result result;
     
+    /**
+     * Creates a new QRCodeReader.
+     */
     public QRCodeReader() {
         this.result = null;
     }
     
+    /**
+     * Check if a image contains a QR-Code.
+     * 
+     * @param image the image to be checked
+     * @return true, if the image contains a QR-Code or false otherwise
+     */
     public boolean checkImage(BufferedImage image) {
         result = null;
         LuminanceSource source = new BufferedImageLuminanceSource(image);
@@ -65,6 +75,11 @@ public class QRCodeReader {
         return false;
     }
     
+    /**
+     * Gets the result from a scanned QR-Code image.
+     * 
+     * @return the result as a string
+     */
     public String getResult() {
         if (result != null) {
             return result.getText();

@@ -58,6 +58,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 /**
+ * This class is the main application of the user interface and the start class.
  *
  * @author Gian Poltéra
  */
@@ -82,7 +83,7 @@ public class MainApp extends Application {
     private KeyStore keys;
 
     /**
-     * Constructor
+     * Creates a new MainApp.
      */
     public MainApp() {
         Locale locale = Locale.getDefault();
@@ -97,40 +98,42 @@ public class MainApp extends Application {
     }
 
     /**
-     * Returns the Properties.
+     * The main() method is ignored in correctly deployed JavaFX application.
+     * main() serves only as fallback in case the application can not be
+     * launched through deployment artifacts, e.g., in IDEs with limited FX
+     * support. NetBeans ignores main().
      *
-     * @return
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    /**
+     * Gets the properties.
+     *
+     * @return the properties as a PropertiesHandler
      */
     public PropertiesHandler getProperties() {
         return properties;
     }
 
     /**
-     * Returns the Files.
+     * Gets the files.
      *
-     * @return
+     * @return the files as a FileHandler
      */
     public FileHandler getFiles() {
         return files;
     }
 
     /**
-     * Return the Keys.
+     * Gets the Keys.
      *
-     * @return
+     * @return the keys as a KeyStore
      */
     public KeyStore getKeys() {
         return keys;
-    }
-
-    private void showPasswordInput() {
-        TextInputDialog dialog = new TextInputDialog(rb.getString("password"));
-        dialog.setTitle("XClavis");
-        dialog.setHeaderText(rb.getString("password_input"));
-        dialog.setContentText("");
-
-        Optional<String> password = dialog.showAndWait();
-        password.ifPresent(choice -> keys = new KeyStore(choice));
     }
 
     @Override
@@ -189,7 +192,10 @@ public class MainApp extends Application {
             Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    
+    /**
+     * Shows the RootPane.
+     */
     public void showRootPane() {
         Scene scene = new Scene(rootPane);
         scene.getStylesheets().add("/styles/Styles.css");
@@ -214,23 +220,26 @@ public class MainApp extends Application {
     }
 
     /**
-     * Shows the Encryption Status inside the root layout.
+     * Shows the CryptionState inside the root layout.
      *
-     * @param sessionKey
-     * @param encryption, true for encryption and false for decryption
-     * @param output, Path for the output files
+     * @param sessionKey the SessionKey for the cryption
+     * @param encryption true for encryption or false for decryption
+     * @param output the output path for the files
      */
     public void showCryptionState(SessionKey sessionKey, boolean encryption, String output) {
         rootPane.setBottom(cryptionStateBox);
         cryptionStateController.setParameters(sessionKey, encryption, output);
     }
 
+    /**
+     * Removes the CryptionState from the root layout.
+     */
     public void removeCryptionState() {
         rootPane.setBottom(null);
     }
 
     /**
-     * Shows the Code Reader inside the root layout.
+     * Shows the CodeReader inside the root layout.
      */
     public void showCodeReader() {
         rootPane.setCenter(codeReaderBox);
@@ -239,7 +248,7 @@ public class MainApp extends Application {
     }
 
     /**
-     * Shows the Code Output inside the root layout.
+     * Shows the CodeOutput inside the root layout.
      *
      * @param keys
      */
@@ -249,13 +258,18 @@ public class MainApp extends Application {
     }
 
     /**
-     * Shows the Key Management inside the root layout.
+     * Shows the KeyManagement inside the root layout.
      */
     public void showKeyManagement() {
         rootPane.setCenter(keyManagementBox);
         topMenuController.markKeyManagement();
     }
 
+    /**
+     * Changes the language.
+     * 
+     * @param locale the locale for the new language
+     */
     public void changeLanguage(Locale locale) {
         rb = ResourceBundle.getBundle("bundles.XClavis", locale);
         initAllWindows();
@@ -268,15 +282,13 @@ public class MainApp extends Application {
         return new FXMLLoader(getClass().getResource(path), rb);
     }
 
-    /**
-     * The main() method is ignored in correctly deployed JavaFX application.
-     * main() serves only as fallback in case the application can not be
-     * launched through deployment artifacts, e.g., in IDEs with limited FX
-     * support. NetBeans ignores main().
-     *
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        launch(args);
+    private void showPasswordInput() {
+        TextInputDialog dialog = new TextInputDialog(rb.getString("password"));
+        dialog.setTitle("XClavis");
+        dialog.setHeaderText(rb.getString("password_input"));
+        dialog.setContentText("");
+
+        Optional<String> password = dialog.showAndWait();
+        password.ifPresent(choice -> keys = new KeyStore(choice));
     }
 }

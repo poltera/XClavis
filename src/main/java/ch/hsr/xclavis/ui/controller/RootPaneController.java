@@ -39,7 +39,9 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 
 /**
- *
+ * FXML Controller class
+ * Shows the root layout.
+ * 
  * @author Gian Poltéra
  */
 public class RootPaneController implements Initializable {

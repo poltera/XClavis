@@ -34,7 +34,8 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 /**
- *
+ * This class represents a Key, she is the super class of a SessionKey and a ECDHKey.
+ * 
  * @author Gian Poltéra
  */
 public class Key {
@@ -45,6 +46,11 @@ public class Key {
     private StringProperty id;
     private StringProperty state;
 
+    /**
+     * Creates a new Key with given SessionID.
+     * 
+     * @param sessionID the SessionID of the key.
+     */
     public Key(SessionID sessionID) {
         this.sessionID = sessionID;
         this.id = new SimpleStringProperty(this.sessionID.getID());
@@ -54,50 +60,110 @@ public class Key {
         this.state = new SimpleStringProperty("0");
     }
 
+    /**
+     * Gets the SessionID from the key.
+     * 
+     * @return the SessionID
+     */
     public SessionID getSessionID() {
         return sessionID;
     }
 
+    /**
+     * Gets the ID from the key.
+     * 
+     * @return the ID as a string
+     */
     public String getID() {
         return sessionID.getID();
     }
 
+    /**
+     * Gets the ID from the key.
+     * 
+     * @return the id as a StringProperty
+     */
     public StringProperty idProperty() {
         return id;
     }
 
+    /**
+     * Gets the partner for which a key has been created.
+     * 
+     * @return the name of the partner as a string
+     */
     public String getPartner() {
         return partner.get();
     }
 
+    /**
+     * Gets the partner for which a key has been created.
+     * 
+     * @return the name of the partner as a StringProperty
+     */
     public StringProperty partnerProperty() {
         return partner;
     }
 
+    /**
+     * Sets the partner for which a key has been created.
+     * 
+     * @param partner the name of the partner
+     */
     public void setPartner(String partner) {
         this.partner.set(partner);
     }
 
+    /**
+     * Gets the date when a key has been created.
+     * 
+     * @return the date as a string
+     */
     public String getDate() {
         return date.get();
     }
 
+    /**
+     * Gets the date when a key has been created.
+     * 
+     * @return the date as a StringProperty
+     */
     public StringProperty dateProperty() {
         return date;
     }
     
+    /**
+     * Sets the date when a key has been created.
+     * 
+     * @param date the date when a key has been created
+     */
     public void setDate(String date) {
         this.date.set(date);
     }
 
+    /**
+     * Gets the state of a key.
+     * 
+     * @return the state as a String
+     */
     public String getState() {
         return state.get();
     }
 
+    /**
+     * Gets the state of a key.
+     * 
+     * @return the state as a StringProperty
+     */
     public StringProperty stateProperty() {
         return state;
     }
     
+    /**
+     * Sets the state of a key.
+     * 
+     * @param state the state of a key
+     */
     public void setState(String state) {
         this.state.set(state);
     }

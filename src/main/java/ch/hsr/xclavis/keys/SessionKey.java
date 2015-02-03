@@ -32,7 +32,8 @@ import ch.hsr.xclavis.crypto.RandomGenerator;
 import ch.hsr.xclavis.helpers.Base32;
 
 /**
- *
+ * This class represents a Session-Key and is a subclass of Key.
+ * 
  * @author Gian Poltéra
  */
 public class SessionKey extends Key {
@@ -41,9 +42,9 @@ public class SessionKey extends Key {
     private byte[] iv;
 
     /**
-     * Creates a new SessionKey.
+     * Creates a complete new SessionKey.
      *
-     * @param type
+     * @param type the type of the key to be created
      */
     public SessionKey(String type) {
         super(new SessionID(type));
@@ -52,10 +53,11 @@ public class SessionKey extends Key {
     }
 
     /**
-     * Creates a SessionKey with given Key and SessionID.
-     *
-     * @param sessionID
-     * @param sessionKey
+     * Creates a new SessionKey with given SessionID and Key.
+     * Is used from the ECDHKey to create a SessionKey.
+     * 
+     * @param sessionID the SessionId of the key
+     * @param sessionKey the SessionKey as a byte-array
      */
     public SessionKey(SessionID sessionID, byte[] sessionKey) {
         super(sessionID);
@@ -64,10 +66,11 @@ public class SessionKey extends Key {
     }
 
     /**
-     * Creates a SessionKey with given Base32 Key and SessionID.
+     * Creates a new SessionKey with given SessionID and base32 Key.
+     * Is used in the load from a QR-Code and the KeyStore.
      *
-     * @param sessionID
-     * @param base32SessionKey
+     * @param sessionID the SessionId of the key
+     * @param base32SessionKey the SessionKey as a base32 string
      */
     public SessionKey(SessionID sessionID, String base32SessionKey) {
         super(sessionID);
@@ -80,14 +83,29 @@ public class SessionKey extends Key {
         this.iv = RandomGenerator.getRandomBytes(12);
     }
 
+    /**
+     * Gets the Key.
+     * 
+     * @return the key as a byte-array.
+     */
     public byte[] getKey() {
         return sessionKey;
     }
 
+    /**
+     * Gets the initialvector.
+     * 
+     * @return the IV as a byte-array.
+     */
     public byte[] getIV() {
         return iv;
     }
 
+    /**
+     * Sets the initialvector.
+     * 
+     * @param iv the initialvector
+     */
     public void setIV(byte[] iv) {
         this.iv = iv;
     }

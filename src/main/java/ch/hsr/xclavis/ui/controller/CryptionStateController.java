@@ -45,7 +45,8 @@ import javafx.scene.image.ImageView;
 
 /**
  * FXML Controller class
- *
+ * Shows the state of a encryption or a decryption.
+ * 
  * @author Gian Poltéra
  */
 public class CryptionStateController implements Initializable {
@@ -91,6 +92,13 @@ public class CryptionStateController implements Initializable {
         this.mainApp = mainApp;
     }
 
+    /**
+     * Sets the parameters for the cryption.
+     * 
+     * @param sessionKey the SessionKey for the cryption
+     * @param encryption true for encryption or false for decryption
+     * @param output the output path for the files
+     */
     public void setParameters(SessionKey sessionKey, boolean encryption, String output) {
         if (encryption) {
             lblCryptionState.setText(rb.getString("encryption_state"));

@@ -29,7 +29,8 @@
 package ch.hsr.xclavis.helpers;
 
 /**
- *
+ * This class provides the methods to convert a value to base32 and back.
+ * 
  * @author Gian Poltéra
  */
 public class Base32 {
@@ -40,10 +41,10 @@ public class Base32 {
     private final static int[] BASE32_VALUES = {16, 8, 4, 2, 1};
 
     /**
-     * Transform a bit-string in a base32 string
+     * Converts a bit-string to a base32 string.
      *
-     * @param bitString
-     * @return base32 string
+     * @param bitString the bit-string to convert
+     * @return the base32 value as string
      */
     public static String bitStringToBase32(String bitString) {
         String string = "";
@@ -73,6 +74,12 @@ public class Base32 {
         return string;
     }
 
+    /**
+     * Converts a base32 string to a bit-string.
+     * 
+     * @param base32 the base32 string to convert
+     * @return the bit-string as string
+     */
     public static String base32ToBitString(String base32) {
         String bitString = "";
         for (int i = 0; i < base32.length(); i++) {
@@ -90,18 +97,36 @@ public class Base32 {
         return bitString;
     }
 
+    /**
+     * Converts a byte-array to a base32 string. 
+     * 
+     * @param bytes the byte-array to convert
+     * @return the base32 value as string
+     */
     public static String byteToBase32(byte[] bytes) {
         String bitString = byteToBitString(bytes);
         
         return bitStringToBase32(bitString);
     }
     
+    /**
+     * Converts a base32 string to a byte-array.
+     * 
+     * @param base32 the base32 string to convert
+     * @return the byte-array
+     */
     public static byte[] base32ToByte(String base32) {
         String bitString = base32ToBitString(base32);
         
         return bitStringToByte(bitString);
     }
 
+    /**
+     * Converts a byte-array to a bit-string.
+     * 
+     * @param bytes the byte-array to convert
+     * @return the bit-string as string
+     */
     public static String byteToBitString(byte[] bytes) {
         StringBuilder sb = new StringBuilder(bytes.length * Byte.SIZE);
         for (int i = 0; i < Byte.SIZE * bytes.length; i++) {
@@ -110,6 +135,11 @@ public class Base32 {
         return sb.toString();
     }
 
+    /**
+     * Converts a bit-string to a byte-array.
+     * @param string the bit-string to convert
+     * @return the byte-array
+     */
     public static byte[] bitStringToByte(String string) {
         int sLen = string.length();
         byte[] toReturn = new byte[(sLen + Byte.SIZE - 1) / Byte.SIZE];

@@ -53,7 +53,8 @@ import javafx.scene.layout.VBox;
 
 /**
  * FXML Controller class
- *
+ * Shows the webcam and manual code input.
+ * 
  * @author Gian Poltéra
  */
 public class CodeReaderController implements Initializable {
@@ -130,6 +131,9 @@ public class CodeReaderController implements Initializable {
         this.mainApp = mainApp;
     }
 
+    /**
+     * Starts the webcam.
+     */
     public void startWebcam() {
         ImageView imageViewWebcam = new ImageView();
         imageViewWebcam.setFitWidth(480);

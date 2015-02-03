@@ -60,7 +60,8 @@ import javafx.stage.Stage;
 
 /**
  * FXML Controller class
- *
+ * Shows the table for file selection.
+ * 
  * @author Gian Poltéra
  */
 public class FileSelecterController implements Initializable {
@@ -183,6 +184,9 @@ public class FileSelecterController implements Initializable {
         }
     }
 
+    /**
+     * Updates the view if something changed.
+     */
     public void updateView() {
         cbExisitingKeys.getItems().clear();
         mainApp.getKeys().getSessionKeys().stream().filter((sessionKey) -> (sessionKey.getState().equals("0"))).forEach((sessionKey) -> {

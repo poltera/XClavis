@@ -60,7 +60,6 @@ public class FileHandler {
 
     /**
      * Creates a new FileHandler instance.
-     *
      */
     public FileHandler() {
         this.files = FXCollections.observableArrayList();
