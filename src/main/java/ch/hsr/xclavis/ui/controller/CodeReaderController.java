@@ -258,7 +258,7 @@ public class CodeReaderController implements Initializable {
         if (sessionID.isSessionKey()) {
             SessionKey sessionKey = new SessionKey(sessionID, key);
             sessionKey.setPartner("Remote");
-            sessionKey.setState("3");
+            sessionKey.setState(Key.REMOTE);
             mainApp.getKeys().add(sessionKey);
 
         } else if (sessionID.isECDHReq()) {
@@ -267,7 +267,7 @@ public class CodeReaderController implements Initializable {
             //mainApp.getKeys().add(ecdhKey);
             SessionKey sessionKey = ecdhKey.getSessionKey(key);
             sessionKey.setPartner("Remote");
-            sessionKey.setState("3");
+            sessionKey.setState(Key.REMOTE);
             mainApp.getKeys().add(sessionKey);
             mainApp.getKeys().remove(ecdhKey);
             ecdhResponseKeys.add(ecdhKey);
@@ -277,7 +277,7 @@ public class CodeReaderController implements Initializable {
             ECDHKey ecdhKey = mainApp.getKeys().getECDHKey(sessionID.getRandom());
             SessionKey sessionKey = ecdhKey.getSessionKey(key);
             sessionKey.setPartner(ecdhKey.getPartner());
-            sessionKey.setState("0");
+            sessionKey.setState(Key.USABLE);
             mainApp.getKeys().add(sessionKey);
             mainApp.getKeys().remove(ecdhKey);
         }

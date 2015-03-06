@@ -217,7 +217,7 @@ public class FileSelecterController implements Initializable {
                 sessionKey = new SessionKey(SessionID.SESSION_KEY_128);
             }
             sessionKey.setPartner("Self");
-            sessionKey.setState("1");
+            sessionKey.setState(Key.USED);
             List<Key> keys = new ArrayList<>();
             keys.add(sessionKey);
             mainApp.getKeys().add(sessionKey);
@@ -230,7 +230,7 @@ public class FileSelecterController implements Initializable {
             String random = splittedKey[0].substring(1);
             SessionID sessionID = new SessionID(type, random);
             SessionKey sessionKey = mainApp.getKeys().getSessionKey(sessionID);
-            sessionKey.setState("1");
+            sessionKey.setState(Key.USED);
             List<Key> keys = new ArrayList<>();
             keys.add(sessionKey);
             mainApp.showCodeOutput(keys);

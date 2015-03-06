@@ -39,6 +39,10 @@ import javafx.beans.property.StringProperty;
  * @author Gian Poltéra
  */
 public class Key {
+    public final static String USABLE = "0";
+    public final static String USED = "1";
+    public final static String WAIT = "2";
+    public final static String REMOTE = "3";
 
     private SessionID sessionID;
     private StringProperty partner;

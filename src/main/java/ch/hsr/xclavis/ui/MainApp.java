@@ -92,9 +92,15 @@ public class MainApp extends Application {
         this.files = new FileHandler();
         this.keys = new KeyStore();
 
-        while (!keys.isPasswordCorrect()) {
-            showPasswordInput();
+        //TBA
+        String version = System.getProperty("java.version");
+        char minor = version.charAt(2);
+        char point = version.charAt(6);
+        if (minor < '8' || point < '4') {
+            throw new RuntimeException("JDK 1.8.40 or higher "
+                    + "is required to run XClavis.");
         }
+        System.out.println("JDK version " + version + " found");
     }
 
     /**
@@ -142,6 +148,10 @@ public class MainApp extends Application {
         this.stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/xclavis.png")));
         this.stage.setTitle("XClavis");
         this.stage.setResizable(false);
+
+        while (!keys.isPasswordCorrect()) {
+            showPasswordInput();
+        }
 
         initAllWindows();
         showRootPane();
@@ -192,7 +202,7 @@ public class MainApp extends Application {
             Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     /**
      * Shows the RootPane.
      */
@@ -267,7 +277,7 @@ public class MainApp extends Application {
 
     /**
      * Changes the language.
-     * 
+     *
      * @param locale the locale for the new language
      */
     public void changeLanguage(Locale locale) {

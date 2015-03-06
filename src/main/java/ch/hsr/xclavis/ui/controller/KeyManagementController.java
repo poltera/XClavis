@@ -32,36 +32,49 @@ import ch.hsr.xclavis.keys.ECDHKey;
 import ch.hsr.xclavis.keys.Key;
 import ch.hsr.xclavis.keys.SessionID;
 import ch.hsr.xclavis.keys.SessionKey;
+import ch.hsr.xclavis.qrcode.QRCodeGenerator;
 import ch.hsr.xclavis.ui.MainApp;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.util.Duration;
 
 /**
- * FXML Controller class
- * Shows the created and obtained keys.
+ * FXML Controller class Shows the created and obtained keys.
  *
  * @author Gian Poltéra
  */
 public class KeyManagementController implements Initializable {
 
     private MainApp mainApp;
+    //private MenuItem miShowQRCode;
     @FXML
     private TextField tfName;
     @FXML
@@ -75,7 +88,7 @@ public class KeyManagementController implements Initializable {
     @FXML
     private TableColumn<Key, String> tcDate;
     @FXML
-    private TableColumn<Key, String> tcState;
+    private TableColumn<Key, Label> tcState;
     @FXML
     private TableColumn<Key, Button> tcDelete;
     @FXML
@@ -90,11 +103,70 @@ public class KeyManagementController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         tableView.setPlaceholder(new Label(rb.getString("empty_table_keys")));
+        // Context menu
+        tableView.setRowFactory(
+                (call) -> {
+                    final TableRow<Key> row = new TableRow<>();
+                    final ContextMenu contextMenu = new ContextMenu();
+                    final MenuItem miShowQRCode = new MenuItem(rb.getString("show_qr_code"));
+                    miShowQRCode.setOnAction(
+                            (event) -> {
+                                mainApp.showCodeOutput(tableView.getSelectionModel().getSelectedItems());
+                            });
+                    contextMenu.getItems().add(miShowQRCode);
+                    // Set context menu on row, but use a binding to make it only show for non-empty rows:
+                    row.contextMenuProperty().bind(
+                            Bindings.when(row.emptyProperty())
+                            .then((ContextMenu) null)
+                            .otherwise(contextMenu)
+                    );
+
+                    return row;
+                });
+
         tcID.setCellValueFactory(cellData -> cellData.getValue().idProperty());
         tcPartner.setCellValueFactory(cellData -> cellData.getValue().partnerProperty());
         tcDate.setCellValueFactory(cellData -> cellData.getValue().dateProperty());
-        tcState.setCellValueFactory(cellData -> cellData.getValue().stateProperty());
-        tcDelete.setCellValueFactory((TableColumn.CellDataFeatures<Key, Button> p) -> {
+        // State image
+        tcState.setCellValueFactory((TableColumn.CellDataFeatures<Key, Label> cellData) -> {
+            String state = cellData.getValue().stateProperty().get();
+            Label lblState = new Label();
+            lblState.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+            switch (state) {
+                case Key.USABLE:
+                    ImageView ivOK = new ImageView(new Image(getClass().getResourceAsStream("/images/ok.png")));
+                    Tooltip ttOK = new Tooltip(rb.getString("usabel"));
+                    hackTooltipStartTiming(ttOK);
+                    lblState.setGraphic(ivOK);
+                    lblState.setTooltip(ttOK);
+                    break;
+                case Key.USED:
+                    ImageView ivNOK = new ImageView(new Image(getClass().getResourceAsStream("/images/not_ok.png")));
+                    Tooltip ttNOK = new Tooltip(rb.getString("used"));
+                    hackTooltipStartTiming(ttNOK);
+                    lblState.setGraphic(ivNOK);
+                    lblState.setTooltip(ttNOK);
+                    break;
+                case Key.WAIT:
+                    ImageView ivWait = new ImageView(new Image(getClass().getResourceAsStream("/images/wait.png")));
+                    Tooltip ttWait = new Tooltip(rb.getString("wait_for_remote"));
+                    hackTooltipStartTiming(ttWait);
+                    lblState.setGraphic(ivWait);
+                    lblState.setTooltip(ttWait);
+                    break;
+                case Key.REMOTE:
+                    ImageView ivRemote = new ImageView(new Image(getClass().getResourceAsStream("/images/remote.png")));
+                    Tooltip ttRemote = new Tooltip(rb.getString("from_remote"));
+                    hackTooltipStartTiming(ttRemote);
+                    lblState.setGraphic(ivRemote);
+                    lblState.setTooltip(ttRemote);
+                    break;
+            }
+
+            return new ReadOnlyObjectWrapper(lblState);
+        });
+        // Delete button
+        tcDelete.setCellValueFactory((TableColumn.CellDataFeatures<Key, Button> cellData) -> {
             Button btnDeleteRow = new Button();
             btnDeleteRow.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/images/delete1.png"))));
 
@@ -109,14 +181,15 @@ public class KeyManagementController implements Initializable {
             btnDeleteRow.setOnAction(
                     (event) -> {
                         tableView.requestFocus();
-                        tableView.getSelectionModel().select(p.getValue());
+                        tableView.getSelectionModel().select(cellData.getValue());
                         tableView.getFocusModel().focus(tableView.getSelectionModel().getSelectedIndex());
                         mainApp.getKeys().remove(tableView.getSelectionModel().getSelectedItem());
                         tableView.getSelectionModel().clearSelection();
                     });
 
             return new ReadOnlyObjectWrapper(btnDeleteRow);
-        });
+        }
+        );
     }
 
     /**
@@ -153,7 +226,7 @@ public class KeyManagementController implements Initializable {
                     ecdhKey = new ECDHKey(SessionID.ECDH_REQ_256);
                 }
                 ecdhKey.setPartner(tfName.getText());
-                ecdhKey.setState("2");
+                ecdhKey.setState(Key.WAIT);
                 keys.add(ecdhKey);
                 mainApp.getKeys().add(ecdhKey);
             }
@@ -169,4 +242,21 @@ public class KeyManagementController implements Initializable {
             tableView.getSelectionModel().clearSelection();
         }
     }
+    
+    private void hackTooltipStartTiming(Tooltip tooltip) {
+    try {
+        Field fieldBehavior = tooltip.getClass().getDeclaredField("BEHAVIOR");
+        fieldBehavior.setAccessible(true);
+        Object objBehavior = fieldBehavior.get(tooltip);
+
+        Field fieldTimer = objBehavior.getClass().getDeclaredField("activationTimer");
+        fieldTimer.setAccessible(true);
+        Timeline objTimer = (Timeline) fieldTimer.get(objBehavior);
+
+        objTimer.getKeyFrames().clear();
+        objTimer.getKeyFrames().add(new KeyFrame(new Duration(100)));
+    } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
+        Logger.getLogger(KeyManagementController.class.getName()).log(Level.SEVERE, null, ex);
+    }
+}
 }
