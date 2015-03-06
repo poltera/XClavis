@@ -61,7 +61,7 @@ public class Key {
         this.partner = new SimpleStringProperty("Self");
         LocalDateTime now = LocalDateTime.now();
         this.date = new SimpleStringProperty(now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
-        this.state = new SimpleStringProperty("0");
+        this.state = new SimpleStringProperty(USABLE);
     }
 
     /**

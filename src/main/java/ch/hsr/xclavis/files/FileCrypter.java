@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.property.ReadOnlyDoubleProperty;
+import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.concurrent.Task;
 
 /**
@@ -55,6 +56,8 @@ public class FileCrypter {
 
     private FileZipper zip;
     private AESGCM aes;
+    
+    private ReadOnlyIntegerProperty numberFiles; 
 
     /**
      * Encrypts a list of files to a specific output.
