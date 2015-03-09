@@ -28,6 +28,7 @@
  */
 package ch.hsr.xclavis.files;
 
+import ch.hsr.xclavis.helpers.Logfile;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -79,6 +80,7 @@ public class FileZipper {
                     zos.putNextEntry(new ZipEntry(file.getName()));
                     zos.write(Files.readAllBytes(Paths.get(file.getPath())));
                     zos.closeEntry();
+                    Logfile.addEntry(file.getName() + " zipped");
                 } catch (IOException ex) {
                     Logger.getLogger(FileZipper.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -104,15 +106,19 @@ public class FileZipper {
     public void getFilesFromZippedBytes(byte[] input, String output) {        
         try (ByteArrayInputStream bais = new ByteArrayInputStream(input);
                 ZipInputStream zis = new ZipInputStream(bais)) {
+            int i = 0;
             ZipEntry entry;
             while ((entry = zis.getNextEntry()) != null) {
                 try (FileOutputStream fos = new FileOutputStream(output + File.separator + entry.getName())) {
+                    i++;
                     int length = 0;
                     while ((length  = zis.read(buffer)) > 0) {
                         fos.write(buffer, 0, length);
-                    }
+                    }  
+                    Logfile.addEntry(entry.getName() + " dezipped to " + output + File.separator + entry.getName());
                 }
             }
+            Logfile.addEntry(i + " files results from the decryption");
         } catch(IOException ex) {
             Logger.getLogger(FileZipper.class.getName()).log(Level.SEVERE, null, ex);
         }

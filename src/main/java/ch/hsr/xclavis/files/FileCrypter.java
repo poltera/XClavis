@@ -30,6 +30,7 @@ package ch.hsr.xclavis.files;
 
 import ch.hsr.xclavis.keys.SessionKey;
 import ch.hsr.xclavis.crypto.AESGCM;
+import ch.hsr.xclavis.helpers.Logfile;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.File;
@@ -44,7 +45,7 @@ import javafx.concurrent.Task;
 
 /**
  * This class encrypts and decrypts files.
- * 
+ *
  * @author Gian Poltéra
  */
 public class FileCrypter {
@@ -56,12 +57,12 @@ public class FileCrypter {
 
     private FileZipper zip;
     private AESGCM aes;
-    
-    private ReadOnlyIntegerProperty numberFiles; 
+
+    private ReadOnlyIntegerProperty numberFiles;
 
     /**
      * Encrypts a list of files to a specific output.
-     * 
+     *
      * @param sessionKey for the encryption
      * @param files list of files to encrypt
      * @param output output-path for the encrpyted file
@@ -74,17 +75,23 @@ public class FileCrypter {
             @Override
             public Void call() {
                 updateProgress(1, 10);
+                Logfile.addTitle("ENCRYPTION");
+                Logfile.addEntry(files.size() + " files selected for encryption");
                 long before = System.nanoTime();
                 // ZIP the files
+                Logfile.addEntry("Begin to zip the selected files");
                 byte[] input = zip.getZippedBytes(files, COMPRESSION);
+                Logfile.addEntry("All files zipped");
                 updateProgress(7, 10);
                 // Encrypt the files
+                Logfile.addEntry("Begin to encrypt the zipped file");
                 boolean result = aes.encrypt(input, output, sessionKey);
+                Logfile.addEntry("Encryption finished");
+                Logfile.addEntry("Encrypted file " + output);
                 long after = System.nanoTime();
                 long runningTimeMs = (after - before) / 1000000;
                 updateProgress(10, 10);
-                System.out.println("encryption time: " + runningTimeMs);
-
+                Logfile.addEntry("Elapsed time: " + runningTimeMs + "ms");
                 return null;
             }
         };
@@ -95,7 +102,7 @@ public class FileCrypter {
 
     /**
      * Decrypts a file to a specific output.
-     * 
+     *
      * @param sessionKey for the decryption
      * @param file to decrypt
      * @param output output-path for the decrpyted file
@@ -108,14 +115,22 @@ public class FileCrypter {
             @Override
             public Void call() {
                 updateProgress(1, 10);
+                Logfile.addTitle("DECRYPTION");
+                long before = System.nanoTime();
                 byte[] encrypted = fileToByteArrayOutputStream(file);
                 // Decrypt the file
+                Logfile.addEntry("Begin to decrypt the selected file " + file.getName());
                 byte[] decrypted = aes.decryptToByteStream(encrypted);
+                Logfile.addEntry("Decryption finished");
                 updateProgress(5, 10);
                 // DeZIP the files
+                Logfile.addEntry("Begin to dezip the decrypted file");
                 zip.getFilesFromZippedBytes(decrypted, output);
+                Logfile.addEntry("All files dezipped");
+                long after = System.nanoTime();
+                long runningTimeMs = (after - before) / 1000000;
                 updateProgress(10, 10);
-
+                Logfile.addEntry("Elapsed time: " + runningTimeMs + "ms");
                 return null;
             }
         };
