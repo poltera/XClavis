@@ -65,7 +65,6 @@ public class TopMenuController implements Initializable {
 
     private MainApp mainApp;
     private ResourceBundle rb;
-    private static final String POPUP_TITLE = "XClavis";
 
     @FXML
     private VBox topMenu;
@@ -167,7 +166,7 @@ public class TopMenuController implements Initializable {
         choices.add("256");
 
         ChoiceDialog<String> dialog = new ChoiceDialog<>(mainApp.getProperties().getString("key_size"), choices);
-        dialog.setTitle(POPUP_TITLE);
+        dialog.setTitle(rb.getString("window_title"));
         dialog.setHeaderText(rb.getString("encryption_key_length"));
         dialog.setContentText(rb.getString("bit_length") + ":");
 
@@ -193,7 +192,7 @@ public class TopMenuController implements Initializable {
     @FXML
     private void showKeyStorePasswordSettings(ActionEvent event) {
         TextInputDialog dialog = new TextInputDialog(rb.getString("password"));
-        dialog.setTitle(POPUP_TITLE);
+        dialog.setTitle(rb.getString("window_title"));
         dialog.setHeaderText(rb.getString("password_protection"));
         dialog.setContentText(rb.getString("password") + ":");
 
@@ -221,7 +220,7 @@ public class TopMenuController implements Initializable {
     @FXML
     private void showAbout(ActionEvent event) {
         Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle(POPUP_TITLE);
+        alert.setTitle(rb.getString("window_title"));
         alert.setHeaderText(rb.getString("about"));
         alert.setContentText(rb.getString("about_text"));
 
@@ -231,7 +230,7 @@ public class TopMenuController implements Initializable {
     @FXML
     private void showExtendedSecuritySettings(ActionEvent event) {
         Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle(POPUP_TITLE);
+        alert.setTitle(rb.getString("window_title"));
         alert.setHeaderText(rb.getString("extended_security"));
         alert.setContentText(rb.getString("activating_extended_security"));
 

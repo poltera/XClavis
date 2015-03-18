@@ -146,7 +146,7 @@ public class MainApp extends Application {
     public void start(Stage stage) {
         this.stage = stage;
         this.stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/xclavis.png")));
-        this.stage.setTitle("XClavis");
+        this.stage.setTitle(rb.getString("window_title"));
         this.stage.setResizable(false);
 
         while (!keys.isPasswordCorrect()) {
@@ -294,7 +294,7 @@ public class MainApp extends Application {
 
     private void showPasswordInput() {
         TextInputDialog dialog = new TextInputDialog(rb.getString("password"));
-        dialog.setTitle("XClavis");
+        dialog.setTitle(rb.getString("window_title"));
         dialog.setHeaderText(rb.getString("password_input"));
         dialog.setContentText("");
 

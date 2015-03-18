@@ -37,6 +37,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ObservableValue;
@@ -44,7 +45,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -59,9 +63,8 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 /**
- * FXML Controller class
- * Shows the table for file selection.
- * 
+ * FXML Controller class Shows the table for file selection.
+ *
  * @author Gian Poltéra
  */
 public class FileSelecterController implements Initializable {
@@ -163,7 +166,7 @@ public class FileSelecterController implements Initializable {
                 } else {
                     hbButtons.getChildren().add(btnCodeReader);
                     changeBtn.setDisable(true);
-                }              
+                }
                 cbExisitingKeys.setDisable(true);
             } else if (newValue.intValue() == 2) {
                 hbButtons.getChildren().add(btnEncrypt);
@@ -209,32 +212,41 @@ public class FileSelecterController implements Initializable {
 
     @FXML
     private void encryptFiles(ActionEvent event) {
+        String filename;
         if (cbExisitingKeys.getValue() == null) {
+            // Encryption with new key
             SessionKey sessionKey;
             if (mainApp.getProperties().getInteger("key_size") == 256) {
                 sessionKey = new SessionKey(SessionID.SESSION_KEY_256);
             } else {
                 sessionKey = new SessionKey(SessionID.SESSION_KEY_128);
             }
-            sessionKey.setPartner("Self");
-            sessionKey.setState(Key.USED);
-            List<Key> keys = new ArrayList<>();
-            keys.add(sessionKey);
-            mainApp.getKeys().add(sessionKey);
-            mainApp.showCodeOutput(keys);
-            mainApp.showCryptionState(sessionKey, true, tfOutputPath.getText() + File.separator + "encryption.enc");
+            filename = tfOutputPath.getText() + File.separator + "ENC_" + sessionKey.getID() + ".enc";
+            if (checkOverwriteFile(filename)) {
+                sessionKey.setPartner("Self");
+                sessionKey.setState(Key.USED);
+                List<Key> keys = new ArrayList<>();
+                keys.add(sessionKey);
+                mainApp.getKeys().add(sessionKey);
+                mainApp.showCodeOutput(keys);
+                mainApp.showCryptionState(sessionKey, true, filename);
+            }
         } else {
+            // Encryption with existing key
             String selectedKey = cbExisitingKeys.getValue();
             String[] splittedKey = selectedKey.split("-");
             String type = splittedKey[0].substring(0, 1);
             String random = splittedKey[0].substring(1);
             SessionID sessionID = new SessionID(type, random);
             SessionKey sessionKey = mainApp.getKeys().getSessionKey(sessionID);
-            sessionKey.setState(Key.USED);
-            List<Key> keys = new ArrayList<>();
-            keys.add(sessionKey);
-            mainApp.showCodeOutput(keys);
-            mainApp.showCryptionState(sessionKey, true, tfOutputPath.getText() + File.separator + "encryption.enc");
+            filename = tfOutputPath.getText() + File.separator + "ENC_" + sessionKey.getID() + ".enc";
+            if (checkOverwriteFile(filename)) {
+                sessionKey.setState(Key.USED);
+                List<Key> keys = new ArrayList<>();
+                keys.add(sessionKey);
+                mainApp.showCodeOutput(keys);
+                mainApp.showCryptionState(sessionKey, true, filename);
+            }
         }
     }
 
@@ -279,6 +291,26 @@ public class FileSelecterController implements Initializable {
             mainApp.showCryptionState(sessionKey, false, tfOutputPath.getText());
         } else {
             mainApp.showCodeReader();
+        }
+    }
+
+    private boolean checkOverwriteFile(String filename) {
+        File file = new File(filename);
+        if (file.exists()) {
+            Alert alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle(rb.getString("window_title"));
+            alert.setHeaderText(rb.getString("file_exists"));
+            alert.setContentText(rb.getString("file_overwritten"));
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK) {
+                return true;
+            } else {
+                changeOutputPath(null);
+                return false;
+            }
+        } else {
+            return true;
         }
     }
 }

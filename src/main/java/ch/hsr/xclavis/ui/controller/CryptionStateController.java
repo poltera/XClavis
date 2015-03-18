@@ -133,7 +133,7 @@ public class CryptionStateController implements Initializable {
     @FXML
     private void showLog(ActionEvent event) {
         Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("XClavis");
+        alert.setTitle(rb.getString("window_title"));
         alert.setHeaderText("Log");
 
         Label label = new Label("Logfile:");

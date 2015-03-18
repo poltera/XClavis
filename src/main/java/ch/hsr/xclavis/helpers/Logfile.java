@@ -39,8 +39,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * @author Gian
+ * This class handles and stores the logfile.
+ * 
+ * @author Gian Poltéra
  */
 public class Logfile {
 
@@ -49,16 +50,31 @@ public class Logfile {
     private final static String TITLE_DELIMITER = "----------------------------------------------------------------------";
     private final static String ENTRY_DELIMITER = "======================================================================";
 
+    /**
+     * Adds a new entry to the logfile
+     * 
+     * @param entry the entry to be added to the logfile
+     */
     public static void addEntry(String entry) {
         checkIfExists();
         save("\r\n" + getActualTime() + " -> " + entry);
     }
 
+    /**
+     * Adds a title to the logile
+     * 
+     * @param title the title to be added to the logfile
+     */
     public static void addTitle(String title) {
         checkIfExists();
         save("\r\n" + "\r\n" + title + "\r\n" + TITLE_DELIMITER);
     }
 
+    /**
+     * Gets the last logfile entry
+     * 
+     * @return the last logile entry as a string
+     */
     public static String getLast() {
         String full = getFull();
         String[] results = full.split(TITLE_DELIMITER);
@@ -67,6 +83,11 @@ public class Logfile {
         return result;
     }
 
+    /**
+     * Gets the full logfile
+     * 
+     * @return the full lofile as a string
+     */
     public static String getFull() {
         checkIfExists();
         String result = "";
