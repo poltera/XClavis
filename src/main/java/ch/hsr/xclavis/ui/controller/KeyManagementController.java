@@ -39,6 +39,7 @@ import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -52,6 +53,8 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -64,6 +67,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Duration;
@@ -126,14 +131,23 @@ public class KeyManagementController implements Initializable {
                             (event) -> {
                                 if (tableView.getSelectionModel().getSelectedItem().getSessionID().isPrivaSphereKey()) {
                                     PrivaSphereKey privaSphereKey = (PrivaSphereKey) tableView.getSelectionModel().getSelectedItem();
-                                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                                    alert.setTitle("XClavis");
-                                    alert.setHeaderText("PrivaSphere Schlüssel für die PDF-Entschlüsselung");
-                                    alert.setContentText("Von: " + privaSphereKey.getPartner() + "\n"
-                                            + "ID: " + privaSphereKey.getID().substring(1) + "\n"
-                                            + "Datum: " + privaSphereKey.getDate() + "\n"
-                                            + "Key: " + PrivaSphereBase32.byteToBase32(privaSphereKey.getKey()));
-                                    alert.showAndWait();
+                                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                                    alert.setTitle(rb.getString("window_title"));
+                                    alert.setHeaderText(rb.getString("privasphere_key"));
+                                    alert.setContentText(rb.getString("privasphere_sender") + ": " + privaSphereKey.getPartner() + "\n"
+                                            + rb.getString("privasphere_id") + ": " + privaSphereKey.getID().substring(1) + "\n"
+                                            + rb.getString("date") + ": " + privaSphereKey.getDate() + "\n"
+                                            + rb.getString("key") + ": " + PrivaSphereBase32.byteToBase32(privaSphereKey.getKey()));
+                                    ButtonType btCopyToClipboard = new ButtonType(rb.getString("copy_to_clipboard"));
+                                    ButtonType btClose = new ButtonType(rb.getString("close"), ButtonBar.ButtonData.CANCEL_CLOSE);
+                                    alert.getButtonTypes().setAll(btCopyToClipboard, btClose);
+                                    Optional<ButtonType> result = alert.showAndWait();
+                                    if (result.get() == btCopyToClipboard) {
+                                        final Clipboard clipboard = Clipboard.getSystemClipboard();
+                                        final ClipboardContent content = new ClipboardContent();
+                                        content.putString(PrivaSphereBase32.byteToBase32(privaSphereKey.getKey()));
+                                        clipboard.setContent(content);
+                                    }
                                 }
                             });
                     contextMenu.getItems().addAll(miShowQRCode, miShowPrivaSphereKey);

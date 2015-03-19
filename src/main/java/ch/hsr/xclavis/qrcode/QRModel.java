@@ -34,6 +34,7 @@ import ch.hsr.xclavis.keys.SessionKey;
 import ch.hsr.xclavis.crypto.Checksum;
 import ch.hsr.xclavis.helpers.Base32;
 import ch.hsr.xclavis.helpers.KeySeparator;
+import ch.hsr.xclavis.helpers.PrivaSphereBase32;
 import ch.hsr.xclavis.keys.Key;
 import ch.hsr.xclavis.keys.PrivaSphereKey;
 
@@ -171,16 +172,18 @@ public class QRModel {
      * @return the PrivaSphereKey
      */
     public PrivaSphereKey getPrivaSphereKey(String string) {
-        String id = "A50";
+        String id = string.split("\\(")[1].substring(0, 3);
         String key = string.split(UNICODE_KEY)[1].substring(1);
         String date = string.split(UNICODE_CALENDAR)[1].substring(1, 11);
         String partner = string.split(UNICODE_SENDER)[1].substring(1).split(NEWLINE)[0];
-
         SessionID sessionID = new SessionID(SessionID.PRIVASPHERE_KEY, id);
         PrivaSphereKey privaSphereKey = new PrivaSphereKey(sessionID, key);
         privaSphereKey.setDate(date);
         privaSphereKey.setPartner(partner);
         privaSphereKey.setState(Key.PRIVASPHERE);
+        
+        System.out.println(sessionID.getID());
+        System.out.println(key);
 
         return privaSphereKey;
     }

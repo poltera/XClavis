@@ -106,8 +106,9 @@ public class PrivaSphereBase32 {
      */
     public static String byteToBase32(byte[] bytes) {
         String bitString = byteToBitString(bytes);
-
-        return bitStringToBase32(bitString);
+        String base32String = bitStringToBase32(bitString);
+        
+        return base32String.substring(0, base32String.length() - 1);
     }
 
     /**

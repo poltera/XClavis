@@ -49,12 +49,7 @@ public class PrivaSphereKey extends Key {
      */
     public PrivaSphereKey(SessionID sessionID, String base32PrivaSphereKey) {
         super(sessionID);
-        // Converting back a Base32 String to its Byte Value gives an additional Byte
-        byte[] bytePrivaSphereKey = PrivaSphereBase32.base32ToByte(base32PrivaSphereKey);
-        // Trim the additional Byte
-        byte[] trimmedPrivaSphereKey = new byte[bytePrivaSphereKey.length - 1];
-        System.arraycopy(bytePrivaSphereKey, 0, trimmedPrivaSphereKey, 0, bytePrivaSphereKey.length - 1);
-        this.privaSphereKey = trimmedPrivaSphereKey;
+        this.privaSphereKey = PrivaSphereBase32.base32ToByte(base32PrivaSphereKey);
     }
 
     /**

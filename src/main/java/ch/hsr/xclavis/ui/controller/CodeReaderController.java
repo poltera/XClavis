@@ -41,17 +41,23 @@ import ch.hsr.xclavis.qrcode.QRModel;
 import ch.hsr.xclavis.webcam.DetectedWebcam;
 import ch.hsr.xclavis.ui.MainApp;
 import ch.hsr.xclavis.webcam.WebcamHandler;
+import java.awt.Toolkit;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -65,6 +71,7 @@ public class CodeReaderController implements Initializable {
     private final static String PATTERN = "[23456789abcdefghjklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ]";
 
     private MainApp mainApp;
+    private ResourceBundle rb;
     private WebcamHandler webcamHandler;
     private final int blockLength = 5;
     private final int blockChecksumSize = 1;
@@ -107,6 +114,7 @@ public class CodeReaderController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        this.rb = rb;
         webcamHandler = new WebcamHandler();
         ecdhResponseKeys = new ArrayList<>();
         webcamStarted = false;
@@ -200,14 +208,23 @@ public class CodeReaderController implements Initializable {
                     mainApp.getKeys().add(privaSphereKey);
                     mainApp.showKeyManagement();
 
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("XClavis");
-                    alert.setHeaderText("PrivaSphere Schlüssel für die PDF-Entschlüsselung");
-                    alert.setContentText("Von: " + privaSphereKey.getPartner() + "\n" 
-                            + "ID: " + privaSphereKey.getID().substring(1) + "\n" 
-                            + "Datum: " + privaSphereKey.getDate() + "\n" 
-                            + "Key: " + PrivaSphereBase32.byteToBase32(privaSphereKey.getKey()));
-                    alert.showAndWait();
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle(rb.getString("window_title"));
+                    alert.setHeaderText(rb.getString("privasphere_key"));
+                    alert.setContentText(rb.getString("privasphere_sender") + ": " + privaSphereKey.getPartner() + "\n"
+                            + rb.getString("privasphere_id") + ": " + privaSphereKey.getID().substring(1) + "\n"
+                            + rb.getString("date") + ": " + privaSphereKey.getDate() + "\n"
+                            + rb.getString("key") + ": " + PrivaSphereBase32.byteToBase32(privaSphereKey.getKey()));
+                    ButtonType btCopyToClipboard = new ButtonType(rb.getString("copy_to_clipboard"));
+                    ButtonType btClose = new ButtonType(rb.getString("close"), ButtonData.CANCEL_CLOSE);
+                    alert.getButtonTypes().setAll(btCopyToClipboard, btClose);
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.get() == btCopyToClipboard) {
+                        final Clipboard clipboard = Clipboard.getSystemClipboard();
+                        final ClipboardContent content = new ClipboardContent();
+                        content.putString(PrivaSphereBase32.byteToBase32(privaSphereKey.getKey()));
+                        clipboard.setContent(content);
+                    }
                 }
             });
         }
