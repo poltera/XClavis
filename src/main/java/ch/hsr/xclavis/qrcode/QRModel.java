@@ -34,6 +34,8 @@ import ch.hsr.xclavis.keys.SessionKey;
 import ch.hsr.xclavis.crypto.Checksum;
 import ch.hsr.xclavis.helpers.Base32;
 import ch.hsr.xclavis.helpers.KeySeparator;
+import ch.hsr.xclavis.keys.Key;
+import ch.hsr.xclavis.keys.PrivaSphereKey;
 
 /**
  * This class generates from any number of keys a QR model and vice versa.
@@ -52,6 +54,10 @@ public class QRModel {
     private final static String UNICODE_LOGO = "\ud83d\udd10";
     private final static String UNICODE_ID = "\ud83c\udd94";
     private final static String UNICODE_KEY = "\uD83D\uDD11";
+
+    // PrivaSphere Key
+    private final static String TITLE_PS = "PrivaSphere";
+    private final static String UNICODE_PS = "\u2709";
     private int numKeys;
     private String model;
 
@@ -94,12 +100,32 @@ public class QRModel {
     }
 
     /**
-     * Gets the keys from a QRModel.
+     * Checks if a QRCode contains a standard key like a SessionKey or a ECDH-Key
      * 
+     * @param string
+     * @return
+     */
+    public boolean isStandardKey(String string) {
+        return string.contains(UNICODE_LOGO + UNICODE_SPACE + TITLE);
+    }
+
+    /**
+     * Checks if a QRCode contains a PrivaSphereKey
+     * 
+     * @param string
+     * @return
+     */
+    public boolean isPrivaSphereKey(String string) {
+        return string.contains(UNICODE_PS + UNICODE_SPACE + TITLE_PS);
+    }
+
+    /**
+     * Gets the standard keys from a QRModel.
+     *
      * @param string the QRModel
      * @return the keys as a 2D string-array
      */
-    public String[][] getKeys(String string) {
+    public String[][] getStandardKeys(String string) {
         String[] splittedKeys = string.split(UNICODE_ID);
         String[][] keys = new String[splittedKeys.length - 1][2];
 
@@ -132,6 +158,28 @@ public class QRModel {
         }
 
         return keys;
+    }
+
+    /**
+     * Gets the PrivaSphere key from a QRModel.
+     *
+     * @param string the QRModel
+     * @return the PrivaSphereKey
+     */
+    public PrivaSphereKey getPrivaSphereKey(String string) {
+        String id = "A50";
+        String key = "ubvtfuc5dv6wf303a9nng5z8z7ubvtfuc5dv6wf303a9nng5z8z7";
+        //key = key.toUpperCase();
+        String date = "2015-03-05";
+        String partner = "Hanspeter";
+        
+        SessionID sessionID = new SessionID(SessionID.PRIVASPHERE_KEY, id);
+        PrivaSphereKey privaSphereKey = new PrivaSphereKey(sessionID, key);
+        privaSphereKey.setDate(date);
+        privaSphereKey.setPartner(partner);
+        privaSphereKey.setState(Key.PRIVASPHERE);
+        
+        return privaSphereKey;
     }
 
     private void addModel(String id, byte[] key) {

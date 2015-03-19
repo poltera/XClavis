@@ -161,6 +161,13 @@ public class KeyManagementController implements Initializable {
                     lblState.setGraphic(ivRemote);
                     lblState.setTooltip(ttRemote);
                     break;
+                case Key.PRIVASPHERE:
+                    ImageView ivPrivaSphere = new ImageView(new Image(getClass().getResourceAsStream("/images/privasphere.png")));
+                    Tooltip ttPrivaSphere = new Tooltip(rb.getString("privasphere_key"));
+                    hackTooltipStartTiming(ttPrivaSphere);
+                    lblState.setGraphic(ivPrivaSphere);
+                    lblState.setTooltip(ttPrivaSphere);
+                    break;
             }
 
             return new ReadOnlyObjectWrapper(lblState);
@@ -242,21 +249,21 @@ public class KeyManagementController implements Initializable {
             tableView.getSelectionModel().clearSelection();
         }
     }
-    
+
     private void hackTooltipStartTiming(Tooltip tooltip) {
-    try {
-        Field fieldBehavior = tooltip.getClass().getDeclaredField("BEHAVIOR");
-        fieldBehavior.setAccessible(true);
-        Object objBehavior = fieldBehavior.get(tooltip);
+        try {
+            Field fieldBehavior = tooltip.getClass().getDeclaredField("BEHAVIOR");
+            fieldBehavior.setAccessible(true);
+            Object objBehavior = fieldBehavior.get(tooltip);
 
-        Field fieldTimer = objBehavior.getClass().getDeclaredField("activationTimer");
-        fieldTimer.setAccessible(true);
-        Timeline objTimer = (Timeline) fieldTimer.get(objBehavior);
+            Field fieldTimer = objBehavior.getClass().getDeclaredField("activationTimer");
+            fieldTimer.setAccessible(true);
+            Timeline objTimer = (Timeline) fieldTimer.get(objBehavior);
 
-        objTimer.getKeyFrames().clear();
-        objTimer.getKeyFrames().add(new KeyFrame(new Duration(100)));
-    } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
-        Logger.getLogger(KeyManagementController.class.getName()).log(Level.SEVERE, null, ex);
+            objTimer.getKeyFrames().clear();
+            objTimer.getKeyFrames().add(new KeyFrame(new Duration(100)));
+        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
+            Logger.getLogger(KeyManagementController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
-}
 }

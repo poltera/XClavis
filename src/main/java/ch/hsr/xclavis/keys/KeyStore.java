@@ -30,6 +30,7 @@ package ch.hsr.xclavis.keys;
 
 import ch.hsr.xclavis.crypto.AESGCM;
 import ch.hsr.xclavis.helpers.Base32;
+import ch.hsr.xclavis.helpers.PrivaSphereBase32;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -229,7 +230,7 @@ public class KeyStore {
 
     /**
      * Checks if the password for KeyStore on the harddisk is correct.
-     * 
+     *
      * @return true, if the password is correct or false otherwise
      */
     public boolean isPasswordCorrect() {
@@ -251,7 +252,7 @@ public class KeyStore {
 
     /**
      * Updates the password of the KeyStore.
-     * 
+     *
      * @param password the new password for the KeyStore
      */
     public void updatePassword(String password) {
@@ -303,6 +304,12 @@ public class KeyStore {
                     ecdhKey.setPartner(splittedKey[2]);
                     ecdhKey.setState(splittedKey[3]);
                     keys.add(ecdhKey);
+                } else if (sessionID.isPrivaSphereKey()) {
+                    PrivaSphereKey privaSphereKey = new PrivaSphereKey(sessionID, splittedKey[4]);
+                    privaSphereKey.setDate(splittedKey[1]);
+                    privaSphereKey.setPartner(splittedKey[2]);
+                    privaSphereKey.setState(splittedKey[3]);
+                    keys.add(privaSphereKey);
                 }
             }
 
@@ -331,6 +338,12 @@ public class KeyStore {
                     baos.write(Base32.byteToBase32(ecdhKey.getPrivateKey()).getBytes());
                     baos.write(DELIMITER.getBytes());
                     baos.write(Base32.byteToBase32(ecdhKey.getPublicKey()).getBytes());
+                    for (int i = 0; i < DELIMITER_COUNT; i++) {
+                        baos.write(DELIMITER.getBytes());
+                    }
+                } else if (key.getSessionID().isPrivaSphereKey()) {
+                    PrivaSphereKey privaSphereKey = (PrivaSphereKey) key;
+                    baos.write(PrivaSphereBase32.byteToBase32(privaSphereKey.getKey()).getBytes());
                     for (int i = 0; i < DELIMITER_COUNT; i++) {
                         baos.write(DELIMITER.getBytes());
                     }

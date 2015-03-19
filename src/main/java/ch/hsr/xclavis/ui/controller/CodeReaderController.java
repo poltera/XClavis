@@ -31,7 +31,9 @@ package ch.hsr.xclavis.ui.controller;
 import ch.hsr.xclavis.keys.ECDHKey;
 import ch.hsr.xclavis.commons.InputBlock;
 import ch.hsr.xclavis.commons.InputBlocks;
+import ch.hsr.xclavis.helpers.Base32;
 import ch.hsr.xclavis.keys.Key;
+import ch.hsr.xclavis.keys.PrivaSphereKey;
 import ch.hsr.xclavis.keys.SessionID;
 import ch.hsr.xclavis.keys.SessionKey;
 import ch.hsr.xclavis.qrcode.QRModel;
@@ -45,6 +47,7 @@ import java.util.ResourceBundle;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -52,9 +55,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 /**
- * FXML Controller class
- * Shows the webcam and manual code input.
- * 
+ * FXML Controller class Shows the webcam and manual code input.
+ *
  * @author Gian Poltéra
  */
 public class CodeReaderController implements Initializable {
@@ -169,24 +171,42 @@ public class CodeReaderController implements Initializable {
 
             // Listener for QRCode
             webcamHandler.getScanedQRCode().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
-                String[][] keys = new QRModel().getKeys(newValue);
-                if (keys.length > 0) {
-                    ecdhResponseKeys.clear();
-                    for (int i = 0; i < keys.length; i++) {
-                        SessionID sessionID = new SessionID(keys[i][0].substring(0, 1), keys[i][0].substring(1));
-                        String key = keys[i][1];
-                        addKeyToKeyStore(sessionID, key);
+                QRModel qrModel = new QRModel();
+                if (qrModel.isStandardKey(newValue)) {
+                    // Standard Key
+                    String[][] keys = qrModel.getStandardKeys(newValue);
+                    if (keys.length > 0) {
+                        ecdhResponseKeys.clear();
+                        for (int i = 0; i < keys.length; i++) {
+                            SessionID sessionID = new SessionID(keys[i][0].substring(0, 1), keys[i][0].substring(1));
+                            String key = keys[i][1];
+                            addKeyToKeyStore(sessionID, key);
+                        }
+                        if (ecdhResponseKeys.size() > 0) {
+                            mainApp.showCodeOutput(ecdhResponseKeys);
+                        } else {
+                            mainApp.showKeyManagement();
+                        }
+                        // Stop the Webcam
+                        imageViewWebcam.imageProperty().unbind();
+                        hbWebcamImage.getChildren().remove(imageViewWebcam);
+                        webcamHandler.stopWebcam();
+                        webcamStarted = false;
                     }
-                    if (ecdhResponseKeys.size() > 0) {
-                        mainApp.showCodeOutput(ecdhResponseKeys);
-                    } else {
-                        mainApp.showKeyManagement();
-                    }
-                    // Stop the Webcam
-                    imageViewWebcam.imageProperty().unbind();
-                    hbWebcamImage.getChildren().remove(imageViewWebcam);
-                    webcamHandler.stopWebcam();
-                    webcamStarted = false;
+                } else if (qrModel.isPrivaSphereKey(newValue)) {
+                    // PrivaSphere Key
+                    PrivaSphereKey privaSphereKey = qrModel.getPrivaSphereKey(newValue);
+                    mainApp.getKeys().add(privaSphereKey);
+                    mainApp.showKeyManagement();
+
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("XClavis");
+                    alert.setHeaderText("PrivaSphere Schlüssel für die PDF-Entschlüsselung");
+                    alert.setContentText("Von: " + privaSphereKey.getPartner() + "\n" 
+                            + "ID: " + privaSphereKey.getID().substring(1) + "\n" 
+                            + "Datum: " + privaSphereKey.getDate() + "\n" 
+                            + "Key: " + Base32.byteToBase32(privaSphereKey.getKey()).toLowerCase());
+                    alert.showAndWait();
                 }
             });
         }

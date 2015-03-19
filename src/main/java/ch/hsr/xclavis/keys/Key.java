@@ -43,6 +43,7 @@ public class Key {
     public final static String USED = "1";
     public final static String WAIT = "2";
     public final static String REMOTE = "3";
+    public final static String PRIVASPHERE = "99";
 
     private SessionID sessionID;
     private StringProperty partner;

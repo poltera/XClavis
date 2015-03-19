@@ -29,16 +29,16 @@
 package ch.hsr.xclavis.helpers;
 
 /**
- * This class provides the methods to convert a value to base32 and back.
+ * This class provides the methods to convert a value to PrivaSphere base32 and back.
  *
  * @author Gian Poltéra
  */
-public class Base32 {
+public class PrivaSphereBase32 {
 
     public final static int SIZE = 5;
-    private final static String[] BASE32_CHARACTERS = {"2", "3", "4", "5", "6", "7",
-        "8", "9", "A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L",
-        "M", "N", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
+    private final static String[] BASE32_CHARACTERS = {"0", "1", "2", "3", "4", "5",
+        "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i",
+        "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v"};
     private final static int[] BASE32_VALUES = {16, 8, 4, 2, 1};
 
     /**
@@ -105,6 +105,18 @@ public class Base32 {
      * @return the base32 value as string
      */
     public static String byteToBase32(byte[] bytes) {
+        String bitString = byteToBitString(bytes);
+
+        return bitStringToBase32(bitString);
+    }
+
+    /**
+     * Converts a byte-array to a PrivaSphere base32 string.
+     *
+     * @param bytes the byte-array to convert
+     * @return the PrivaSphere base32 value as string
+     */
+    public static String byteToPrivaSphereBase32(byte[] bytes) {
         String bitString = byteToBitString(bytes);
 
         return bitStringToBase32(bitString);

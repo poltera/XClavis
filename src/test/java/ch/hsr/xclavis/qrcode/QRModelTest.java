@@ -98,7 +98,7 @@ public class QRModelTest {
         System.out.println("Result: " + modell);
 
         System.out.println("getKeys");
-        String[][] keys = instance.getKeys(modell);
+        String[][] keys = instance.getStandardKeys(modell);
 
         System.out.println("Result:");
         for (int i = 0; i < keys.length; i++) {

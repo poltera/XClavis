@@ -44,6 +44,7 @@ public class SessionID {
     public final static String ECDH_REQ_512 = "D";
     public final static String ECDH_RES_256 = "E";
     public final static String ECDH_RES_512 = "F";
+    public final static String PRIVASPHERE_KEY = "P";
     public final static int KEY_128_SIZE = 128;
     public final static int KEY_256_SIZE = 256;
     public final static int KEY_512_SIZE = 512;
@@ -242,5 +243,9 @@ public class SessionID {
      */
     public boolean isSessionKey() {
         return (getType().equals(SESSION_KEY_128)) || (getType().equals(SESSION_KEY_256));
+    }
+    
+    public boolean isPrivaSphereKey() {
+        return getType().equals(PRIVASPHERE_KEY);
     }
 }
