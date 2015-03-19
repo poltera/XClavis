@@ -46,16 +46,16 @@ import java.util.zip.ZipOutputStream;
 
 /**
  * This class zips and dezips files.
- * 
+ *
  * @author Gian Poltéra
  */
 public class FileZipper {
-    
+
     private byte[] buffer = new byte[2048];
-    
+
     /**
      * Gets zipped-bytes from a filelist.
-     * 
+     *
      * @param files the file list to zip
      * @param compression true, for activate or false for deactivate compression
      * @return the zipped-byted as byte-array
@@ -72,7 +72,7 @@ public class FileZipper {
         } else {
             zos.setLevel(Deflater.NO_COMPRESSION);
         }
-                
+
         try {
             //Put each File in the ZipStream
             files.stream().forEach((file) -> {
@@ -96,31 +96,45 @@ public class FileZipper {
         }
         return result;
     }
-    
+
     /**
      * Dezip a file and write the dezipped files to a specific output.
-     * 
+     *
      * @param input the byte-array of the zipped-file
      * @param output the output-path for the dezipped-files
      */
-    public void getFilesFromZippedBytes(byte[] input, String output) {        
+    public void getFilesFromZippedBytes(byte[] input, String output) {
         try (ByteArrayInputStream bais = new ByteArrayInputStream(input);
                 ZipInputStream zis = new ZipInputStream(bais)) {
             int i = 0;
             ZipEntry entry;
             while ((entry = zis.getNextEntry()) != null) {
-                try (FileOutputStream fos = new FileOutputStream(output + File.separator + entry.getName())) {
-                    i++;
-                    int length = 0;
-                    while ((length  = zis.read(buffer)) > 0) {
-                        fos.write(buffer, 0, length);
-                    }  
-                    Logfile.addEntry(entry.getName() + " dezipped to " + output + File.separator + entry.getName());
+                String filename = output + File.separator + entry.getName();
+                if (checkOverwriteFile(filename)) {
+                    try (FileOutputStream fos = new FileOutputStream(filename)) {
+                        i++;
+                        int length = 0;
+                        while ((length = zis.read(buffer)) > 0) {
+                            fos.write(buffer, 0, length);
+                        }
+                        Logfile.addEntry(entry.getName() + " dezipped to " + filename);
+                    }
+                } else {
+                    Logfile.addEntry(entry.getName() + " already exists, file skipped");
                 }
             }
             Logfile.addEntry(i + " files results from the decryption");
-        } catch(IOException ex) {
+        } catch (IOException ex) {
             Logger.getLogger(FileZipper.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private boolean checkOverwriteFile(String filename) {
+        File file = new File(filename);
+        if (file.exists()) {
+            return false;
+        } else {
+            return true;
         }
     }
 }

@@ -57,7 +57,7 @@ public class Logfile {
      */
     public static void addEntry(String entry) {
         checkIfExists();
-        save("\r\n" + getActualTime() + " -> " + entry);
+        save("\r\n" + getActualTime() + ": " + entry);
     }
 
     /**

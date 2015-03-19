@@ -35,6 +35,8 @@ import ch.hsr.xclavis.keys.SessionID;
 import ch.hsr.xclavis.keys.SessionKey;
 import java.io.File;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -258,7 +260,12 @@ public class FileSelecterController implements Initializable {
         if (mainApp.getKeys().existsKey(sessionID)) {
             SessionKey sessionKey = mainApp.getKeys().getSessionKey(sessionID);
             sessionKey.setIV(iv);
-            mainApp.showCryptionState(sessionKey, false, tfOutputPath.getText());
+            LocalDateTime now = LocalDateTime.now();
+            String dateTime = now.format(DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss"));
+            String output = tfOutputPath.getText() + File.separator + dateTime + "_" + sessionID.getID();
+            if (createFolder(output)) {
+                mainApp.showCryptionState(sessionKey, false, output);
+            }
         } else {
             mainApp.showCodeReader();
         }
@@ -311,6 +318,17 @@ public class FileSelecterController implements Initializable {
             }
         } else {
             return true;
+        }
+    }
+    
+    private boolean createFolder(String folder) {
+        boolean result = new File(folder).mkdir();
+        
+        if (result) {
+            return true;
+        } else {
+            // TBA when folder already exists
+            return false;
         }
     }
 }

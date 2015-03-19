@@ -33,8 +33,6 @@ import ch.hsr.xclavis.helpers.Logfile;
 import ch.hsr.xclavis.keys.SessionKey;
 import ch.hsr.xclavis.ui.MainApp;
 import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
