@@ -58,6 +58,9 @@ public class QRModel {
     // PrivaSphere Key
     private final static String TITLE_PS = "PrivaSphere";
     private final static String UNICODE_PS = "\u2709";
+    private final static String UNICODE_CALENDAR = "\uD83D\uDCC5";
+    private final static String UNICODE_SENDER = "\uD83D\uDCE4";
+    private final static String UNICODE_RECEIVER = "\uD83D\uDCE5";
     private int numKeys;
     private String model;
 
@@ -100,8 +103,9 @@ public class QRModel {
     }
 
     /**
-     * Checks if a QRCode contains a standard key like a SessionKey or a ECDH-Key
-     * 
+     * Checks if a QRCode contains a standard key like a SessionKey or a
+     * ECDH-Key
+     *
      * @param string
      * @return
      */
@@ -111,7 +115,7 @@ public class QRModel {
 
     /**
      * Checks if a QRCode contains a PrivaSphereKey
-     * 
+     *
      * @param string
      * @return
      */
@@ -168,17 +172,16 @@ public class QRModel {
      */
     public PrivaSphereKey getPrivaSphereKey(String string) {
         String id = "A50";
-        String key = "ubvtfuc5dv6wf303a9nng5z8z7ubvtfuc5dv6wf303a9nng5z8z7";
-        //key = key.toUpperCase();
-        String date = "2015-03-05";
-        String partner = "Hanspeter";
-        
+        String key = string.split(UNICODE_KEY)[1].substring(1);
+        String date = string.split(UNICODE_CALENDAR)[1].substring(1, 11);
+        String partner = string.split(UNICODE_SENDER)[1].substring(1).split(NEWLINE)[0];
+
         SessionID sessionID = new SessionID(SessionID.PRIVASPHERE_KEY, id);
         PrivaSphereKey privaSphereKey = new PrivaSphereKey(sessionID, key);
         privaSphereKey.setDate(date);
         privaSphereKey.setPartner(partner);
         privaSphereKey.setState(Key.PRIVASPHERE);
-        
+
         return privaSphereKey;
     }
 

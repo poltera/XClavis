@@ -36,9 +36,9 @@ package ch.hsr.xclavis.helpers;
 public class PrivaSphereBase32 {
 
     public final static int SIZE = 5;
-    private final static String[] BASE32_CHARACTERS = {"0", "1", "2", "3", "4", "5",
-        "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i",
-        "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v"};
+    private final static String[] BASE32_CHARACTERS = {"1", "2", "3", "4", "5", "6",
+        "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "j", "k",
+        "m", "n", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"};
     private final static int[] BASE32_VALUES = {16, 8, 4, 2, 1};
 
     /**

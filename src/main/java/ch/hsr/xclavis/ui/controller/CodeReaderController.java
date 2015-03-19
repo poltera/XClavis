@@ -32,6 +32,7 @@ import ch.hsr.xclavis.keys.ECDHKey;
 import ch.hsr.xclavis.commons.InputBlock;
 import ch.hsr.xclavis.commons.InputBlocks;
 import ch.hsr.xclavis.helpers.Base32;
+import ch.hsr.xclavis.helpers.PrivaSphereBase32;
 import ch.hsr.xclavis.keys.Key;
 import ch.hsr.xclavis.keys.PrivaSphereKey;
 import ch.hsr.xclavis.keys.SessionID;
@@ -205,7 +206,7 @@ public class CodeReaderController implements Initializable {
                     alert.setContentText("Von: " + privaSphereKey.getPartner() + "\n" 
                             + "ID: " + privaSphereKey.getID().substring(1) + "\n" 
                             + "Datum: " + privaSphereKey.getDate() + "\n" 
-                            + "Key: " + Base32.byteToBase32(privaSphereKey.getKey()).toLowerCase());
+                            + "Key: " + PrivaSphereBase32.byteToBase32(privaSphereKey.getKey()));
                     alert.showAndWait();
                 }
             });

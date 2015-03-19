@@ -44,12 +44,12 @@ import java.util.logging.Logger;
  * @author Gian Poltéra
  */
 public class Logfile {
-
-    private static final String BASE_PATH = System.getProperty("user.home") + File.separator + ".xclavis" + File.separator;
-    private final static String LOGFILE_PATH = BASE_PATH + "logfile.log";
+    
+    private static final String BASE_PATH = System.getProperty("user.home") + File.separator + ".xclavis" + File.separator + "logfiles" + File.separator;
+    private final static String LOGFILE_PATH = BASE_PATH + "log_year_month_day.log";
     private final static String TITLE_DELIMITER = "----------------------------------------------------------------------";
     private final static String ENTRY_DELIMITER = "======================================================================";
-
+    
     /**
      * Adds a new entry to the logfile
      * 
@@ -111,6 +111,11 @@ public class Logfile {
     }
 
     private static void checkIfExists() {
+        File folder = new File(BASE_PATH);
+        if (!folder.exists()) {
+            folder.mkdir();
+        }
+        
         if (!new File(LOGFILE_PATH).exists()) {
             save("XClavis Logfile" + "\r\n" + ENTRY_DELIMITER);
         }

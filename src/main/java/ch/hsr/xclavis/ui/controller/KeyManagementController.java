@@ -28,11 +28,12 @@
  */
 package ch.hsr.xclavis.ui.controller;
 
+import ch.hsr.xclavis.helpers.PrivaSphereBase32;
 import ch.hsr.xclavis.keys.ECDHKey;
 import ch.hsr.xclavis.keys.Key;
+import ch.hsr.xclavis.keys.PrivaSphereKey;
 import ch.hsr.xclavis.keys.SessionID;
 import ch.hsr.xclavis.keys.SessionKey;
-import ch.hsr.xclavis.qrcode.QRCodeGenerator;
 import ch.hsr.xclavis.ui.MainApp;
 import java.lang.reflect.Field;
 import java.net.URL;
@@ -49,6 +50,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ContextMenu;
@@ -108,17 +110,49 @@ public class KeyManagementController implements Initializable {
                 (call) -> {
                     final TableRow<Key> row = new TableRow<>();
                     final ContextMenu contextMenu = new ContextMenu();
+
+                    // Show QRCode again MenuItem
                     final MenuItem miShowQRCode = new MenuItem(rb.getString("show_qr_code"));
                     miShowQRCode.setOnAction(
                             (event) -> {
-                                mainApp.showCodeOutput(tableView.getSelectionModel().getSelectedItems());
+                                if (!tableView.getSelectionModel().getSelectedItem().getSessionID().isPrivaSphereKey()) {
+                                    mainApp.showCodeOutput(tableView.getSelectionModel().getSelectedItems());
+                                }
                             });
-                    contextMenu.getItems().add(miShowQRCode);
+
+                    // Show PrivaSphereKey again MenuItem
+                    final MenuItem miShowPrivaSphereKey = new MenuItem(rb.getString("show_key"));
+                    miShowPrivaSphereKey.setOnAction(
+                            (event) -> {
+                                if (tableView.getSelectionModel().getSelectedItem().getSessionID().isPrivaSphereKey()) {
+                                    PrivaSphereKey privaSphereKey = (PrivaSphereKey) tableView.getSelectionModel().getSelectedItem();
+                                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                    alert.setTitle("XClavis");
+                                    alert.setHeaderText("PrivaSphere Schlüssel für die PDF-Entschlüsselung");
+                                    alert.setContentText("Von: " + privaSphereKey.getPartner() + "\n"
+                                            + "ID: " + privaSphereKey.getID().substring(1) + "\n"
+                                            + "Datum: " + privaSphereKey.getDate() + "\n"
+                                            + "Key: " + PrivaSphereBase32.byteToBase32(privaSphereKey.getKey()));
+                                    alert.showAndWait();
+                                }
+                            });
+                    contextMenu.getItems().addAll(miShowQRCode, miShowPrivaSphereKey);
+
+                    // Set only the right MenuItem show up
+                    contextMenu.setOnShowing(
+                            (event) -> {
+                                if (tableView.getSelectionModel().getSelectedItem().getSessionID().isPrivaSphereKey()) {
+                                    miShowPrivaSphereKey.setVisible(true);
+                                    miShowQRCode.setVisible(false);
+                                } else {
+                                    miShowPrivaSphereKey.setVisible(false);
+                                    miShowQRCode.setVisible(true);
+                                }
+                            });
+
                     // Set context menu on row, but use a binding to make it only show for non-empty rows:
                     row.contextMenuProperty().bind(
-                            Bindings.when(row.emptyProperty())
-                            .then((ContextMenu) null)
-                            .otherwise(contextMenu)
+                            Bindings.when(row.emptyProperty()).then((ContextMenu) null).otherwise(contextMenu)
                     );
 
                     return row;
