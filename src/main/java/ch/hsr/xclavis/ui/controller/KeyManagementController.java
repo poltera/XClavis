@@ -28,7 +28,6 @@
  */
 package ch.hsr.xclavis.ui.controller;
 
-import ch.hsr.xclavis.helpers.PrivaSphereBase32;
 import ch.hsr.xclavis.keys.ECDHKey;
 import ch.hsr.xclavis.keys.Key;
 import ch.hsr.xclavis.keys.PrivaSphereKey;
@@ -137,7 +136,7 @@ public class KeyManagementController implements Initializable {
                                     alert.setContentText(rb.getString("privasphere_sender") + ": " + privaSphereKey.getPartner() + "\n"
                                             + rb.getString("privasphere_id") + ": " + privaSphereKey.getID().substring(1) + "\n"
                                             + rb.getString("date") + ": " + privaSphereKey.getDate() + "\n"
-                                            + rb.getString("key") + ": " + PrivaSphereBase32.byteToBase32(privaSphereKey.getKey()));
+                                            + rb.getString("key") + ": " + privaSphereKey.getKey());
                                     ButtonType btCopyToClipboard = new ButtonType(rb.getString("copy_to_clipboard"));
                                     ButtonType btClose = new ButtonType(rb.getString("close"), ButtonBar.ButtonData.CANCEL_CLOSE);
                                     alert.getButtonTypes().setAll(btCopyToClipboard, btClose);
@@ -145,7 +144,7 @@ public class KeyManagementController implements Initializable {
                                     if (result.get() == btCopyToClipboard) {
                                         final Clipboard clipboard = Clipboard.getSystemClipboard();
                                         final ClipboardContent content = new ClipboardContent();
-                                        content.putString(PrivaSphereBase32.byteToBase32(privaSphereKey.getKey()));
+                                        content.putString(privaSphereKey.getKey());
                                         clipboard.setContent(content);
                                     }
                                 }

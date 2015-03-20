@@ -30,7 +30,6 @@ package ch.hsr.xclavis.keys;
 
 import ch.hsr.xclavis.crypto.AESGCM;
 import ch.hsr.xclavis.helpers.Base32;
-import ch.hsr.xclavis.helpers.PrivaSphereBase32;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -343,7 +342,7 @@ public class KeyStore {
                     }
                 } else if (key.getSessionID().isPrivaSphereKey()) {
                     PrivaSphereKey privaSphereKey = (PrivaSphereKey) key;
-                    baos.write(PrivaSphereBase32.byteToBase32(privaSphereKey.getKey()).getBytes());
+                    baos.write(privaSphereKey.getKey().getBytes());
                     for (int i = 0; i < DELIMITER_COUNT; i++) {
                         baos.write(DELIMITER.getBytes());
                     }

@@ -28,8 +28,6 @@
  */
 package ch.hsr.xclavis.keys;
 
-import ch.hsr.xclavis.helpers.PrivaSphereBase32;
-
 /**
  * This class represents a PrivaSphere-Key for PDF decryption and is a subclass
  * of Key.
@@ -38,26 +36,26 @@ import ch.hsr.xclavis.helpers.PrivaSphereBase32;
  */
 public class PrivaSphereKey extends Key {
 
-    private final byte[] privaSphereKey;
+    private final String privaSphereKey;
 
     /**
      * Creates a new PrivaSphereKey with given SessionID and base32 Key. Is used
      * in the load from a QR-Code and the KeyStore.
      *
      * @param sessionID the SessionId of the key
-     * @param base32PrivaSphereKey the PrivaSphereKey as a base32 string
+     * @param privaSphereKey the PrivaSphereKey as a string
      */
-    public PrivaSphereKey(SessionID sessionID, String base32PrivaSphereKey) {
+    public PrivaSphereKey(SessionID sessionID, String privaSphereKey) {
         super(sessionID);
-        this.privaSphereKey = PrivaSphereBase32.base32ToByte(base32PrivaSphereKey);
+        this.privaSphereKey = privaSphereKey;
     }
 
     /**
      * Gets the Key.
      *
-     * @return the key as a byte-array.
+     * @return the key as a string.
      */
-    public byte[] getKey() {
+    public String getKey() {
         return privaSphereKey;
     }
 }

@@ -34,7 +34,6 @@ import ch.hsr.xclavis.keys.SessionKey;
 import ch.hsr.xclavis.crypto.Checksum;
 import ch.hsr.xclavis.helpers.Base32;
 import ch.hsr.xclavis.helpers.KeySeparator;
-import ch.hsr.xclavis.helpers.PrivaSphereBase32;
 import ch.hsr.xclavis.keys.Key;
 import ch.hsr.xclavis.keys.PrivaSphereKey;
 
