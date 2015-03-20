@@ -120,7 +120,7 @@ public class QRModel {
      * @return
      */
     public boolean isPrivaSphereKey(String string) {
-        return string.contains(UNICODE_PS + UNICODE_SPACE + TITLE_PS);
+        return string.contains(UNICODE_PS);
     }
 
     /**
@@ -171,7 +171,7 @@ public class QRModel {
      * @return the PrivaSphereKey
      */
     public PrivaSphereKey getPrivaSphereKey(String string) {
-        String id = string.split("\\(")[1].substring(0, 3);
+        String id = string.split("\\(")[1].split("\\)")[0];
         String key = string.split(UNICODE_KEY)[1].substring(1);
         String date = string.split(UNICODE_CALENDAR)[1].substring(1, 11);
         String partner = string.split(UNICODE_SENDER)[1].substring(1).split(NEWLINE)[0];
