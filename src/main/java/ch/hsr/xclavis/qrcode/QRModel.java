@@ -177,7 +177,7 @@ public class QRModel {
         String partner = string.split(UNICODE_SENDER)[1].substring(1).split(NEWLINE)[0];
         SessionID sessionID = new SessionID(SessionID.PRIVASPHERE_KEY, id);
         PrivaSphereKey privaSphereKey = new PrivaSphereKey(sessionID, key);
-        privaSphereKey.setDate(date);
+        privaSphereKey.setCreationDate(date);
         privaSphereKey.setPartner(partner);
         privaSphereKey.setState(Key.PRIVASPHERE);
         

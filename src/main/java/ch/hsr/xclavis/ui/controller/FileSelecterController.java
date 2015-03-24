@@ -227,6 +227,8 @@ public class FileSelecterController implements Initializable {
             if (checkOverwriteFile(filename)) {
                 sessionKey.setPartner("Self");
                 sessionKey.setState(Key.USED);
+                sessionKey.setLastUseDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+                sessionKey.setLastActivity(Key.ENCRYPTION);
                 List<Key> keys = new ArrayList<>();
                 keys.add(sessionKey);
                 mainApp.getKeys().add(sessionKey);
@@ -244,8 +246,11 @@ public class FileSelecterController implements Initializable {
             filename = tfOutputPath.getText() + File.separator + "ENC_" + sessionKey.getID() + ".enc";
             if (checkOverwriteFile(filename)) {
                 sessionKey.setState(Key.USED);
+                sessionKey.setLastUseDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+                sessionKey.setLastActivity(Key.ENCRYPTION);
                 List<Key> keys = new ArrayList<>();
                 keys.add(sessionKey);
+                mainApp.getKeys().replace(sessionKey);
                 mainApp.showCodeOutput(keys);
                 mainApp.showCryptionState(sessionKey, true, filename);
             }
@@ -260,10 +265,12 @@ public class FileSelecterController implements Initializable {
         if (mainApp.getKeys().existsKey(sessionID)) {
             SessionKey sessionKey = mainApp.getKeys().getSessionKey(sessionID);
             sessionKey.setIV(iv);
-            LocalDateTime now = LocalDateTime.now();
-            String dateTime = now.format(DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss"));
+            sessionKey.setLastUseDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+            sessionKey.setLastActivity(Key.DECRYPTION);
+            String dateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss"));
             String output = tfOutputPath.getText() + File.separator + dateTime + "_" + sessionID.getID();
             if (createFolder(output)) {
+                mainApp.getKeys().replace(sessionKey);
                 mainApp.showCryptionState(sessionKey, false, output);
             }
         } else {

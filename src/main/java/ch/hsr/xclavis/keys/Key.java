@@ -34,40 +34,48 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 /**
- * This class represents a Key, she is the super class of a SessionKey and a ECDHKey.
- * 
+ * This class represents a Key, she is the super class of a SessionKey and a
+ * ECDHKey.
+ *
  * @author Gian Poltéra
  */
 public class Key {
+
+    // State
     public final static String USABLE = "0";
     public final static String USED = "1";
     public final static String WAIT = "2";
     public final static String REMOTE = "3";
     public final static String PRIVASPHERE = "99";
 
+    // Last use Property
+    public final static String NO_ACTIVITY = "0";
+    public final static String ENCRYPTION = "1";
+    public final static String DECRYPTION = "2";
+    public final static String READING = "3";
+
     private SessionID sessionID;
-    private StringProperty partner;
-    private StringProperty date;
-    private StringProperty id;
-    private StringProperty state;
+    private StringProperty partner, creationDate, lastUseDate, lastActivity, id, state;
 
     /**
      * Creates a new Key with given SessionID.
-     * 
+     *
      * @param sessionID the SessionID of the key.
      */
     public Key(SessionID sessionID) {
         this.sessionID = sessionID;
         this.id = new SimpleStringProperty(this.sessionID.getID());
         this.partner = new SimpleStringProperty("Self");
-        LocalDateTime now = LocalDateTime.now();
-        this.date = new SimpleStringProperty(now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+        this.creationDate = new SimpleStringProperty(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+        this.lastUseDate = new SimpleStringProperty(NO_ACTIVITY);
+        this.lastActivity = new SimpleStringProperty(NO_ACTIVITY);
+
         this.state = new SimpleStringProperty(USABLE);
     }
 
     /**
      * Gets the SessionID from the key.
-     * 
+     *
      * @return the SessionID
      */
     public SessionID getSessionID() {
@@ -76,7 +84,7 @@ public class Key {
 
     /**
      * Gets the ID from the key.
-     * 
+     *
      * @return the ID as a string
      */
     public String getID() {
@@ -85,7 +93,7 @@ public class Key {
 
     /**
      * Gets the ID from the key.
-     * 
+     *
      * @return the id as a StringProperty
      */
     public StringProperty idProperty() {
@@ -94,7 +102,7 @@ public class Key {
 
     /**
      * Gets the partner for which a key has been created.
-     * 
+     *
      * @return the name of the partner as a string
      */
     public String getPartner() {
@@ -103,7 +111,7 @@ public class Key {
 
     /**
      * Gets the partner for which a key has been created.
-     * 
+     *
      * @return the name of the partner as a StringProperty
      */
     public StringProperty partnerProperty() {
@@ -112,7 +120,7 @@ public class Key {
 
     /**
      * Sets the partner for which a key has been created.
-     * 
+     *
      * @param partner the name of the partner
      */
     public void setPartner(String partner) {
@@ -121,34 +129,88 @@ public class Key {
 
     /**
      * Gets the date when a key has been created.
-     * 
+     *
      * @return the date as a string
      */
-    public String getDate() {
-        return date.get();
+    public String getCreationDate() {
+        return creationDate.get();
     }
 
     /**
      * Gets the date when a key has been created.
-     * 
+     *
      * @return the date as a StringProperty
      */
-    public StringProperty dateProperty() {
-        return date;
+    public StringProperty creationDateProperty() {
+        return creationDate;
     }
-    
+
     /**
      * Sets the date when a key has been created.
-     * 
-     * @param date the date when a key has been created
+     *
+     * @param creationDate the date when a key has been created
      */
-    public void setDate(String date) {
-        this.date.set(date);
+    public void setCreationDate(String creationDate) {
+        this.creationDate.set(creationDate);
+    }
+
+    /**
+     * Gets the date when a key has been last used.
+     *
+     * @return the date as a string
+     */
+    public String getLastUseDate() {
+        return lastUseDate.get();
+    }
+
+    /**
+     * Gets the date when a key has been last used.
+     *
+     * @return the date as a StringProperty
+     */
+    public StringProperty lastUseDateProperty() {
+        return lastUseDate;
+    }
+
+    /**
+     * Sets the date when a key has been last used.
+     *
+     * @param lastUseDate the date when a key has been last used
+     */
+    public void setLastUseDate(String lastUseDate) {
+        this.lastUseDate.set(lastUseDate);
+    }
+
+    /**
+     * Gets the activity for which a key has been last used.
+     *
+     * @return the activity as a string
+     */
+    public String getLastActivity() {
+        return lastActivity.get();
+    }
+
+    /**
+     * Gets the activity for which a key has been last used.
+     *
+     * @return the activity as a StringProperty
+     */
+    public StringProperty lastActivityProperty() {
+        return lastActivity;
+    }
+
+    /**
+     * Sets the activity for which a key has been last used.
+     *
+     * @param lastActivity the activity for which a key has been last used
+     */
+    public void setLastActivity(String lastActivity) {
+        this.lastActivity.set(lastActivity);
     }
 
     /**
      * Gets the state of a key.
-     * 
+     *
      * @return the state as a String
      */
     public String getState() {
@@ -157,16 +219,16 @@ public class Key {
 
     /**
      * Gets the state of a key.
-     * 
+     *
      * @return the state as a StringProperty
      */
     public StringProperty stateProperty() {
         return state;
     }
-    
+
     /**
      * Sets the state of a key.
-     * 
+     *
      * @param state the state of a key
      */
     public void setState(String state) {

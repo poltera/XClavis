@@ -40,6 +40,8 @@ import ch.hsr.xclavis.webcam.DetectedWebcam;
 import ch.hsr.xclavis.ui.MainApp;
 import ch.hsr.xclavis.webcam.WebcamHandler;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -209,15 +211,17 @@ public class CodeReaderController implements Initializable {
                 } else if (qrModel.isPrivaSphereKey(newValue)) {
                     // PrivaSphere Key
                     PrivaSphereKey privaSphereKey = qrModel.getPrivaSphereKey(newValue);
+                    privaSphereKey.setLastUseDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+                    privaSphereKey.setLastActivity(Key.READING);
                     mainApp.getKeys().add(privaSphereKey);
                     mainApp.showKeyManagement();
-
+                    
                     Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                     alert.setTitle(rb.getString("window_title"));
                     alert.setHeaderText(rb.getString("privasphere_key"));
                     alert.setContentText(rb.getString("privasphere_sender") + ": " + privaSphereKey.getPartner() + "\n"
                             + rb.getString("privasphere_id") + ": " + privaSphereKey.getID().substring(1) + "\n"
-                            + rb.getString("date") + ": " + privaSphereKey.getDate() + "\n"
+                            + rb.getString("date") + ": " + privaSphereKey.getCreationDate() + "\n"
                             + rb.getString("key") + ": " + privaSphereKey.getKey());
                     ButtonType btCopyToClipboard = new ButtonType(rb.getString("copy_to_clipboard"));
                     ButtonType btClose = new ButtonType(rb.getString("close"), ButtonData.CANCEL_CLOSE);

@@ -19,7 +19,7 @@
         <columns>
             <TableColumn fx:id="tcID" prefWidth="75.0" text="%id" />
           <TableColumn fx:id="tcPartner" prefWidth="150.0" text="%partner" />
-          <TableColumn fx:id="tcDate" prefWidth="150.0" text="%date" />
+          <TableColumn fx:id="tcDate" prefWidth="150.0" text="%creation_date" />
             <TableColumn fx:id="tcState" prefWidth="50.0" text="%state" />
             <TableColumn fx:id="tcDelete" prefWidth="73.0" text="%delete" />
         </columns>

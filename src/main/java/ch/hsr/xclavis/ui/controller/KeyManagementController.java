@@ -36,6 +36,8 @@ import ch.hsr.xclavis.keys.SessionKey;
 import ch.hsr.xclavis.ui.MainApp;
 import java.lang.reflect.Field;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -80,7 +82,8 @@ import javafx.util.Duration;
 public class KeyManagementController implements Initializable {
 
     private MainApp mainApp;
-    //private MenuItem miShowQRCode;
+    private ResourceBundle rb;
+
     @FXML
     private TextField tfName;
     @FXML
@@ -108,6 +111,7 @@ public class KeyManagementController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        this.rb = rb;
         tableView.setPlaceholder(new Label(rb.getString("empty_table_keys")));
         // Context menu
         tableView.setRowFactory(
@@ -135,7 +139,7 @@ public class KeyManagementController implements Initializable {
                                     alert.setHeaderText(rb.getString("privasphere_key"));
                                     alert.setContentText(rb.getString("privasphere_sender") + ": " + privaSphereKey.getPartner() + "\n"
                                             + rb.getString("privasphere_id") + ": " + privaSphereKey.getID().substring(1) + "\n"
-                                            + rb.getString("date") + ": " + privaSphereKey.getDate() + "\n"
+                                            + rb.getString("date") + ": " + privaSphereKey.getCreationDate() + "\n"
                                             + rb.getString("key") + ": " + privaSphereKey.getKey());
                                     ButtonType btCopyToClipboard = new ButtonType(rb.getString("copy_to_clipboard"));
                                     ButtonType btClose = new ButtonType(rb.getString("close"), ButtonBar.ButtonData.CANCEL_CLOSE);
@@ -147,6 +151,9 @@ public class KeyManagementController implements Initializable {
                                         content.putString(privaSphereKey.getKey());
                                         clipboard.setContent(content);
                                     }
+                                    privaSphereKey.setLastUseDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+                                    privaSphereKey.setLastActivity(Key.READING);
+                                    mainApp.getKeys().replace(privaSphereKey);
                                 }
                             });
                     contextMenu.getItems().addAll(miShowQRCode, miShowPrivaSphereKey);
@@ -173,7 +180,7 @@ public class KeyManagementController implements Initializable {
 
         tcID.setCellValueFactory(cellData -> cellData.getValue().idProperty());
         tcPartner.setCellValueFactory(cellData -> cellData.getValue().partnerProperty());
-        tcDate.setCellValueFactory(cellData -> cellData.getValue().dateProperty());
+        tcDate.setCellValueFactory(cellData -> cellData.getValue().creationDateProperty());
         // State image
         tcState.setCellValueFactory((TableColumn.CellDataFeatures<Key, Label> cellData) -> {
             String state = cellData.getValue().stateProperty().get();
@@ -182,35 +189,36 @@ public class KeyManagementController implements Initializable {
             switch (state) {
                 case Key.USABLE:
                     ImageView ivOK = new ImageView(new Image(getClass().getResourceAsStream("/images/ok.png")));
-                    Tooltip ttOK = new Tooltip(rb.getString("usabel"));
+                    Tooltip ttOK = new Tooltip(rb.getString("usabel") + getAdditionalTooltipInfos(cellData.getValue()));
                     hackTooltipStartTiming(ttOK);
                     lblState.setGraphic(ivOK);
                     lblState.setTooltip(ttOK);
                     break;
                 case Key.USED:
                     ImageView ivNOK = new ImageView(new Image(getClass().getResourceAsStream("/images/not_ok.png")));
-                    Tooltip ttNOK = new Tooltip(rb.getString("used"));
+                    Tooltip ttNOK = new Tooltip(rb.getString("used") + getAdditionalTooltipInfos(cellData.getValue()));
                     hackTooltipStartTiming(ttNOK);
                     lblState.setGraphic(ivNOK);
                     lblState.setTooltip(ttNOK);
                     break;
                 case Key.WAIT:
                     ImageView ivWait = new ImageView(new Image(getClass().getResourceAsStream("/images/wait.png")));
-                    Tooltip ttWait = new Tooltip(rb.getString("wait_for_remote"));
+                    Tooltip ttWait = new Tooltip(rb.getString("wait_for_remote") + getAdditionalTooltipInfos(cellData.getValue()));
                     hackTooltipStartTiming(ttWait);
                     lblState.setGraphic(ivWait);
                     lblState.setTooltip(ttWait);
                     break;
                 case Key.REMOTE:
                     ImageView ivRemote = new ImageView(new Image(getClass().getResourceAsStream("/images/remote.png")));
-                    Tooltip ttRemote = new Tooltip(rb.getString("from_remote"));
+                    Tooltip ttRemote = new Tooltip(rb.getString("from_remote") + getAdditionalTooltipInfos(cellData.getValue()));
                     hackTooltipStartTiming(ttRemote);
                     lblState.setGraphic(ivRemote);
                     lblState.setTooltip(ttRemote);
                     break;
                 case Key.PRIVASPHERE:
+                    PrivaSphereKey privaSphereKey = (PrivaSphereKey) cellData.getValue();
                     ImageView ivPrivaSphere = new ImageView(new Image(getClass().getResourceAsStream("/images/privasphere.png")));
-                    Tooltip ttPrivaSphere = new Tooltip(rb.getString("privasphere_key"));
+                    Tooltip ttPrivaSphere = new Tooltip(rb.getString("privasphere_key") + getAdditionalTooltipInfos(privaSphereKey));
                     hackTooltipStartTiming(ttPrivaSphere);
                     lblState.setGraphic(ivPrivaSphere);
                     lblState.setTooltip(ttPrivaSphere);
@@ -295,6 +303,37 @@ public class KeyManagementController implements Initializable {
             mainApp.getKeys().remove(tableView.getSelectionModel().getSelectedItem());
             tableView.getSelectionModel().clearSelection();
         }
+    }
+
+    private String getAdditionalTooltipInfos(Key key) {
+        String addtionalTooltip = "\n";
+        if (!key.getSessionID().isPrivaSphereKey()) {
+            addtionalTooltip += rb.getString("key_length") + ": " + key.getSessionID().getFinalKeyLength() + " " + rb.getString("bit") + "\n";
+        } else {
+            PrivaSphereKey privaSphereKey = (PrivaSphereKey) key;
+            addtionalTooltip += rb.getString("key_length") + ": " + privaSphereKey.getKey().length() * 5 + " " + rb.getString("bit") + "\n";
+        }
+        if (key.getLastUseDate().equals(Key.NO_ACTIVITY)) {
+            addtionalTooltip += rb.getString("last_use_date") + ": " + rb.getString("no_activity") + "\n";
+        } else {
+            addtionalTooltip += rb.getString("last_use_date") + ": " + key.getLastUseDate() + "\n";
+        }
+        switch (key.getLastActivity()) {
+            case Key.NO_ACTIVITY:
+                addtionalTooltip += rb.getString("last_activity") + ": " + rb.getString("no_activity");
+                break;
+            case Key.ENCRYPTION:
+                addtionalTooltip += rb.getString("last_activity") + ": " + rb.getString("encryption");
+                break;
+            case Key.DECRYPTION:
+                addtionalTooltip += rb.getString("last_activity") + ": " + rb.getString("decryption");
+                break;
+            case Key.READING:
+                addtionalTooltip += rb.getString("last_activity") + ": " + rb.getString("reading");
+                break;
+        }
+
+        return addtionalTooltip;
     }
 
     private void hackTooltipStartTiming(Tooltip tooltip) {

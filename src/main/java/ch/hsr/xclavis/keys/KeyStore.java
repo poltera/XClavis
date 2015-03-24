@@ -127,6 +127,29 @@ public class KeyStore {
     }
 
     /**
+     * Replace an existing Key in the KeyStore.
+     * 
+     * @param key the new key to which the old replaced
+     */
+    public void replace(Key key) {
+        if (existsKey(key.getSessionID())) {
+            remove(getKey(key.getSessionID()));
+            add(key);
+        }
+    }
+
+    /**
+     * Removes a key from the KeyStore.
+     *
+     * @param key the key to be removed
+     */
+    public void remove(Key key) {
+        keys.remove(key);
+
+        saveKeys();
+    }
+
+    /**
      * Checks whether a key exists in the KeyStore.
      *
      * @param sessionID the SessionID to be searched
@@ -141,19 +164,29 @@ public class KeyStore {
     }
 
     /**
+     * Gets the Key with the specified SessionID.
+     * 
+     * @param sessionID the SessionID for which the Key to be returned
+     * @return the Key
+     */
+    public Key getKey(SessionID sessionID) {
+        for (Key key : keys) {
+            if (key.getSessionID().getID().equals(sessionID.getID())) {
+                return key;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Gets the SessionKey with the specified SessionID.
      *
      * @param sessionID the SessionID for which the SessionKey to be returned
      * @return the SessionKey
      */
     public SessionKey getSessionKey(SessionID sessionID) {
-        for (Key key : keys) {
-            if (key.getSessionID().getID().equals(sessionID.getID())) {
-                return (SessionKey) key;
-            }
-        }
-
-        return null;
+        return (SessionKey) getKey(sessionID);
     }
 
     /**
@@ -177,13 +210,7 @@ public class KeyStore {
      * @return the ECDHKey
      */
     public ECDHKey getECDHKey(SessionID sessionID) {
-        for (Key key : keys) {
-            if (key.getSessionID().getID().equals(sessionID.getID())) {
-                return (ECDHKey) key;
-            }
-        }
-
-        return null;
+        return (ECDHKey) getKey(sessionID);
     }
 
     /**
@@ -214,17 +241,6 @@ public class KeyStore {
         });
 
         return ecdhKeys;
-    }
-
-    /**
-     * Removes a key from the KeyStore.
-     *
-     * @param key the key to be removed
-     */
-    public void remove(Key key) {
-        keys.remove(key);
-
-        saveKeys();
     }
 
     /**
@@ -292,22 +308,28 @@ public class KeyStore {
 
                 SessionID sessionID = new SessionID(splittedKey[0].substring(0, 1), splittedKey[0].substring(1));
                 if (sessionID.isSessionKey()) {
-                    SessionKey sessionKey = new SessionKey(sessionID, splittedKey[4]);
-                    sessionKey.setDate(splittedKey[1]);
-                    sessionKey.setPartner(splittedKey[2]);
-                    sessionKey.setState(splittedKey[3]);
+                    SessionKey sessionKey = new SessionKey(sessionID, splittedKey[6]);
+                    sessionKey.setCreationDate(splittedKey[1]);
+                    sessionKey.setLastUseDate(splittedKey[2]);
+                    sessionKey.setLastActivity(splittedKey[3]);
+                    sessionKey.setPartner(splittedKey[4]);
+                    sessionKey.setState(splittedKey[5]);
                     keys.add(sessionKey);
                 } else if (sessionID.isECDH()) {
-                    ECDHKey ecdhKey = new ECDHKey(sessionID, splittedKey[4], splittedKey[5]);
-                    ecdhKey.setDate(splittedKey[1]);
-                    ecdhKey.setPartner(splittedKey[2]);
-                    ecdhKey.setState(splittedKey[3]);
+                    ECDHKey ecdhKey = new ECDHKey(sessionID, splittedKey[6], splittedKey[7]);
+                    ecdhKey.setCreationDate(splittedKey[1]);
+                    ecdhKey.setLastUseDate(splittedKey[2]);
+                    ecdhKey.setLastActivity(splittedKey[3]);
+                    ecdhKey.setPartner(splittedKey[4]);
+                    ecdhKey.setState(splittedKey[5]);
                     keys.add(ecdhKey);
                 } else if (sessionID.isPrivaSphereKey()) {
-                    PrivaSphereKey privaSphereKey = new PrivaSphereKey(sessionID, splittedKey[4]);
-                    privaSphereKey.setDate(splittedKey[1]);
-                    privaSphereKey.setPartner(splittedKey[2]);
-                    privaSphereKey.setState(splittedKey[3]);
+                    PrivaSphereKey privaSphereKey = new PrivaSphereKey(sessionID, splittedKey[6]);
+                    privaSphereKey.setCreationDate(splittedKey[1]);
+                    privaSphereKey.setLastUseDate(splittedKey[2]);
+                    privaSphereKey.setLastActivity(splittedKey[3]);
+                    privaSphereKey.setPartner(splittedKey[4]);
+                    privaSphereKey.setState(splittedKey[5]);
                     keys.add(privaSphereKey);
                 }
             }
@@ -320,7 +342,11 @@ public class KeyStore {
             for (Key key : keys) {
                 baos.write(key.getID().getBytes());
                 baos.write(DELIMITER.getBytes());
-                baos.write(key.getDate().getBytes());
+                baos.write(key.getCreationDate().getBytes());
+                baos.write(DELIMITER.getBytes());
+                baos.write(key.getLastUseDate().getBytes());
+                baos.write(DELIMITER.getBytes());
+                baos.write(key.getLastActivity().getBytes());
                 baos.write(DELIMITER.getBytes());
                 baos.write(key.getPartner().getBytes());
                 baos.write(DELIMITER.getBytes());

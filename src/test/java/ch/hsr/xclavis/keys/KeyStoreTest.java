@@ -82,17 +82,17 @@ public class KeyStoreTest {
         ecdhKeyRes512.setPartner("KeyStoreTest");
 
         System.out.println("Input:");
-        System.out.println("ID: " + sessionKey128.getID() + " Date: " + sessionKey128.getDate() + " Partner: " + sessionKey128.getPartner() + " State: " + sessionKey128.getState());
+        System.out.println("ID: " + sessionKey128.getID() + " Date: " + sessionKey128.getCreationDate() + " Partner: " + sessionKey128.getPartner() + " State: " + sessionKey128.getState());
         System.out.println("Key: " + Base32.byteToBase32(sessionKey128.getKey()));
-        System.out.println("ID: " + sessionKey256.getID() + " Date: " + sessionKey256.getDate() + " Partner: " + sessionKey256.getPartner() + " State: " + sessionKey256.getState());
+        System.out.println("ID: " + sessionKey256.getID() + " Date: " + sessionKey256.getCreationDate() + " Partner: " + sessionKey256.getPartner() + " State: " + sessionKey256.getState());
         System.out.println("Key: " + Base32.byteToBase32(sessionKey256.getKey()));
-        System.out.println("ID: " + ecdhKeyReq256.getID() + " Date: " + ecdhKeyReq256.getDate() + " Partner: " + ecdhKeyReq256.getPartner() + " State: " + ecdhKeyReq256.getState());
+        System.out.println("ID: " + ecdhKeyReq256.getID() + " Date: " + ecdhKeyReq256.getCreationDate() + " Partner: " + ecdhKeyReq256.getPartner() + " State: " + ecdhKeyReq256.getState());
         System.out.println("Private Key: " + Base32.byteToBase32(ecdhKeyReq256.getPrivateKey()) + " Public Key: " + Base32.byteToBase32(ecdhKeyReq256.getPublicKey()));
-        System.out.println("ID: " + ecdhKeyReq512.getID() + " Date: " + ecdhKeyReq512.getDate() + " Partner: " + ecdhKeyReq512.getPartner() + " State: " + ecdhKeyReq512.getState());
+        System.out.println("ID: " + ecdhKeyReq512.getID() + " Date: " + ecdhKeyReq512.getCreationDate() + " Partner: " + ecdhKeyReq512.getPartner() + " State: " + ecdhKeyReq512.getState());
         System.out.println("Private Key: " + Base32.byteToBase32(ecdhKeyReq512.getPrivateKey()) + " Public Key: " + Base32.byteToBase32(ecdhKeyReq512.getPublicKey()));
-        System.out.println("ID: " + ecdhKeyRes256.getID() + " Date: " + ecdhKeyRes256.getDate() + " Partner: " + ecdhKeyRes256.getPartner() + " State: " + ecdhKeyRes256.getState());
+        System.out.println("ID: " + ecdhKeyRes256.getID() + " Date: " + ecdhKeyRes256.getCreationDate() + " Partner: " + ecdhKeyRes256.getPartner() + " State: " + ecdhKeyRes256.getState());
         System.out.println("Private Key: " + Base32.byteToBase32(ecdhKeyRes256.getPrivateKey()) + " Public Key: " + Base32.byteToBase32(ecdhKeyRes256.getPublicKey()));
-        System.out.println("ID: " + ecdhKeyRes512.getID() + " Date: " + ecdhKeyRes512.getDate() + " Partner: " + ecdhKeyRes512.getPartner() + " State: " + ecdhKeyRes512.getState());
+        System.out.println("ID: " + ecdhKeyRes512.getID() + " Date: " + ecdhKeyRes512.getCreationDate() + " Partner: " + ecdhKeyRes512.getPartner() + " State: " + ecdhKeyRes512.getState());
         System.out.println("Private Key: " + Base32.byteToBase32(ecdhKeyRes512.getPrivateKey()) + " Public Key: " + Base32.byteToBase32(ecdhKeyRes512.getPublicKey()));
 
         KeyStore instance = new KeyStore();
@@ -109,14 +109,14 @@ public class KeyStoreTest {
 
         List<SessionKey> sessionKeys = instance2.getSessionKeys();
         for (SessionKey sessionKey : sessionKeys) {
-            System.out.println("ID: " + sessionKey.getID() + " Date: " + sessionKey.getDate() + " Partner: " + sessionKey.getPartner() + " State: " + sessionKey.getState());
+            System.out.println("ID: " + sessionKey.getID() + " Date: " + sessionKey.getCreationDate() + " Partner: " + sessionKey.getPartner() + " State: " + sessionKey.getState());
             System.out.println("Key: " + Base32.byteToBase32(sessionKey.getKey()));
             instance2.remove(sessionKey);
         }
 
         List<ECDHKey> ecdhKeys = instance2.getECDHKeys();
         for (ECDHKey ecdhKey : ecdhKeys) {
-            System.out.println("ID: " + ecdhKey.getID() + " Date: " + ecdhKey.getDate() + " Partner: " + ecdhKey.getPartner() + " State: " + ecdhKey.getState());
+            System.out.println("ID: " + ecdhKey.getID() + " Date: " + ecdhKey.getCreationDate() + " Partner: " + ecdhKey.getPartner() + " State: " + ecdhKey.getState());
             System.out.println("Private Key: " + Base32.byteToBase32(ecdhKey.getPrivateKey()) + " Public Key: " + Base32.byteToBase32(ecdhKey.getPublicKey()));
             instance2.remove(ecdhKey);
         }
