@@ -227,6 +227,7 @@ public class MainApp extends Application {
         rootPane.setCenter(fileSelecterBox);
         topMenuController.markFileSelecter();
         fileSelecterController.updateView();
+        codeReaderController.stopWebcam();
     }
 
     /**
@@ -265,6 +266,7 @@ public class MainApp extends Application {
     public void showCodeOutput(List<Key> keys) {
         rootPane.setCenter(codeOutputBox);
         codeOutputController.setKeys(keys);
+        codeReaderController.stopWebcam();
     }
 
     /**
@@ -273,6 +275,7 @@ public class MainApp extends Application {
     public void showKeyManagement() {
         rootPane.setCenter(keyManagementBox);
         topMenuController.markKeyManagement();
+        codeReaderController.stopWebcam();
     }
 
     /**

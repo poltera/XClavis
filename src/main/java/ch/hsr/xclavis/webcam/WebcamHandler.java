@@ -30,9 +30,13 @@ package ch.hsr.xclavis.webcam;
 
 import ch.hsr.xclavis.qrcode.QRCodeReader;
 import com.github.sarxos.webcam.Webcam;
+import com.github.sarxos.webcam.WebcamDiscoveryService;
 import java.awt.image.BufferedImage;
 import javafx.application.Platform;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyIntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -44,7 +48,7 @@ import javafx.scene.image.Image;
 
 /**
  * This class handles the webcams.
- * 
+ *
  * @author Gian Poltéra
  */
 public class WebcamHandler {
@@ -59,8 +63,12 @@ public class WebcamHandler {
     private boolean stopCamera;
     private QRCodeReader qrCodeReader;
     private StringProperty qrResult;
-    
+
     private int qrFlopsCounter;
+    private IntegerProperty checkedImagesCounter;
+
+    private Task<Void> taskInitializer, taskStream;
+    private Thread threadInitializer, threadStream;
 
     /**
      * Creates a new WebcamHandler.
@@ -69,6 +77,7 @@ public class WebcamHandler {
         this.webcams = FXCollections.observableArrayList();
         this.sleepTimer = 1000 / FPS;
         this.qrFlopsCounter = 0;
+        this.checkedImagesCounter = new SimpleIntegerProperty(0);
         this.selectedWebcam = null;
         this.stopCamera = false;
         scanWebcams();
@@ -78,7 +87,7 @@ public class WebcamHandler {
 
     /**
      * Checks if a webcam exists.
-     * 
+     *
      * @return true, if a webcam exists or false otherwise
      */
     public boolean existsWebcam() {
@@ -91,7 +100,7 @@ public class WebcamHandler {
 
     /**
      * Gets the number of webcams detected.
-     * 
+     *
      * @return the number of detected webcams as a integer
      */
     public int getWebcamCount() {
@@ -100,7 +109,7 @@ public class WebcamHandler {
 
     /**
      * Gets the DetectedWebcam's as a list.
-     * 
+     *
      * @return the detectedWebcam's as a ObservableList
      */
     public ObservableList<DetectedWebcam> getWebcams() {
@@ -109,11 +118,11 @@ public class WebcamHandler {
 
     /**
      * Initializes a webcam.
-     * 
+     *
      * @param webcamIndex the index of the webcam to be initialized
      */
     public void initWebcam(final int webcamIndex) {
-        Task<Void> webcamInitializer = new Task<Void>() {
+        taskInitializer = new Task<Void>() {
 
             @Override
             protected Void call() throws Exception {
@@ -125,23 +134,26 @@ public class WebcamHandler {
                 return null;
             }
         };
-        new Thread(webcamInitializer).start();
+        threadInitializer = new Thread(taskInitializer);
+        threadInitializer.setDaemon(true);
+        threadInitializer.start();
     }
 
     /**
      * Gets the webcam stream as an image.
-     * 
+     *
      * @return the webcam stream as a ObjectProperty
      */
     public ObjectProperty<Image> getStream() {
         stopCamera = false;
         ObjectProperty<Image> imageProperty = new SimpleObjectProperty<>();
-        Task<Void> task = new Task<Void>() {
-
+        taskStream = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                
                 while (!stopCamera) {
+                    if (isCancelled()) {
+                        break;
+                    }
                     if (selectedWebcam.isOpen()) {
                         try {
                             if ((bufferedImage = selectedWebcam.getImage()) != null) {
@@ -151,9 +163,15 @@ public class WebcamHandler {
                                     imageProperty.set(image);
                                     qrFlopsCounter++;
                                     if (qrFlopsCounter == 5) {
+                                        checkedImagesCounter.set(checkedImagesCounter.get() + 1);
                                         // Check if QR-Code is in Image
                                         if (qrCodeReader.checkImage(bufferedImage)) {
-                                            qrResult.set(qrCodeReader.getResult());
+                                            if (qrResult.get().equals(qrCodeReader.getResult())) {
+                                                qrResult.set("");
+                                                qrResult.set(qrCodeReader.getResult());
+                                            } else {
+                                                qrResult.set(qrCodeReader.getResult());
+                                            }
                                         }
                                         qrFlopsCounter = 0;
                                     }
@@ -167,23 +185,35 @@ public class WebcamHandler {
                     // Sleep Timer for FPS
                     Thread.sleep(sleepTimer);
                 }
+
                 return null;
             }
         };
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+        threadStream = new Thread(taskStream);
+
+        threadStream.setDaemon(
+                true);
+        threadStream.start();
 
         return imageProperty;
     }
 
     /**
      * Gets a scanned QR-Code.
-     * 
+     *
      * @return the scanned QR-Code as a StringProperty
      */
     public StringProperty getScanedQRCode() {
         return qrResult;
+    }
+
+    /**
+     * Gets the counter of the already checked images.
+     *
+     * @return the counter of the checked images
+     */
+    public ReadOnlyIntegerProperty getCheckedImagesCounter() {
+        return checkedImagesCounter;
     }
 
     /**
@@ -192,6 +222,20 @@ public class WebcamHandler {
     public void stopWebcam() {
         stopCamera = true;
         close();
+        if (taskInitializer != null && taskInitializer.isRunning()) {
+            taskInitializer.cancel();
+        }
+        if (taskStream != null && taskStream.isRunning()) {
+            taskStream.cancel();
+        }
+        if (threadInitializer != null && threadInitializer.isAlive()) {
+            threadInitializer.interrupt();
+        }
+        if (threadStream != null && threadStream.isAlive()) {
+            threadStream.interrupt();
+        }
+        WebcamDiscoveryService discovery = Webcam.getDiscoveryService();
+        discovery.stop();
     }
 
     private void scanWebcams() {

@@ -30,6 +30,7 @@
                <children>
                   <Label fx:id="lblWebcamLoad" alignment="CENTER" maxHeight="270.0" maxWidth="480.0" minHeight="270.0" minWidth="480.0" prefHeight="270.0" prefWidth="480.0" text="%webcam_load" />
                </children></HBox>
+            <Label fx:id="lblWebcamQRState" text="%state" />
             </children>
         </VBox>
       <VBox fx:id="vbManualInput" alignment="TOP_CENTER" maxWidth="500.0" minWidth="500.0" prefWidth="500.0" spacing="10.0">

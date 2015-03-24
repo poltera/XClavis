@@ -57,6 +57,7 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 
 /**
  * FXML Controller class Shows the webcam and manual code input.
@@ -75,6 +76,8 @@ public class CodeReaderController implements Initializable {
     private SessionID manualSessionID;
     private List<Key> ecdhResponseKeys;
     private boolean webcamStarted;
+    private int imageCounter = 0;
+    private ImageView imageViewWebcam;
 
     @FXML
     private VBox vbWebcamInput;
@@ -102,6 +105,8 @@ public class CodeReaderController implements Initializable {
     private ComboBox<DetectedWebcam> cbWebcamSelecter;
     @FXML
     private Label lblNoWebcam;
+    @FXML
+    private Label lblWebcamQRState;
 
     /**
      * Initializes the controller class.
@@ -112,7 +117,6 @@ public class CodeReaderController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         this.rb = rb;
-        webcamHandler = new WebcamHandler();
         ecdhResponseKeys = new ArrayList<>();
         webcamStarted = false;
 
@@ -143,26 +147,31 @@ public class CodeReaderController implements Initializable {
      * Starts the webcam.
      */
     public void startWebcam() {
-        ImageView imageViewWebcam = new ImageView();
-        imageViewWebcam.setFitWidth(480);
-        imageViewWebcam.setPreserveRatio(true);
-
-        // Show WebcamSelecter if more then one Webcam
-        if (webcamHandler.getWebcamCount() > 1) {
-            cbWebcamSelecter.setItems(webcamHandler.getWebcams());
-            cbWebcamSelecter.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends DetectedWebcam> observable, DetectedWebcam oldValue, DetectedWebcam newValue) -> {
-                if (newValue != null) {
-                    webcamHandler.initWebcam(newValue.getWebcamIndex());
-                    imageViewWebcam.imageProperty().bind(webcamHandler.getStream());
-                }
-            });
-        } else {
-            vbWebcamInput.getChildren().remove(hbWebcamSelecter);
-        }
-
-        // Show WebcamImage from first Webcam if one Webcam exists
         if (!webcamStarted) {
+            webcamHandler = new WebcamHandler();
+            imageViewWebcam = new ImageView();
+            imageViewWebcam.setFitWidth(480);
+            imageViewWebcam.setPreserveRatio(true);
+
+            // Show WebcamSelecter if more then one Webcam
+            if (webcamHandler.getWebcamCount() > 1) {
+                cbWebcamSelecter.setItems(webcamHandler.getWebcams());
+                cbWebcamSelecter.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends DetectedWebcam> observable, DetectedWebcam oldValue, DetectedWebcam newValue) -> {
+                    if (newValue != null) {
+                        webcamHandler.initWebcam(newValue.getWebcamIndex());
+                        imageViewWebcam.imageProperty().bind(webcamHandler.getStream());
+                    }
+                });
+            } else {
+                vbWebcamInput.getChildren().remove(hbWebcamSelecter);
+            }
+
+            // Show WebcamImage from first Webcam if one Webcam exists
             if (webcamHandler.existsWebcam()) {
+                lblWebcamQRState.setText(rb.getString("webcam_load"));
+                lblWebcamQRState.setTextFill(Color.BLACK);
+                lblWebcamQRState.setStyle("-fx-font-weight: normal");
+                lblWebcamQRState.setVisible(true);
                 // Start the Webcam
                 webcamStarted = true;
                 webcamHandler.initWebcam(0);
@@ -173,6 +182,7 @@ public class CodeReaderController implements Initializable {
 
             } else {
                 vbWebcamInput.getChildren().remove(hbWebcamImage);
+                vbWebcamInput.getChildren().remove(lblWebcamQRState);
             }
 
             // Listener for QRCode
@@ -193,12 +203,9 @@ public class CodeReaderController implements Initializable {
                         } else {
                             mainApp.showKeyManagement();
                         }
-                        // Stop the Webcam
-                        imageViewWebcam.imageProperty().unbind();
-                        hbWebcamImage.getChildren().remove(imageViewWebcam);
-                        webcamHandler.stopWebcam();
-                        webcamStarted = false;
                     }
+                    lblWebcamQRState.setVisible(false);
+                    imageCounter = 0;
                 } else if (qrModel.isPrivaSphereKey(newValue)) {
                     // PrivaSphere Key
                     PrivaSphereKey privaSphereKey = qrModel.getPrivaSphereKey(newValue);
@@ -222,8 +229,43 @@ public class CodeReaderController implements Initializable {
                         content.putString(privaSphereKey.getKey());
                         clipboard.setContent(content);
                     }
+                    lblWebcamQRState.setVisible(false);
+                    imageCounter = 0;
+                } else {
+                    // QR-code found, but not in XClavis format
+                    lblWebcamQRState.setText(rb.getString("not_right_qr_format"));
+                    lblWebcamQRState.setTextFill(Color.RED);
+                    lblWebcamQRState.setStyle("-fx-font-weight: bold");
+                    lblWebcamQRState.setVisible(true);
                 }
             });
+
+            // Listener for scanned images counter
+            webcamHandler.getCheckedImagesCounter().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
+                imageCounter++;
+                if ((imageCounter % 10) == 0) {
+                    lblWebcamQRState.setText(imageCounter + " " + rb.getString("images_checked"));
+                    lblWebcamQRState.setTextFill(Color.BLACK);
+                    lblWebcamQRState.setStyle("-fx-font-weight: normal");
+                    lblWebcamQRState.setVisible(true);
+                }
+            });
+        }
+    }
+
+    /**
+     * Stop the webcam.
+     */
+    public void stopWebcam() {
+        if (webcamHandler != null) {
+            webcamHandler.stopWebcam();
+        }
+        webcamStarted = false;
+        if (imageViewWebcam != null) {
+            imageViewWebcam.imageProperty().unbind();
+        }
+        if (hbWebcamImage.getChildren().contains(imageViewWebcam)) {
+            hbWebcamImage.getChildren().remove(imageViewWebcam);
         }
     }
 
