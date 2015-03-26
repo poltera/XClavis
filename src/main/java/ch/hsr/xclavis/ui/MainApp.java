@@ -91,16 +91,6 @@ public class MainApp extends Application {
         this.properties = new PropertiesHandler();
         this.files = new FileHandler();
         this.keys = new KeyStore();
-
-        //TBA
-        String version = System.getProperty("java.version");
-        char minor = version.charAt(2);
-        char point = version.charAt(6);
-        if (minor < '8' || point < '4') {
-            throw new RuntimeException("JDK 1.8.40 or higher "
-                    + "is required to run XClavis.");
-        }
-        System.out.println("JDK version " + version + " found");
     }
 
     /**

@@ -4,7 +4,7 @@
 
     <groupId>ch.hsr</groupId>
     <artifactId>XClavis</artifactId>
-    <version>0.105</version>
+    <version>0.107</version>
     <packaging>jar</packaging>
     
     <name>XClavis</name>
@@ -21,7 +21,7 @@
     
     <developers>
         <developer>
-            <id>gpolt></id>
+            <id>gpoltera></id>
             <name>Gian Poltéra</name>
             <email>gian@poltera.com</email>
         </developer>
@@ -93,7 +93,6 @@
     
     <build>
         <plugins>
-            
             <!-- The dependency plugin provides the capability to manipulate artifacts. It can copy and/or unpack artifacts from local or remote repositories to a specified location. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -114,48 +113,6 @@
                     </execution>
                 </executions>
             </plugin>
-            
-            <!--            This plugin provides the capability to package the artifact in an uber-jar, including its dependencies and to shade - i.e. rename - the packages of some of the dependencies.            
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>2.3</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>${mainClass}</mainClass>
-                                </transformer>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">
-                                    <resources>
-                                        <resource>.SF</resource>
-                                        <resource>.DSA</resource>
-                                        <resource>.RSA</resource>
-                                    </resources>
-                                </transformer>
-                            </transformers>
-                                                        <minimizeJar>true</minimizeJar> 
-                                                        <filters>
-                                <filter>
-                                    <artifact>*:*</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/*.SF</exclude>
-                                        <exclude>META-INF/*.DSA</exclude>
-                                        <exclude>META-INF/*.RSA</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
-                                                        <shadedArtifactAttached>true</shadedArtifactAttached>
-                            <shadedClassifierName></shadedClassifierName>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>-->
             
             <!-- Use this plugin to manipulate archive files of type zip, tar, tgz, tbz2, etc. You can also use its  truezip-utils component to perform the same operations within your java application. -->
             <plugin>
@@ -208,6 +165,8 @@
                                 <argument>${project.build.directory}</argument>
                                 <argument>-outfile</argument>
                                 <argument>${project.build.finalName}.jar</argument>
+                                <argument>-manifestAttrs</argument>
+                                <argument>"Implementation-Version=${project.version}"</argument>
                             </arguments>
                         </configuration>
                     </execution>

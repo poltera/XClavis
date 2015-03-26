@@ -222,7 +222,7 @@ public class TopMenuController implements Initializable {
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle(rb.getString("window_title"));
         alert.setHeaderText(rb.getString("about"));
-        alert.setContentText(rb.getString("about_text"));
+        alert.setContentText(rb.getString("about_text") + this.getClass().getPackage().getImplementationVersion());
 
         alert.showAndWait();
     }
